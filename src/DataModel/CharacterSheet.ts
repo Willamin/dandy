@@ -15,6 +15,18 @@ export type CharacterSheet = {
     levels: Array<Level>,
 }
 
+export const shrinkToSheet = ({ sheetView, descriptive, baseScores, species, background, compendium, levels }: object & CharacterSheet): CharacterSheet => (
+    {
+        sheetView,
+        descriptive,
+        baseScores,
+        species,
+        background,
+        compendium,
+        levels,
+    }
+)
+
 export type DiceSize = 4 | 6 | 8 | 10 | 12 | 20
 
 export type DiceCollection = {
@@ -26,6 +38,7 @@ export type DiceCollection = {
     d20: number,
 }
 
+export const AbilityScoreOrder = ["strength", "dexterity", "constitution", "intelligence", "wisdom", "charisma"]
 export type AbilityScores = {
     strength: number,
     dexterity: number,
@@ -146,3 +159,11 @@ export type FeatureEffectLanguage = { language: string }
 export type FeatureEffectWalkingSpeed = { walking: number}
 export type FeatureEffectSpell = { spell: string }
 export type FeatureEffectSetAbility = { setAbility: Ability, minimum: number }
+
+export const prefixify = (value: number): {sign: string, abs: string, combined: string} => {
+    if (value >= 0) {
+        return {sign: "+", abs: `${value}`, combined: `+${value}`}
+    } else {
+        return {sign: "-", abs: `${value}`, combined: `-${value}`}
+    }
+}

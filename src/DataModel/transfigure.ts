@@ -28,6 +28,7 @@ export type DerivedCharacter = {
     descriptiveFeatures: FeatureOnlyDescription[],
     hitPointMaximum: number,
     hitDice: DiceCollection,
+    savingThrowProficiencyBonuses: AbilityScores, // structurally it's the same
 }
 
 export type FullCharacter = CharacterSheet & DerivedCharacter
@@ -177,6 +178,7 @@ export const transfigure = (character: CharacterSheet): FullCharacter => {
         walkingSpeed,
         initiative,
         abilityMods, 
+        savingThrowProficiencyBonuses,
         savingThrows,
         skillMods,
         descriptiveFeatures,

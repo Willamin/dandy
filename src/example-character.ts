@@ -1,5 +1,4 @@
-import { CharacterSheet } from "./CharacterSheet";
-import { transfigure } from "./transfigure";
+import { CharacterSheet } from "./DataModel/CharacterSheet";
 
 const example: CharacterSheet = {
     sheetView: {
@@ -113,6 +112,10 @@ const example: CharacterSheet = {
                 name: "Warlock",
                 hitDice: 8,
             },
+            {
+                name: "Fighter",
+                hitDice: 10,
+            }
         ],
         spells: [
             {
@@ -336,4 +339,4 @@ const example: CharacterSheet = {
     ]
 }
 
-console.dir(transfigure(example), { depth: null });
+export default example;
