@@ -24115,10 +24115,10 @@ var SavingThrows = (style) => {
     primary: (ability) => {
       const { sign, abs } = prefixify(fullCharacter.savingThrows[ability]);
       return import_react2.default.createElement("div", {
+        className: "mono",
         style: {
           display: "flex",
-          alignItems: "center",
-          fontFamily: "ui-monospace"
+          alignItems: "center"
         }
       }, import_react2.default.createElement("span", {
         style: {

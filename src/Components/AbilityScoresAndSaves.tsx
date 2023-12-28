@@ -45,10 +45,9 @@ export const SavingThrows: React.FC<{style?: React.style}> = (style) => {
                 primary={(ability) => {
                     const {sign, abs} = prefixify(fullCharacter.savingThrows[ability])
                     return (
-                        <div style={{
+                        <div className="mono" style={{
                             display: "flex", 
                             alignItems: "center",
-                            fontFamily: "ui-monospace",
                         }}>
                             <span style={{
                                 fontSize: "0.7em",
