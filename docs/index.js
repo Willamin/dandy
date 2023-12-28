@@ -24039,7 +24039,7 @@ var prefixify = (value) => {
 // src/Components/StatBlock.tsx
 var StatBlock = ({ name, primary, secondary }) => import_react.default.createElement("div", {
   key: `row-${name}`,
-  className: "stat-block",
+  className: "stat-block pointer",
   style: {
     display: "flex",
     flexDirection: "column",
@@ -24048,8 +24048,7 @@ var StatBlock = ({ name, primary, secondary }) => import_react.default.createEle
     border: "1px solid",
     borderRadius: "4px",
     borderColor: "var(--bd-primary)",
-    backgroundColor: "var(--bg-secondary)",
-    cursor: "pointer"
+    backgroundColor: "var(--bg-secondary)"
   }
 }, import_react.default.createElement("div", {
   style: { fontSize: "0.7em" }
@@ -24087,10 +24086,10 @@ var AbilityScores = ({ style }) => {
     primary: (ability) => {
       const { sign, abs } = prefixify(fullCharacter.abilityMods[ability]);
       return import_react2.default.createElement("div", {
+        className: "mono",
         style: {
           display: "flex",
-          alignItems: "center",
-          fontFamily: "ui-monospace"
+          alignItems: "center"
         }
       }, import_react2.default.createElement("span", {
         style: {
@@ -24104,7 +24103,7 @@ var AbilityScores = ({ style }) => {
       }, sign));
     },
     secondary: (ability) => import_react2.default.createElement("span", {
-      style: { fontFamily: "ui-monospace" }
+      className: "mono"
     }, fullCharacter.finalAbilityScores[ability])
   });
 };

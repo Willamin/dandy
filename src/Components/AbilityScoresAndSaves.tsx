@@ -13,10 +13,9 @@ export const AbilityScores: React.FC<{style?: React.style}> = ({style}) => {
                 primary={(ability) => {
                     const {sign, abs} = prefixify(fullCharacter.abilityMods[ability])
                     return (
-                        <div style={{
+                        <div className="mono" style={{
                             display: "flex", 
                             alignItems: "center",
-                            fontFamily: "ui-monospace",
                         }}>
                             <span style={{
                                 fontSize: "0.7em",
@@ -30,7 +29,7 @@ export const AbilityScores: React.FC<{style?: React.style}> = ({style}) => {
                     )
                 }}
                 secondary={(ability) => (
-                    <span style={{fontFamily: "ui-monospace"}}>
+                    <span className="mono">
                         {fullCharacter.finalAbilityScores[ability]} 
                     </span>
                 )}
