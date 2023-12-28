@@ -1,0 +1,40 @@
+:root {
+    --bg-primary: #F6F3EE;
+    --bg-secondary: hsl(35, 25%, 86%);
+    --fg-primary: #5F5B53;
+    --bd-primary: #5F5B53;
+}
+
+@media(prefers-color-scheme: dark) {
+    :root {
+        --bg-primary: #2B2525;
+        --bg-secondary: #362F2F;
+        --fg-primary: #FDF1F3;
+        --bd-primary: #908E8F;
+    }
+}
+
+body { 
+    font-family: system-ui;
+    background-color: var(--bg-primary);
+    color: var(--fg-primary);
+}
+
+.pointer:hover {
+    cursor: pointer;
+}
+
+.mono {
+    font-family: ui-monospace;
+}
+
+hr {
+    color: rgba(0,0,0,0);
+    padding: 1em;
+}
+
+@media print {
+    hr { page-break-after: always; display: none; }
+  
+    .do-not-print { display: none !important; }
+}
