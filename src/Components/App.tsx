@@ -1,32 +1,45 @@
 import React, { useRef, useContext } from 'react'
 import { AbilityScores, AbilityScoresAndSaves, SavingThrows } from './AbilityScoresAndSaves'
 import { CharacterName } from './CharacterName'
-import Proficiencies from './Proficiencies'
+import Proficiencies, { OtherStats } from './Proficiencies'
 import { Description } from './Description'
 import { CharacterContext } from '..'
 import JSON5 from 'json5'
 import { shrinkToSheet } from '../DataModel/CharacterSheet'
+import { Inspector } from './Inspector'
+import { Skills } from './Skills'
+import { Spells } from './Spells'
+import { FeaturesDescriptions } from './FeaturesDescriptions'
+import { CompendiumCard } from './CompendiumCard'
+import { Compendium } from './Compendium'
 
 export const App: React.FC = () => {
     const [character, saveCharacter] = useContext(CharacterContext)
+
     return (
-        <div style={{ display: "flex", justifyContent: "center"}}>
-            <div style={{maxWidth: "1200px"}}>
+        <div style={{ display: "block", justifyContent: "center", padding: "0 2rem" }}>
+            <div style={{ }}>
                 <Menu />
                 <IfPresent value={character}>
                     <CharacterName />
 
-                    <Grid style={{
-                        gridTemplateColumns: "repeat(2, 1fr)",
-                        rowGap: "1em",
-                        columnGap: "6em",
-                    }}>
-                        <Description style={{ gridRow: "1", gridColumn: "1" }} />
-                        <AbilityScores style={{ gridRow: "2", gridColumn: "1" }} />
-                        <SavingThrows style={{ gridRow: "3", gridColumn: "1" }} />
-                        <Proficiencies style={{ gridRow: "1 / 4", gridColumn: "2" }} />
+                    <Grid className="main-grid">
+                        <Description className="span2" />
+                        
+                        <AbilityScores />
+                        <SavingThrows />
+                        
+                        <OtherStats className="if-3-col-then-row-1-column-3" />
+                        <Proficiencies />
 
+                        <Skills />
+                        <FeaturesDescriptions />
+                        <Spells />
+                        
+                        {/* <Inspector style={{ }} /> */}
                     </Grid>
+
+                    <Compendium />
                 </IfPresent>
                 <IfNotPresent value={character}>
                     <p>No character sheet loaded. Use the load button above.</p>
@@ -44,11 +57,11 @@ const Column: React.FC<{children: React.ReactChild, style: React.style}> = ({chi
     <div style={{...style, display: "flex", flexDirection: "column"}}>{children}</div>
 )
 
-const Grid: React.FC<{children: React.ReactChild, style: React.style}> = ({children, style}) => (
+const Grid: React.FC<{children: React.ReactChild, style: React.style, className: string}> = ({children, style, className}) => (
     <div style={{
         ...style, 
         display: "grid",
-    }}>{children}</div>
+    }} className={className ?? ""}>{children}</div>
 )
 
 const IfPresent: React.FC<{value: any, children: React.ReactChild}> = ({value, children}) => (

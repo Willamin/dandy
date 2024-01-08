@@ -5,13 +5,10 @@ import { CharacterContext } from "..";
 import { prefixify } from "../DataModel/CharacterSheet";
 import { TagRow } from "./TagRow";
 
-const Proficiencies: React.FC<{style?: React.style}> = ({style}) => {
-  const [character, setCharacter] = React.useContext(CharacterContext);
+export const OtherStats: React.FC<{style?: React.style, className?: string}> = ({style, className}) => {
+  const [character, setCharacter] = React.useContext(CharacterContext)
+
   const {
-    languages,
-    toolProficiencies,
-    weaponProficiencies,
-    armorProficiencies,
     initiative,
     walkingSpeed,
     hitPointMaximum,
@@ -29,12 +26,27 @@ const Proficiencies: React.FC<{style?: React.style}> = ({style}) => {
   ].flatMap(x=>(x))
 
   return (
-    <div style={{flexShrink: 1, flexGrow: 0, ...style}}>
-      <TagRow title="Hit Point Maximum" tags={[hitPointMaximum]} tagsClassName="mono" />
+    <div style={{flexShrink: 1, flexGrow: 0, ...style}} className={className ?? ""}>
+      <TagRow title="Hit Point Maximum" tags={[hitPointMaximum]} tagsClassName="mono accent-color-yellow" />
       <TagRow title="Hit Dice" tags={hitDiceDescription} tagsClassName="mono"/>
       <TagRow title="Proficiency Bonus" tagsClassName="mono" tags={[prefixify(proficiencyBonus).combined]} />
-      <TagRow title="Initiative" tagsClassName="mono" tags={[prefixify(initiative).combined]} />
+      <TagRow title="Initiative" tagsClassName="mono accent-color-orange" tags={[prefixify(initiative).combined]} />
       <TagRow title="Walking Speed" tags={[(<><span className="mono">{walkingSpeed}</span> ft</>)]} />
+    </div>
+  )
+}
+
+const Proficiencies: React.FC<{style?: React.style}> = ({style}) => {
+  const [character, setCharacter] = React.useContext(CharacterContext);
+  const {
+    languages,
+    toolProficiencies,
+    weaponProficiencies,
+    armorProficiencies,
+  } = character
+
+  return (
+    <div style={{flexShrink: 1, flexGrow: 0, ...style}}>
       <TagRow title="Languages Known" tags={languages} />
       <TagRow title="Tool Proficiencies" tags={toolProficiencies} />
       <TagRow title="Weapon Proficiencies" tags={weaponProficiencies} />

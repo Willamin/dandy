@@ -9,10 +9,11 @@ export const CharacterContext = React.createContext<[FullCharacter, (FullCharact
 
 const Wrapper = () => {
   const [character, setCharacter] = useState(ExampleCharacter)
+  const transfiguredCharacter = character != null ? transfigure(character) : null
 
   return (
     <CharacterContext.Provider value={[
-      character != null ? transfigure(character) : null, 
+      transfiguredCharacter, 
       setCharacter
     ]}>
       <App />

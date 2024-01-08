@@ -4,14 +4,15 @@ import { CharacterContext } from "..";
 import { Tag } from "./TagRow";
 import { aan } from "../Helpers/aan";
 
-export const Description: React.FC<{style?: React.style}> = ({style}) => {
+export const Description: React.FC<{style?: React.style, className?: string}> = ({style, className}) => {
     const [character, saveCharacter] = React.useContext(CharacterContext);
     const {
         levels,
         sheetView: { currentLevel },
-        alignment,
         species: { name: species },
-        background: { name: background, characteristics }
+        background: { name: background, characteristics },
+        descriptive: { alignment },
+        classes,
     } = character;
 
     const adjustLevel = (byAmount) => {
@@ -44,8 +45,20 @@ export const Description: React.FC<{style?: React.style}> = ({style}) => {
     }
 
 return (
-    <div style={{flexShrink: 1, flexGrow: 0, ...style}}>
-        A level <LevelAdjuster /> <em>{alignment}</em> <em>{species}</em> with {aan(background)} <em>{background}</em> background
+    <div style={{flexShrink: 1, flexGrow: 0, ...style}} className={className ?? ""}>
+        A level 
+        {' '}
+        <LevelAdjuster />
+        {' '}
+        <em>{alignment}</em>
+        {' '}
+        <em>{classes.join("-")}</em>
+        {' '}
+        <em>{species}</em>
+        {' '}
+        with {aan(background)}
+        {' '}
+        <em>{background}</em> background
     <ul style={{marginBlockStart: 0, paddingInlineStart: "2em"}}>
         {
         [

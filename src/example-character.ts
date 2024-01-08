@@ -261,9 +261,6 @@ const example: CharacterSheet = {
                         { weaponProficiency: "Simple Weapons"},
                     ],
                 }, {
-                    name: "Tool Proficiency",
-                    description: "placeholder",
-                }, {
                     name: "Saving Throw Proficiency",
                     effects: [
                         { savingProficiency: "wisdom" },

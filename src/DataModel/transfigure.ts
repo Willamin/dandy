@@ -29,6 +29,8 @@ export type DerivedCharacter = {
     hitPointMaximum: number,
     hitDice: DiceCollection,
     savingThrowProficiencyBonuses: AbilityScores, // structurally it's the same
+    classes: string[],
+    spells: string[],
 }
 
 export type FullCharacter = CharacterSheet & DerivedCharacter
@@ -166,6 +168,22 @@ export const transfigure = (character: CharacterSheet): FullCharacter => {
         d20: 0,
         })
     
+    const classes = currentLevels.reduce((accumulator, level, index) => {
+        if (accumulator.includes(level.class)) {
+            return accumulator
+        } else {
+            return [...accumulator, level.class]
+        }
+    }, [])
+
+    const spells = allEffects.reduce((acc, effect) => {
+        if ("spell" in effect) {
+            return [ ...acc, effect.spell ]
+        } else {
+            return acc
+        }
+    }, [])
+    
     return {
         ...character,
         currentLevels,
@@ -184,6 +202,8 @@ export const transfigure = (character: CharacterSheet): FullCharacter => {
         descriptiveFeatures,
         hitPointMaximum,
         hitDice,
+        classes,
+        spells,
     }
 }
 

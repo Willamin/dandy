@@ -23985,11 +23985,11 @@ var require_dist = __commonJS((exports, module) => {
 });
 
 // src/index.tsx
-var import_react7 = __toESM(require_react(), 1);
+var import_react12 = __toESM(require_react(), 1);
 var client = __toESM(require_client(), 1);
 
 // src/Components/App.tsx
-var import_react6 = __toESM(require_react(), 1);
+var import_react11 = __toESM(require_react(), 1);
 
 // src/Components/AbilityScoresAndSaves.tsx
 var import_react2 = __toESM(require_react(), 1);
@@ -24037,9 +24037,9 @@ var prefixify = (value) => {
 };
 
 // src/Components/StatBlock.tsx
-var StatBlock = ({ name, primary, secondary }) => import_react.default.createElement("div", {
+var StatBlock = ({ name, primary, secondary, style, className }) => import_react.default.createElement("div", {
   key: `row-${name}`,
-  className: "stat-block pointer",
+  className: `stat-block pointer ${className}`,
   style: {
     display: "flex",
     flexDirection: "column",
@@ -24048,7 +24048,8 @@ var StatBlock = ({ name, primary, secondary }) => import_react.default.createEle
     border: "1px solid",
     borderRadius: "4px",
     borderColor: "var(--bd-primary)",
-    backgroundColor: "var(--bg-secondary)"
+    backgroundColor: "var(--bg-secondary)",
+    ...style
   }
 }, import_react.default.createElement("div", {
   style: { fontSize: "0.7em" }
@@ -24214,13 +24215,9 @@ var TagRow = ({ title, tags, tagsClassName }) => import_react4.default.createEle
 }, tag)));
 
 // src/Components/Proficiencies.tsx
-var Proficiencies = ({ style }) => {
+var OtherStats = ({ style, className }) => {
   const [character, setCharacter] = React5.useContext(CharacterContext);
   const {
-    languages,
-    toolProficiencies,
-    weaponProficiencies,
-    armorProficiencies,
     initiative,
     walkingSpeed,
     hitPointMaximum,
@@ -24236,11 +24233,12 @@ var Proficiencies = ({ style }) => {
     hitDice.d20 > 0 ? [`${hitDice.d20}d20`] : []
   ].flatMap((x) => x);
   return React5.createElement("div", {
-    style: { flexShrink: 1, flexGrow: 0, ...style }
+    style: { flexShrink: 1, flexGrow: 0, ...style },
+    className: className ?? ""
   }, React5.createElement(TagRow, {
     title: "Hit Point Maximum",
     tags: [hitPointMaximum],
-    tagsClassName: "mono"
+    tagsClassName: "mono accent-color-yellow"
   }), React5.createElement(TagRow, {
     title: "Hit Dice",
     tags: hitDiceDescription,
@@ -24251,14 +24249,26 @@ var Proficiencies = ({ style }) => {
     tags: [prefixify(proficiencyBonus).combined]
   }), React5.createElement(TagRow, {
     title: "Initiative",
-    tagsClassName: "mono",
+    tagsClassName: "mono accent-color-orange",
     tags: [prefixify(initiative).combined]
   }), React5.createElement(TagRow, {
     title: "Walking Speed",
     tags: [React5.createElement(React5.Fragment, null, React5.createElement("span", {
       className: "mono"
     }, walkingSpeed), " ft")]
-  }), React5.createElement(TagRow, {
+  }));
+};
+var Proficiencies = ({ style }) => {
+  const [character, setCharacter] = React5.useContext(CharacterContext);
+  const {
+    languages,
+    toolProficiencies,
+    weaponProficiencies,
+    armorProficiencies
+  } = character;
+  return React5.createElement("div", {
+    style: { flexShrink: 1, flexGrow: 0, ...style }
+  }, React5.createElement(TagRow, {
     title: "Languages Known",
     tags: languages
   }), React5.createElement(TagRow, {
@@ -24319,14 +24329,15 @@ var aan = (word) => {
 };
 
 // src/Components/Description.tsx
-var Description = ({ style }) => {
+var Description = ({ style, className }) => {
   const [character, saveCharacter] = import_react5.default.useContext(CharacterContext);
   const {
     levels,
     sheetView: { currentLevel },
-    alignment,
     species: { name: species },
-    background: { name: background, characteristics }
+    background: { name: background, characteristics },
+    descriptive: { alignment },
+    classes
   } = character;
   const adjustLevel = (byAmount) => {
     let newLevel = currentLevel + byAmount;
@@ -24360,8 +24371,9 @@ var Description = ({ style }) => {
     }, currentLevel));
   };
   return import_react5.default.createElement("div", {
-    style: { flexShrink: 1, flexGrow: 0, ...style }
-  }, "A level ", import_react5.default.createElement(LevelAdjuster, null), " ", import_react5.default.createElement("em", null, alignment), " ", import_react5.default.createElement("em", null, species), " with ", aan(background), " ", import_react5.default.createElement("em", null, background), " background", import_react5.default.createElement("ul", {
+    style: { flexShrink: 1, flexGrow: 0, ...style },
+    className: className ?? ""
+  }, "A level", " ", import_react5.default.createElement(LevelAdjuster, null), " ", import_react5.default.createElement("em", null, alignment), " ", import_react5.default.createElement("em", null, classes.join("-")), " ", import_react5.default.createElement("em", null, species), " ", "with ", aan(background), " ", import_react5.default.createElement("em", null, background), " background", import_react5.default.createElement("ul", {
     style: { marginBlockStart: 0, paddingInlineStart: "2em" }
   }, [
     ...characteristics.personality,
@@ -24375,42 +24387,372 @@ var Description = ({ style }) => {
 
 // src/Components/App.tsx
 var import_json5 = __toESM(require_dist(), 1);
-var App = () => {
-  const [character, saveCharacter] = import_react6.useContext(CharacterContext);
-  return import_react6.default.createElement("div", {
-    style: { display: "flex", justifyContent: "center" }
-  }, import_react6.default.createElement("div", {
-    style: { maxWidth: "1200px" }
-  }, import_react6.default.createElement(Menu, null), import_react6.default.createElement(IfPresent, {
-    value: character
-  }, import_react6.default.createElement(CharacterName, null), import_react6.default.createElement(Grid, {
-    style: {
-      gridTemplateColumns: "repeat(2, 1fr)",
-      rowGap: "1em",
-      columnGap: "6em"
-    }
-  }, import_react6.default.createElement(Description, {
-    style: { gridRow: "1", gridColumn: "1" }
-  }), import_react6.default.createElement(AbilityScores, {
-    style: { gridRow: "2", gridColumn: "1" }
-  }), import_react6.default.createElement(SavingThrows, {
-    style: { gridRow: "3", gridColumn: "1" }
-  }), import_react6.default.createElement(Proficiencies_default, {
-    style: { gridRow: "1 / 4", gridColumn: "2" }
-  }))), import_react6.default.createElement(IfNotPresent, {
-    value: character
-  }, import_react6.default.createElement("p", null, "No character sheet loaded. Use the load button above."))));
+
+// src/Components/Skills.tsx
+var import_react6 = __toESM(require_react(), 1);
+var MapAllKeys = (obj) => {
+  return Object.keys(obj).map((k) => [k, obj[k]]);
 };
-var Grid = ({ children, style }) => import_react6.default.createElement("div", {
+var Skills = ({ style }) => {
+  const [character, setCharacter] = import_react6.default.useContext(CharacterContext);
+  const { skillMods, finalAbilityScores } = character;
+  const [sortOrder, setSortOrder] = import_react6.useState("name");
+  return import_react6.default.createElement("div", {
+    style: {
+      padding: "4px 1em",
+      border: "1px solid",
+      borderRadius: "4px",
+      borderColor: "var(--bd-primary)",
+      position: "relative",
+      ...style
+    }
+  }, import_react6.default.createElement("strong", null, "Skills ", import_react6.default.createElement("span", {
+    className: "hover-show"
+  }, "(sorted by ", sortOrder, ")")), import_react6.default.createElement("div", {
+    style: {
+      display: "grid",
+      gridTemplateColumns: "repeat(3, auto)",
+      gap: "0 1em",
+      alignItems: "baseline",
+      margin: "1em",
+      marginTop: "0em"
+    }
+  }, import_react6.default.createElement("button", {
+    title: "Cycle through sorting methods",
+    style: {
+      color: "var(--fg-primary)",
+      background: "var(--bg-secondary)",
+      border: "1px solid var(--bd-primary)",
+      borderRadius: "5px",
+      boxShadow: "none",
+      position: "absolute",
+      top: "-10px",
+      left: "-10px",
+      width: "20px",
+      height: "20px",
+      margin: 0,
+      padding: 0,
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      cursor: "pointer"
+    },
+    onClick: () => {
+      switch (sortOrder) {
+        case "name":
+          setSortOrder("ability-book");
+          break;
+        case "ability-book":
+          setSortOrder("ability-score");
+          break;
+        case "ability-score":
+          setSortOrder("skill-score");
+          break;
+        case "skill-score":
+          setSortOrder("name");
+          break;
+      }
+    }
+  }, import_react6.default.createElement("div", null, "\u21C5")), MapAllKeys(skillMods).map(([name, value]) => ({
+    skill: name,
+    mod: value,
+    ability: SkillsToAbilities[name]
+  })).sort((left, right) => {
+    switch (sortOrder) {
+      case "name":
+        if (left.skill < right.skill) {
+          return -1;
+        }
+        if (left.skill > right.skill) {
+          return 1;
+        }
+        return 0;
+      case "ability-book":
+        const leftOrder = AbilityScoreOrder.indexOf(left.ability);
+        const rightOrder = AbilityScoreOrder.indexOf(right.ability);
+        if (leftOrder < rightOrder) {
+          return -1;
+        }
+        if (leftOrder > rightOrder) {
+          return 1;
+        }
+        return 0;
+      case "ability-score":
+        const leftLevel = finalAbilityScores[left.ability];
+        const rightLevel = finalAbilityScores[right.ability];
+        if (leftLevel > rightLevel) {
+          return -1;
+        }
+        if (leftLevel < rightLevel) {
+          return 1;
+        }
+        return 0;
+      case "skill-score":
+        if (left.mod > right.mod) {
+          return -1;
+        }
+        if (left.mod < right.mod) {
+          return 1;
+        }
+        return 0;
+    }
+  }).map(({ skill, mod, ability }) => import_react6.default.createElement(import_react6.default.Fragment, {
+    key: skill
+  }, import_react6.default.createElement("div", {
+    key: "name"
+  }, skill.slice(0, 1).toUpperCase() + skill.slice(1, skill.length)), import_react6.default.createElement("div", {
+    key: "ability",
+    style: {
+      textAlign: "center"
+    }
+  }, ability.slice(0, 3).toUpperCase()), import_react6.default.createElement("div", {
+    key: "value",
+    style: {
+      fontVariantNumeric: "tabular-nums",
+      textAlign: "right"
+    }
+  }, prefixify(mod).combined)))));
+};
+
+// src/Components/Spells.tsx
+var import_react7 = __toESM(require_react(), 1);
+var Spells = ({ style }) => {
+  const [character, setCharacter] = import_react7.default.useContext(CharacterContext);
+  const { spells, compendium } = character;
+  const [sortOrder, setSortOrder] = import_react7.useState("level");
+  return import_react7.default.createElement("div", {
+    style: {
+      padding: "4px 1em",
+      border: "1px solid",
+      borderRadius: "4px",
+      borderColor: "var(--bd-primary)",
+      position: "relative",
+      ...style
+    }
+  }, import_react7.default.createElement("strong", null, "Spells ", import_react7.default.createElement("span", {
+    className: "hover-show"
+  }, "(sorted by ", sortOrder, ")")), import_react7.default.createElement("div", {
+    style: {
+      display: "grid",
+      gridTemplateColumns: "repeat(2, auto)",
+      gap: "0 1em",
+      alignItems: "baseline",
+      margin: "1em",
+      marginTop: "0em"
+    }
+  }, import_react7.default.createElement("button", {
+    title: "Cycle through sorting methods",
+    style: {
+      color: "var(--fg-primary)",
+      background: "var(--bg-secondary)",
+      border: "1px solid var(--bd-primary)",
+      borderRadius: "5px",
+      boxShadow: "none",
+      position: "absolute",
+      top: "-10px",
+      left: "-10px",
+      width: "20px",
+      height: "20px",
+      margin: 0,
+      padding: 0,
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      cursor: "pointer"
+    },
+    onClick: () => {
+      switch (sortOrder) {
+        case "name":
+          setSortOrder("level");
+          break;
+        case "level":
+          setSortOrder("name");
+          break;
+      }
+    }
+  }, import_react7.default.createElement("div", null, "\u21C5")), spells.map((name) => ({
+    ...compendium.spells.find((e) => e.name === name),
+    name
+  })).sort((left, right) => {
+    switch (sortOrder) {
+      case "name":
+        if (left.name < right.name) {
+          return -1;
+        }
+        if (left.name > right.name) {
+          return 1;
+        }
+        return 0;
+      case "level":
+        if (left.level < right.level) {
+          return -1;
+        }
+        if (left.level > right.level) {
+          return 1;
+        }
+        return 0;
+    }
+  }).map(({ name, level }) => import_react7.default.createElement(import_react7.default.Fragment, {
+    key: name
+  }, import_react7.default.createElement("div", {
+    key: "name"
+  }, name), import_react7.default.createElement("div", {
+    key: "level"
+  }, level === 0 ? "Cantrip" : `Level ${level}`)))));
+};
+
+// src/Components/FeaturesDescriptions.tsx
+var import_react8 = __toESM(require_react(), 1);
+var FeaturesDescriptions = ({ style }) => {
+  const [character, setCharacter] = import_react8.default.useContext(CharacterContext);
+  const { descriptiveFeatures } = character;
+  const [sortOrder, setSortOrder] = import_react8.useState("position");
+  return import_react8.default.createElement("div", {
+    style: {
+      padding: "4px 1em",
+      border: "1px solid",
+      borderRadius: "4px",
+      borderColor: "var(--bd-primary)",
+      position: "relative",
+      ...style
+    }
+  }, import_react8.default.createElement("strong", null, "Features ", import_react8.default.createElement("span", {
+    className: "hover-show"
+  }, "(sorted by ", sortOrder, ")")), import_react8.default.createElement("div", {
+    style: {
+      display: "grid",
+      gridTemplateColumns: "repeat(1, auto)",
+      gap: "0 1em",
+      alignItems: "baseline",
+      margin: "1em",
+      marginTop: "0em"
+    }
+  }, import_react8.default.createElement("button", {
+    title: "Cycle through sorting methods",
+    style: {
+      color: "var(--fg-primary)",
+      background: "var(--bg-secondary)",
+      border: "1px solid var(--bd-primary)",
+      borderRadius: "5px",
+      boxShadow: "none",
+      position: "absolute",
+      top: "-10px",
+      left: "-10px",
+      width: "20px",
+      height: "20px",
+      margin: 0,
+      padding: 0,
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      cursor: "pointer"
+    },
+    onClick: () => {
+      switch (sortOrder) {
+        case "name":
+          setSortOrder("position");
+          break;
+        case "position":
+          setSortOrder("name");
+          break;
+      }
+    }
+  }, import_react8.default.createElement("div", null, "\u21C5")), descriptiveFeatures.map((feature) => ({ name: feature.name })).sort((left, right) => {
+    switch (sortOrder) {
+      case "name":
+        if (left.name < right.name) {
+          return -1;
+        }
+        if (left.name > right.name) {
+          return 1;
+        }
+        return 0;
+      case "position":
+        return 0;
+    }
+  }).map(({ name }) => import_react8.default.createElement(import_react8.default.Fragment, {
+    key: name
+  }, import_react8.default.createElement("div", {
+    key: "name"
+  }, name)))));
+};
+
+// src/Components/Compendium.tsx
+var import_react10 = __toESM(require_react(), 1);
+
+// src/Components/CompendiumCard.tsx
+var import_react9 = __toESM(require_react(), 1);
+var CompendiumCard = ({ title, content }) => {
+  console.log(content);
+  const body = content.replaceAll(/---\n/g, "<hr />");
+  return import_react9.default.createElement("div", {
+    style: {
+      border: "1px solid var(--bd-primary)",
+      borderRadius: "5px",
+      padding: "5px 10px",
+      display: "inline-block",
+      marginTop: "1em"
+    }
+  }, import_react9.default.createElement("b", null, title), import_react9.default.createElement("br", null), import_react9.default.createElement("p", {
+    dangerouslySetInnerHTML: { __html: body }
+  }));
+};
+
+// src/Components/Compendium.tsx
+var Compendium = () => {
+  const [character, setCharacter] = import_react10.useContext(CharacterContext);
+  return import_react10.default.createElement("div", null, import_react10.default.createElement("h2", {
+    style: { breakBefore: "page" }
+  }, "Compendium \u2013 Spells"), import_react10.default.createElement("div", {
+    className: "compendium-columns"
+  }, character.spells.map((name) => {
+    const spell = character.compendium.spells.find((s) => s.name === name);
+    return import_react10.default.createElement(CompendiumCard, {
+      title: spell.name,
+      content: spell.description
+    });
+  })), import_react10.default.createElement("h2", {
+    style: { breakBefore: "page" }
+  }, "Compendium \u2013 Features"), import_react10.default.createElement("div", {
+    className: "compendium-columns"
+  }, character.descriptiveFeatures.map(({ name, description }) => {
+    return import_react10.default.createElement(CompendiumCard, {
+      title: name,
+      content: description
+    });
+  })));
+};
+
+// src/Components/App.tsx
+var App = () => {
+  const [character, saveCharacter] = import_react11.useContext(CharacterContext);
+  return import_react11.default.createElement("div", {
+    style: { display: "block", justifyContent: "center", padding: "0 2rem" }
+  }, import_react11.default.createElement("div", {
+    style: {}
+  }, import_react11.default.createElement(Menu, null), import_react11.default.createElement(IfPresent, {
+    value: character
+  }, import_react11.default.createElement(CharacterName, null), import_react11.default.createElement(Grid, {
+    className: "main-grid"
+  }, import_react11.default.createElement(Description, {
+    className: "span2"
+  }), import_react11.default.createElement(AbilityScores, null), import_react11.default.createElement(SavingThrows, null), import_react11.default.createElement(OtherStats, {
+    className: "if-3-col-then-row-1-column-3"
+  }), import_react11.default.createElement(Proficiencies_default, null), import_react11.default.createElement(Skills, null), import_react11.default.createElement(FeaturesDescriptions, null), import_react11.default.createElement(Spells, null)), import_react11.default.createElement(Compendium, null)), import_react11.default.createElement(IfNotPresent, {
+    value: character
+  }, import_react11.default.createElement("p", null, "No character sheet loaded. Use the load button above."))));
+};
+var Grid = ({ children, style, className }) => import_react11.default.createElement("div", {
   style: {
     ...style,
     display: "grid"
-  }
+  },
+  className: className ?? ""
 }, children);
 var IfPresent = ({ value, children }) => !!value && children;
 var IfNotPresent = ({ value, children }) => !value && children;
 var Menu = () => {
-  const [character, saveCharacter] = import_react6.useContext(CharacterContext);
+  const [character, saveCharacter] = import_react11.useContext(CharacterContext);
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     const reader = new FileReader;
@@ -24419,26 +24761,26 @@ var Menu = () => {
       saveCharacter(shrinkToSheet(import_json5.default.parse(reader.result)));
     };
   };
-  const filePickerRef = import_react6.useRef();
-  const downloadRef = import_react6.useRef();
-  return import_react6.default.createElement("div", {
+  const filePickerRef = import_react11.useRef();
+  const downloadRef = import_react11.useRef();
+  return import_react11.default.createElement("div", {
     className: "do-not-print",
     style: { display: "flex", justifyContent: "flex-start" }
-  }, import_react6.default.createElement("input", {
+  }, import_react11.default.createElement("input", {
     ref: filePickerRef,
     type: "file",
     onChange: handleFileChange,
     style: { display: "none" }
-  }), import_react6.default.createElement("button", {
+  }), import_react11.default.createElement("button", {
     onClick: () => {
       filePickerRef.current.click();
     }
-  }, "Load Sheet"), import_react6.default.createElement("button", {
+  }, "Load Sheet"), import_react11.default.createElement("button", {
     onClick: () => {
       saveCharacter(null);
     },
     disabled: character == null
-  }, "Remove Character"), import_react6.default.createElement("button", {
+  }, "Remove Character"), import_react11.default.createElement("button", {
     onClick: () => {
       const fileName = "my-character.json";
       const fileContent = import_json5.default.stringify(shrinkToSheet(character));
@@ -24449,7 +24791,7 @@ var Menu = () => {
       download.click();
     },
     disabled: character == null
-  }, "Save Sheet"), import_react6.default.createElement("a", {
+  }, "Save Sheet"), import_react11.default.createElement("a", {
     ref: downloadRef,
     id: "download",
     style: { display: "none" }
@@ -24583,6 +24925,20 @@ var transfigure = (character) => {
     d12: 0,
     d20: 0
   });
+  const classes = currentLevels.reduce((accumulator, level, index) => {
+    if (accumulator.includes(level.class)) {
+      return accumulator;
+    } else {
+      return [...accumulator, level.class];
+    }
+  }, []);
+  const spells = allEffects.reduce((acc, effect) => {
+    if ("spell" in effect) {
+      return [...acc, effect.spell];
+    } else {
+      return acc;
+    }
+  }, []);
   return {
     ...character,
     currentLevels,
@@ -24600,7 +24956,9 @@ var transfigure = (character) => {
     skillMods,
     descriptiveFeatures,
     hitPointMaximum,
-    hitDice
+    hitDice,
+    classes,
+    spells
   };
 };
 var calculateFinalAbilityScores = ({ baseScores, allEffects }) => {
@@ -24998,10 +25356,6 @@ At Higher Levels. When you cast this spell using a spell slot of 2nd level or hi
           ]
         },
         {
-          name: "Tool Proficiency",
-          description: "placeholder"
-        },
-        {
           name: "Saving Throw Proficiency",
           effects: [
             { savingProficiency: "wisdom" },
@@ -25090,22 +25444,23 @@ You can transform one magic weapon into your pact weapon by performing a special
 var example_character_default = example;
 
 // src/index.tsx
-var CharacterContext = import_react7.default.createContext([{}, () => {
+var CharacterContext = import_react12.default.createContext([{}, () => {
 }]);
 var Wrapper = () => {
-  const [character, setCharacter] = import_react7.useState(example_character_default);
-  return import_react7.default.createElement(CharacterContext.Provider, {
+  const [character, setCharacter] = import_react12.useState(example_character_default);
+  const transfiguredCharacter = character != null ? transfigure(character) : null;
+  return import_react12.default.createElement(CharacterContext.Provider, {
     value: [
-      character != null ? transfigure(character) : null,
+      transfiguredCharacter,
       setCharacter
     ]
-  }, import_react7.default.createElement(App, null));
+  }, import_react12.default.createElement(App, null));
 };
 if (typeof document !== "undefined") {
   const rootElement = document.getElementById("root");
   if (rootElement) {
     const root = client.default.createRoot(rootElement);
-    root.render(import_react7.default.createElement(import_react7.default.StrictMode, null, import_react7.default.createElement(Wrapper, null)));
+    root.render(import_react12.default.createElement(import_react12.default.StrictMode, null, import_react12.default.createElement(Wrapper, null)));
   }
 }
 export {
