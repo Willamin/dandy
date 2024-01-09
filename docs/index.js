@@ -24419,6 +24419,7 @@ var Skills = ({ style }) => {
     }
   }, import_react6.default.createElement("button", {
     title: "Cycle through sorting methods",
+    className: "do-not-print",
     style: {
       color: "var(--fg-primary)",
       background: "var(--bg-secondary)",
@@ -24542,6 +24543,7 @@ var Spells = ({ style }) => {
     }
   }, import_react7.default.createElement("button", {
     title: "Cycle through sorting methods",
+    className: "do-not-print",
     style: {
       color: "var(--fg-primary)",
       background: "var(--bg-secondary)",
@@ -24629,6 +24631,7 @@ var FeaturesDescriptions = ({ style }) => {
     }
   }, import_react8.default.createElement("button", {
     title: "Cycle through sorting methods",
+    className: "do-not-print",
     style: {
       color: "var(--fg-primary)",
       background: "var(--bg-secondary)",

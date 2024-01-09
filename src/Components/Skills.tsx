@@ -37,6 +37,7 @@ export const Skills: React.FC<{style?: React.style}> = ({style}) => {
             >    
                 <button
                     title="Cycle through sorting methods"
+                    className="do-not-print"
                     style={{
                     color: 'var(--fg-primary)',
                     background: 'var(--bg-secondary)',

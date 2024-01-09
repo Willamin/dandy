@@ -55,14 +55,14 @@ hr {
 .main-grid {
     grid-template-columns: 1fr;
     row-gap: 1em;
-    column-gap: 6em;
+    column-gap: 4em;
 }
 
 .span2 { /* */ }
 
 .compendium-columns { columns: 1; }
 
-@media screen and (min-width: calc(22em + 22em + 6em)) {
+@media screen and (min-width: calc(22em + 22em + 4em)) {
     .main-grid {
         grid-template-columns: 1fr 1fr;
     }
@@ -74,7 +74,7 @@ hr {
     .compendium-columns { columns: 2; }
 }
 
-@media screen and (min-width: calc(22em + 6em + 22em + 6em + 22em)) {
+@media screen and (min-width: calc(22em + 4em + 22em + 4em + 22em)) {
     .main-grid {
         grid-template-columns: 1fr 1fr 1fr;
     }
@@ -106,6 +106,7 @@ hr {
 
     body {
         background-color: none;
+        font-size: 12px;
     }
 }
 
@@ -113,7 +114,7 @@ hr {
     .main-grid {
         grid-template-columns: 1fr 1fr;
         row-gap: 1em;
-        column-gap: 6em;
+        column-gap: 4em;
     }
 
     .span2 {
@@ -127,7 +128,7 @@ hr {
     .main-grid {
         grid-template-columns: 1fr 1fr 1fr;
         row-gap: 1em;
-        column-gap: 6em;
+        column-gap: 4em;
     }
 
     .span2 {
