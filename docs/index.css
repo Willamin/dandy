@@ -64,7 +64,7 @@ hr {
 
 @media screen and (min-width: calc(22em + 22em + 6em)) {
     .main-grid {
-        grid-template-columns: 22em 22em;
+        grid-template-columns: 1fr 1fr;
     }
 
     .span2 {
@@ -76,7 +76,7 @@ hr {
 
 @media screen and (min-width: calc(22em + 6em + 22em + 6em + 22em)) {
     .main-grid {
-        grid-template-columns: 22em 22em 22em;
+        grid-template-columns: 1fr 1fr 1fr;
     }
 
     .span2 {
@@ -111,7 +111,7 @@ hr {
 
 @media print and (orientation: portrait) {
     .main-grid {
-        grid-template-columns: 22em 22em;
+        grid-template-columns: 1fr 1fr;
         row-gap: 1em;
         column-gap: 6em;
     }
@@ -125,7 +125,7 @@ hr {
 
 @media print and (orientation: landscape) {
     .main-grid {
-        grid-template-columns: 22em 22em 22em;
+        grid-template-columns: 1fr 1fr 1fr;
         row-gap: 1em;
         column-gap: 6em;
     }

@@ -24683,7 +24683,6 @@ var import_react10 = __toESM(require_react(), 1);
 // src/Components/CompendiumCard.tsx
 var import_react9 = __toESM(require_react(), 1);
 var CompendiumCard = ({ title, content }) => {
-  console.log(content);
   const body = content.replaceAll(/---\n/g, "<hr />");
   return import_react9.default.createElement("div", {
     style: {

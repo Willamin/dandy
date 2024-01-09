@@ -1,8 +1,6 @@
 import React from "react"
 
 export const CompendiumCard = ({title, content}) => {
-    console.log(content)
-
     const body = content.replaceAll(/---\n/g, '<hr />')
 
     return (
@@ -11,7 +9,7 @@ export const CompendiumCard = ({title, content}) => {
             borderRadius: "5px",
             padding: "5px 10px",
             display: "inline-block",
-            marginTop: "1em",
+            marginTop: "1em"
         }}>
             <b>{title}</b>
             <br/>
