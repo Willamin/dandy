@@ -2,7 +2,7 @@ import * as React from "react";
 
 import { CharacterContext } from "..";
 
-import { prefixify } from "../DataModel/CharacterSheet";
+import { prefixify, titleCase } from "../DataModel/CharacterSheet";
 import { TagRow } from "./TagRow";
 
 export const OtherStats: React.FC<{style?: React.style, className?: string}> = ({style, className}) => {
@@ -14,6 +14,7 @@ export const OtherStats: React.FC<{style?: React.style, className?: string}> = (
     hitPointMaximum,
     proficiencyBonus,
     hitDice,
+    armorClass,
   } = character
 
   let hitDiceDescription = [
@@ -32,6 +33,7 @@ export const OtherStats: React.FC<{style?: React.style, className?: string}> = (
       <TagRow title="Proficiency Bonus" tagsClassName="mono" tags={[prefixify(proficiencyBonus).combined]} />
       <TagRow title="Initiative" tagsClassName="mono accent-color-orange" tags={[prefixify(initiative).combined]} />
       <TagRow title="Walking Speed" tags={[(<><span className="mono">{walkingSpeed}</span> ft</>)]} />
+      <TagRow title="Armor Class" tags={[(<><span className="mono">{armorClass}</span></>)]} />
     </div>
   )
 }
@@ -49,8 +51,8 @@ const Proficiencies: React.FC<{style?: React.style}> = ({style}) => {
     <div style={{flexShrink: 1, flexGrow: 0, ...style}}>
       <TagRow title="Languages Known" tags={languages} />
       <TagRow title="Tool Proficiencies" tags={toolProficiencies} />
-      <TagRow title="Weapon Proficiencies" tags={weaponProficiencies} />
-      <TagRow title="Armor Proficiencies" tags={armorProficiencies} />
+      <TagRow title="Weapon Proficiencies" tags={weaponProficiencies.map(titleCase)} />
+      <TagRow title="Armor Proficiencies" tags={armorProficiencies.map(titleCase)} />
     </div>
   )
 }

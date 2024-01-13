@@ -1,6 +1,6 @@
 import React, { useState } from "react"
 import { CharacterContext } from "..";
-import { AbilityScoreOrder, SkillsToAbilities, prefixify } from "../DataModel/CharacterSheet";
+import { AbilityScoreOrder, SkillsToAbilities, prefixify, titleCase } from "../DataModel/CharacterSheet";
 
 const MapAllKeys = (obj) => {
     return Object.keys(obj).map((k) => ([k, obj[k]]))
@@ -27,7 +27,7 @@ export const Skills: React.FC<{style?: React.style}> = ({style}) => {
             <div
                 style={{
                     display: "grid",
-                    gridTemplateColumns: "repeat(3, auto)",
+                    gridTemplateColumns: "repeat(4, auto)",
                     gap: "0 1em",
                     alignItems: "baseline",
                     margin: "1em",
@@ -99,7 +99,7 @@ export const Skills: React.FC<{style?: React.style}> = ({style}) => {
                     })
                     .map(({skill, mod, ability}) => (
                         <React.Fragment key={skill}>
-                            <div key="name">{skill.slice(0,1).toUpperCase() + skill.slice(1,skill.length)}</div>
+                            <div key="name">{titleCase(skill)}</div>
                             <div key="ability" style={{
                                 textAlign: 'center'
                             }}>
@@ -110,6 +110,9 @@ export const Skills: React.FC<{style?: React.style}> = ({style}) => {
                                 textAlign: "right"
                             }}>
                                 {prefixify(mod).combined}
+                            </div>
+                            <div key="prof">
+                                
                             </div>
                         </React.Fragment>
                     ))

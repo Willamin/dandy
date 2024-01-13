@@ -58,7 +58,7 @@ return (
         {' '}
         with {aan(background)}
         {' '}
-        <em>{background}</em> background
+        <em>{background}</em> background.
     <ul style={{marginBlockStart: 0, paddingInlineStart: "2em"}}>
         {
         [

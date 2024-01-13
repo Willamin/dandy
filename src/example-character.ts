@@ -2,8 +2,10 @@ import { CharacterSheet } from "./DataModel/CharacterSheet";
 
 const example: CharacterSheet = {
     sheetView: {
-        currentLevel: 3,
+        currentLevel: 4,
         namePreference: "short",
+        inventoryHistoryVisible: false,
+        currentInventory: 0,
     },
     descriptive: {
         longName: "Finnian Darkthorn",
@@ -79,16 +81,6 @@ const example: CharacterSheet = {
                     { skillProficiency: "history" },
                 ],
             },
-            {
-                name: "Starting Magic Item",
-                description: "Gauntlets of Ogre Power\n\nYour Strength score is 19 while you wear these gauntlets. They have no effect on you if your Strength is 19 or higher without them.",
-                effects: [
-                  {
-                    setAbility: "strength",
-                    minimum: 19,
-                  },
-                ],
-              },
         ],
         characteristics: {
             personality: [
@@ -106,6 +98,46 @@ const example: CharacterSheet = {
             ],
           },
     },
+    inventoryHistory: [
+        {
+            comment: "Starting Inventory",
+            items: [
+                {
+                    name: "Gauntlets of Ogre Power",
+                    equipped: true,
+                    attuned: true,
+                },
+                {
+                    name: "Studded Leather Armor",
+                    equipped: true,
+                },
+                {
+                    name: "Crystal",
+                },
+                {
+                    name: "Exsanguinated Bat Corpse",
+                },
+                {
+                    name: "Cultist Outfit",
+                    equipped: false,
+                },
+                {
+                    name: "Cultist Sword",
+                    equipped: false,
+                },
+                {
+                    name: "Sleepy Hat",
+                    equipped: false,
+                    comment: "Magical, sometimes puts people to sleep"
+                },
+                {
+                    name: "Greatsword +1",
+                    comment: "Bonded Pact Weapon",
+                    equipped: false,
+                }
+            ],
+        },
+    ],
     compendium: {
         classes: [
             {
@@ -244,29 +276,107 @@ const example: CharacterSheet = {
                 "description": "1st-level evocation\n---\nCasting Time: 1 action\nRange: 30 feet\nComponents: V, S, M (a twig from a tree that has been struck by lightning)\nDuration: Concentration, up to 1 minute\n---\nA beam of crackling, blue energy lances out toward a creature within range, forming a sustained arc of lightning between you and the target. Make a ranged spell attack against that creature. On a hit, the target takes 1d12 lightning damage, and on each of your turns for the duration, you can use your action to deal 1d12 lightning damage to the target automatically. The spell ends if you use your action to do anything else. The spell also ends if the target is ever outside the spell’s range or if it has total cover from you.\nAt Higher Levels. When you cast this spell using a spell slot of 2nd level or higher, the initial damage increases by 1d12 for each slot level above 1st."
             }
               
+        ],
+        items: [
+            { 
+                name: "Studded Leather Armor",
+                type: "armor",
+                armorType: "light",
+                description: "Light armor\nAC: 12 + Dex modifier\n---\nMade from tough but flexible leather, studded leather is reinforced with close-set rivets or spikes.",
+                equippedEffects: [
+                    {
+                        armorClassBase: 12,
+                        dexModMultiplier: 1,
+                    }
+                ]
+            },
+            {
+                name: "Gauntlets of Ogre Power",
+                description: "Wondrous item, uncommon (requires attunement)\n---\nYour Strength score is 19 while you wear these gauntlets. They have no effect on you if your Strength is 19 or higher without them.",
+                type: "item",
+                equippedAndAttunedEffects: [
+                    {
+                        setAbility: "strength",
+                        minimum: 19,
+                    }
+                ]
+            },
+            {
+                name: "Crystal",
+                description: "An arcane focus is a special item designed to channel the power of arcane spells. A sorcerer, warlock, or wizard can use such an item as a spellcasting focus, as described in the Spellcasting section.",
+                type: "item",
+            },
+            {
+                name: "Greatsword +1",
+                description: "You have a +1 bonus to attack and damage rolls made with this magic weapon.",
+                type: "weapon",
+
+                heavy: true,
+                twoHanded: true,
+
+                equippedEffects: [
+                    {
+                        attackType: "melee",
+                        reach: 5, // feet
+        
+                        damageType: "slashing",
+                        damage: {
+                            d6: 2,
+                            bonus: 5,
+                        },       
+                    },
+                ]
+            }
         ]
     },
     levels: [
         {
-            class: "Warlock",
+            class: "Fighter",
             features: [
                 {
                     name: "Armor Proficiency",
                     effects: [
-                      { armorProficiency: "Light Armor" },
+                        { armorProficiency: "light" },
+                        { armorProficiency: "medium" },
+                        { armorProficiency: "heavy" },
+                        { armorProficiency: "shields" },
                     ],
-                }, {
+                },
+                {
                     name: "Weapon Proficiency",
                     effects: [
-                        { weaponProficiency: "Simple Weapons"},
+                        { weaponProficiency: "simple"},
+                        { weaponProficiency: "martial"},
                     ],
-                }, {
+                },
+                {
                     name: "Saving Throw Proficiency",
                     effects: [
-                        { savingProficiency: "wisdom" },
-                        { savingProficiency: "charisma" },
+                        { savingProficiency: "strength" },
+                        { savingProficiency: "constitution" },
                     ],
-                }, {
+                },
+                {
+                    name: "Skill Proficiency",
+                    effects: [
+                        { skillProficiency: "perception" },
+                        { skillProficiency: "insight" },
+                    ],
+                },
+                {
+                    name: "Fighting Style: Two Weapon Fighting",
+                    description: "When you engage in two-weapon fighting, you can add your ability modifier to the damage of the second attack."
+                },
+                {
+                    name: "Second Wind",
+                    description: "You have a limited well of stamina that you can draw on to protect yourself from harm. On your turn, you can use a bonus action to regain hit points equal to 1d10 + your fighter level. Once you use this feature, you must finish a short or long rest before you can use it again."
+                }
+            ],
+        },
+        {
+            class: "Warlock",
+            features: [
+                {
                     name: "Skill Proficiency",
                     effects: [
                         { skillProficiency: "deception" },

@@ -1,7 +1,9 @@
 import React from "react"
 
-export const CompendiumCard = ({title, content}) => {
-    const body = content.replaceAll(/---\n/g, '<hr />')
+export const CompendiumCard: React.FC<{title: string, content: string}> = ({ title, content }) => {
+    const body = content
+        .replaceAll(/---\n/g, '<hr />')
+        .replaceAll(/\n/g, '<br />')
 
     return (
         <div style={{
@@ -13,7 +15,9 @@ export const CompendiumCard = ({title, content}) => {
         }}>
             <b>{title}</b>
             <br/>
-            <p dangerouslySetInnerHTML={{__html: body}} />
+            <p 
+                dangerouslySetInnerHTML={{__html: body}}
+            />
         </div>
     )
 }

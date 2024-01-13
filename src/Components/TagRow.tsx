@@ -2,7 +2,7 @@ import React from "react"
 
 export const Tag: React.FC<{children: React.ReactChild, className?: string, inline?: boolean}> = ({ children, className, inline = false }) => (
     <div className={className} style={{
-        display: "inline",
+        display: "inline-block",
         border: "1px solid",
         borderColor: "var(--bd-primary)",
         borderRadius: "4px",
@@ -16,12 +16,13 @@ export const Tag: React.FC<{children: React.ReactChild, className?: string, inli
 
 export const TagRow: React.FC<{title: string, tags: React.ReactChild[], tagsClassName?: string}> = ({title, tags, tagsClassName}) => (
     <div style={{
-        display: "flex",
+        display: "block",
         justifyContent: "flex-start",
         alignItems: "center",
         flexWrap: "wrap",
         width: "100%",
         lineHeight: "1.2em",
+        textIndent: "1em hanging each-line",
     }}>
         <span>{title}:</span>
         { (tags ?? []).length == 0 && (<Tag className={tagsClassName} key={"none"}>None</Tag>)}

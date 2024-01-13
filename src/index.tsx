@@ -5,18 +5,35 @@ import { FullCharacter, transfigure } from './DataModel/transfigure'
 
 import ExampleCharacter from './example-character.ts'
 
-export const CharacterContext = React.createContext<[FullCharacter, (FullCharacter) => ()]>([{} as FullCharacter, ()=>{}])
+export const CharacterContext = React.createContext<[FullCharacter, (FullCharacter) => void]>([{} as FullCharacter, ()=>{}])
+
+export const BounceHistoryContext = React.createContext<[boolean, (boolean) => void]>(false, ()=>{})
 
 const Wrapper = () => {
   const [character, setCharacter] = useState(ExampleCharacter)
   const transfiguredCharacter = character != null ? transfigure(character) : null
+  
+  const [bouncing, setBouncing] = useState(false)
+  const setBouncingInterceptor = (value) => {
+    if (value === true) {
+      setTimeout(() => {
+        setBouncing(false)
+      }, 500)
+    }
+    setBouncing(value)
+  }
 
   return (
     <CharacterContext.Provider value={[
       transfiguredCharacter, 
       setCharacter
     ]}>
-      <App />
+      <BounceHistoryContext.Provider value={[
+        bouncing,
+        setBouncingInterceptor
+      ]}>
+        <App />
+      </BounceHistoryContext.Provider>
     </CharacterContext.Provider>
   )
 }

@@ -12,6 +12,7 @@ export const Compendium = () => {
                 {character.spells.map((name) => {
                     const spell = character.compendium.spells.find((s) => (s.name === name))
                     return (<CompendiumCard 
+                        key={spell.name}
                         title={spell.name} 
                         content={spell.description}
                     />)
@@ -21,11 +22,23 @@ export const Compendium = () => {
             <h2 style={{ breakBefore: "page" }}>Compendium – Features</h2>
             <div className="compendium-columns">
                 {character.descriptiveFeatures.map(({name, description}) => {
-                    return (<CompendiumCard 
+                    return (<CompendiumCard
+                        key={name}
                         title={name} 
                         content={description}
                     />)
                 })}
+            </div>
+
+            <h2 style={{ breakBefore: "page" }}>Compendium – Items</h2>
+            <div className="compendium-columns">
+                {character.currentItems.flatMap(({ name, description }) => (
+                    description ? [(<CompendiumCard
+                        key={name}
+                        title={name} 
+                        content={description}
+                    />)] : []
+                ))}
             </div>
         </div>
     )   

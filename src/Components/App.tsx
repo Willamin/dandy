@@ -1,4 +1,4 @@
-import React, { useRef, useContext } from 'react'
+import React, { useRef, useContext, useState } from 'react'
 import { AbilityScores, AbilityScoresAndSaves, SavingThrows } from './AbilityScoresAndSaves'
 import { CharacterName } from './CharacterName'
 import Proficiencies, { OtherStats } from './Proficiencies'
@@ -6,15 +6,16 @@ import { Description } from './Description'
 import { CharacterContext } from '..'
 import JSON5 from 'json5'
 import { shrinkToSheet } from '../DataModel/CharacterSheet'
-import { Inspector } from './Inspector'
 import { Skills } from './Skills'
 import { Spells } from './Spells'
+import { Items } from './Items'
 import { FeaturesDescriptions } from './FeaturesDescriptions'
-import { CompendiumCard } from './CompendiumCard'
 import { Compendium } from './Compendium'
+import { InventoryHistory } from './InventoryHistory'
 
 export const App: React.FC = () => {
     const [character, saveCharacter] = useContext(CharacterContext)
+    const { sheetView: { inventoryHistoryVisible } } = character
 
     return (
         <div style={{ display: "block", justifyContent: "center", padding: "0 2rem" }}>
@@ -35,6 +36,8 @@ export const App: React.FC = () => {
                         <Skills />
                         <FeaturesDescriptions />
                         <Spells />
+                        <Items />
+                        { inventoryHistoryVisible && (<InventoryHistory />) }
                         
                         {/* <Inspector style={{ }} /> */}
                     </Grid>
@@ -123,6 +126,12 @@ const Menu = () => {
                 disabled={character == null}
             >Save Sheet</button>
             <a ref={downloadRef} id="download" style={{display: "none"}}></a>
+
+            <button onClick={() => {
+                window.open(window.location, "", "menubar=no, location=no")
+            }}>
+                Open in Popup Window
+            </button>
         </div>
     )
 }

@@ -30,7 +30,18 @@
 }
 
 body { 
-    font-family: system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    font-family: system-ui, 
+                 -apple-system, BlinkMacSystemFont, 
+                 "Segoe UI", 
+                 "Roboto", 
+                 "Oxygen", 
+                 "Ubuntu", 
+                 "Cantarell", 
+                 "Fira Sans", 
+                 "Droid Sans", 
+                 "Helvetica Neue", 
+                 Arial, sans-serif;
     background-color: var(--bg-primary);
     color: var(--fg-primary);
 }
@@ -43,13 +54,62 @@ body {
 }
 
 .mono {
-    font-family: ui-monospace, Courier, monospace;
+    font-family: ui-monospace, 
+                 Menlo, Monaco, 
+                 "Cascadia Mono", "Segoe UI Mono", 
+                 "Roboto Mono", 
+                 "Oxygen Mono", 
+                 "Ubuntu Monospace", 
+                 "Source Code Pro",
+                 "Fira Mono", 
+                 "Droid Sans Mono", 
+                 "Courier New", monospace;
 }
 
 hr {
     color: var(--bd-primary);
     height: 0;
     border-bottom: 0;
+}
+
+
+button.checkbox {
+    background: none;
+    border: 1px solid var(--bd-primary);
+    border-radius: 5px;
+    width: 15px;
+    height: 15px;
+    appearance: initial;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    top: 1px;
+}
+
+button.checkbox > * {
+    width: 11px;
+    height: 11px;
+    display: block;
+    border-radius: 3px;
+    line-height: 11px;
+    font-size: 9px;
+    color: var(--fg-primary);
+}
+
+button.checkbox > .checkmark {
+    box-shadow: inset 0 0 0 10px var(--fg-primary);
+    color: var(--bg-primary);
+}
+
+button.checkbox:not(:disabled) {
+    cursor: pointer;
+}
+
+button.checkbox:disabled {
+    opacity: 0;
 }
 
 .main-grid {
@@ -107,6 +167,10 @@ hr {
     body {
         background-color: none;
         font-size: 12px;
+        --fg-primary: black;
+        --bg-primary: white;
+        --bg-secondary: white;
+        color-adjust: exact;
     }
 }
 
@@ -142,3 +206,17 @@ hr {
 
     .compendium-columns { columns: 3; }
 }
+
+.bouncing {
+    animation-name: bouncing;
+    animation-duration: 0.25s;
+    animation-iteration-count: infinite;
+}
+
+@keyframes bouncing {
+    0% { transform: translate(0, 0); }
+    25% { transform: translate(5px, 0); }
+    50% { transform: translate(0, 0); }
+    75% { transform: translate(-5px, 0); }
+    100% { transform: translate(0, 0); }
+  }

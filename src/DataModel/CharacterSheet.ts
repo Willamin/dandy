@@ -2,6 +2,9 @@ export type CharacterSheet = {
     sheetView: {
         currentLevel: number,
         namePreference: "long" | "short",
+        
+        inventoryHistoryVisible: boolean,
+        currentInventory: number,
     },
     descriptive: {
         longName: string,
@@ -13,9 +16,10 @@ export type CharacterSheet = {
     background: Background,
     compendium: Compendium,
     levels: Array<Level>,
+    inventoryHistory: Array<Inventory>, // A snapshot of inventory. The higher the index, the farther into the past.
 }
 
-export const shrinkToSheet = ({ sheetView, descriptive, baseScores, species, background, compendium, levels }: object & CharacterSheet): CharacterSheet => (
+export const shrinkToSheet = ({ sheetView, descriptive, baseScores, species, background, compendium, levels, inventoryHistory }: object & CharacterSheet): CharacterSheet => (
     {
         sheetView,
         descriptive,
@@ -24,18 +28,59 @@ export const shrinkToSheet = ({ sheetView, descriptive, baseScores, species, bac
         background,
         compendium,
         levels,
+        inventoryHistory,
     }
 )
+
+export type ItemState = {
+    name: string,
+    quantity?: number,
+    equipped?: boolean,
+    attuned?: boolean, 
+    comment?: string,
+}
+
+export type Inventory = {
+    comment: string,
+    items: Array<ItemState>
+}
+
+export type AnyItem = 
+    ( 
+        { type: "item" } 
+        | 
+        { 
+            type: "armor",
+            armorType: "light" | "medium" | "heavy" | "shield"
+        }
+        | 
+        {
+            type: "weapon",
+            light?: boolean,
+            heavy?: boolean,
+            versatile?: boolean,
+            finesse?: boolean,
+            thrown?: boolean,
+            twoHanded?: boolean,
+        }
+    ) 
+    & 
+    {  
+        name: string,
+        description?: string,
+        equippedEffects?: FeatureEffect[],
+        equippedAndAttunedEffects?: FeatureEffect[],
+    }
 
 export type DiceSize = 4 | 6 | 8 | 10 | 12 | 20
 
 export type DiceCollection = {
-    d4: number,
-    d6: number,
-    d8: number,
-    d10: number,
-    d12: number,
-    d20: number,
+    d4?: number,
+    d6?: number,
+    d8?: number,
+    d10?: number,
+    d12?: number,
+    d20?: number,
 }
 
 export const AbilityScoreOrder = ["strength", "dexterity", "constitution", "intelligence", "wisdom", "charisma"]
@@ -51,8 +96,9 @@ export type AbilityScores = {
 export type Ability = keyof AbilityScores
 
 export type Compendium = {
-    classes: Array<{name: string, hitDice: DiceSize}>
-    spells: Array<{name: string, level: number, description: string}>
+    classes: Array<{name: string, hitDice: DiceSize}>,
+    spells: Array<{name: string, level: number, description: string}>,
+    items: Array<AnyItem>,
 }
 
 export type Species = {
@@ -142,6 +188,8 @@ export type FeatureEffect
 | FeatureEffectWalkingSpeed
 | FeatureEffectSpell
 | FeatureEffectSetAbility
+| FeatureEffectAC
+| FeatureEffectAttack
 
 export type Level = {
     class: string,
@@ -159,6 +207,16 @@ export type FeatureEffectLanguage = { language: string }
 export type FeatureEffectWalkingSpeed = { walking: number}
 export type FeatureEffectSpell = { spell: string }
 export type FeatureEffectSetAbility = { setAbility: Ability, minimum: number }
+export type FeatureEffectAC =
+    ({ armorClassBase: number } | { armorClassBonus: number })
+    &
+    ({ dexModMultiplier: number, dexModMaximum?: number })
+export type FeatureEffectAttack = {
+    attackType: "melee",
+    reach: number,
+    damageType: "slashing",
+    damage: DiceCollection & { bonus: number },
+}
 
 export const prefixify = (value: number): {sign: string, abs: string, combined: string} => {
     if (value >= 0) {
@@ -167,3 +225,7 @@ export const prefixify = (value: number): {sign: string, abs: string, combined: 
         return {sign: "-", abs: `${value}`, combined: `-${value}`}
     }
 }
+
+export const titleCase = (string: string): string => (
+    string.slice(0, 1).toUpperCase() + string.slice(1, string.length)
+)

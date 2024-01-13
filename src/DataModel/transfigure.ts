@@ -10,6 +10,9 @@ import {
     SkillsToAbilities,
     FeatureOnlyDescription,
     DiceCollection,
+    AnyItem,
+    ItemState,
+    FeatureEffectSpell,
 } from "./CharacterSheet";
 
 export type DerivedCharacter = {
@@ -31,6 +34,8 @@ export type DerivedCharacter = {
     savingThrowProficiencyBonuses: AbilityScores, // structurally it's the same
     classes: string[],
     spells: string[],
+    armorClass: number,
+    currentItems: (AnyItem & ItemState)[],
 }
 
 export type FullCharacter = CharacterSheet & DerivedCharacter
@@ -41,32 +46,48 @@ export const transfigure = (character: CharacterSheet): FullCharacter => {
     const currentLevels = character.levels.slice(0, character.sheetView.currentLevel)
     const proficiencyBonus = 1 + Math.ceil(currentLevels.length / 4)
 
+    const currentItems: Array<AnyItem & ItemState> = character.inventoryHistory[character.sheetView.currentInventory].items.flatMap((item) => (
+        {
+            ...(item),
+            ...(character.compendium.items.find((itemDef) => ( itemDef.name == item.name ))),
+        }
+    ))
+
+    const currentItemEffects: Array<FeatureEffect> = currentItems.flatMap((item) => (
+        [
+            ...((item.equipped ?? false) && (item.attuned ?? false) ? (item.equippedAndAttunedEffects ?? []) : []),
+            ...((item.equipped ?? false) ? (item.equippedEffects ?? []) : []),
+        ]
+    ))
+
     const allFeatures: Array<Feature> = [
         character.species.features,
         character.background.features,
         ...currentLevels.map(level => (level.features)),
     ].flat()
 
-    const allEffects: Array<FeatureEffect> = allFeatures.flatMap(feature => {
+    const featureEffects = allFeatures.flatMap(feature => {
         if ("effects" in feature) { return feature.effects } else { return [] }
     })
 
-    const finalAbilityScores = calculateFinalAbilityScores({ ...character, allEffects })
+    const allActiveEffects: Array<FeatureEffect> = [...featureEffects, ...currentItemEffects]
 
-    const languages = allEffects.flatMap((effect) => {
+    const finalAbilityScores = calculateFinalAbilityScores({ ...character, allActiveEffects })
+
+    const languages = allActiveEffects.flatMap((effect) => {
         if ("language" in effect) { return [effect.language] } else { return [] }
     })
-    const toolProficiencies = allEffects.flatMap((effect) => {
+    const toolProficiencies = allActiveEffects.flatMap((effect) => {
         if ("toolProficiency" in effect) { return [effect.toolProficiency] } else { return [] }
     })
-    const weaponProficiencies = allEffects.flatMap((effect) => {
+    const weaponProficiencies = allActiveEffects.flatMap((effect) => {
         if ("weaponProficiency" in effect) { return [effect.weaponProficiency] } else { return [] }
     })
-    const armorProficiencies = allEffects.flatMap((effect) => {
+    const armorProficiencies = allActiveEffects.flatMap((effect) => {
         if ("armorProficiency" in effect) { return [effect.armorProficiency] } else { return [] }
     })
 
-    const walkingSpeed = allEffects.reduce((acc, effect) => {
+    const walkingSpeed = allActiveEffects.reduce((acc, effect) => {
         if ("walking" in effect) { return Math.max(acc, effect.walking) } else { return acc }
     }, 0)
 
@@ -82,7 +103,7 @@ export const transfigure = (character: CharacterSheet): FullCharacter => {
     }
 
     const savingThrowProficiencyBonuses = 
-        allEffects
+        allActiveEffects
             .reduce((acc, effect) => {
                 if (("savingProficiency" in effect) && (acc[effect.savingProficiency] == 0)) {
                     return { ...acc, [effect.savingProficiency]: 1 }
@@ -101,7 +122,7 @@ export const transfigure = (character: CharacterSheet): FullCharacter => {
     }
 
     const skillProficiencyBonuses = 
-        allEffects.reduce((acc, effect) => {
+        allActiveEffects.reduce((acc, effect) => {
             if ("skillProficiency" in effect) {
                 return {
                     ...acc,
@@ -176,13 +197,39 @@ export const transfigure = (character: CharacterSheet): FullCharacter => {
         }
     }, [])
 
-    const spells = allEffects.reduce((acc, effect) => {
+    const spells = allActiveEffects.reduce((acc, effect) => {
         if ("spell" in effect) {
             return [ ...acc, effect.spell ]
         } else {
             return acc
         }
     }, [])
+
+    const armorClass = (() => {
+        const { base, dexModMultiplier, dexModMaximum, bonusAdded } = allActiveEffects.reduce(({ base, dexModMultiplier, dexModMaximum, bonusAdded }, effect) => {
+            if ("armorClassBase" in effect) {
+                base = Math.max(effect.armorClassBase, base)
+            }
+
+            if ("dexModMultiplier" in effect) {
+                dexModMultiplier = dexModMultiplier * (effect.dexModMultiplier ?? 1)
+            }
+
+            if ("dexModMaximum" in effect) {
+                dexModMaximum = Math.min(dexModMaximum, effect.dexModMaximum)
+            }
+
+            if ("armorClassBonus" in effect) {
+                bonusAdded = bonusAdded + effect.armorClassBonus
+            }
+
+            return { base, dexModMultiplier, dexModMaximum, bonusAdded }
+        }, { base: 10, dexModMultiplier: 1, dexModMaximum: Number.MAX_SAFE_INTEGER, bonusAdded: 0})
+
+        const dexBonus = Math.min(abilityMods.dexterity * dexModMultiplier, dexModMaximum)
+
+        return base + dexBonus + bonusAdded
+    })()
     
     return {
         ...character,
@@ -204,14 +251,16 @@ export const transfigure = (character: CharacterSheet): FullCharacter => {
         hitDice,
         classes,
         spells,
+        armorClass,
+        currentItems,
     }
 }
 
-const calculateFinalAbilityScores = ({ baseScores, allEffects }: {baseScores: AbilityScores, allEffects: FeatureEffect[]}): AbilityScores => {
+const calculateFinalAbilityScores = ({ baseScores, allActiveEffects }: {baseScores: AbilityScores, allActiveEffects: FeatureEffect[]}): AbilityScores => {
     let increaseAbilityEffects: FeatureEffectIncreaseAbility[] = []
     let setAbilityEffects: FeatureEffectSetAbility[] = []
 
-    allEffects.forEach((effect) => {
+    allActiveEffects.forEach((effect) => {
         if ("increaseAbility" in effect) {
             increaseAbilityEffects.push(effect)
         } else if ("setAbility" in effect) {

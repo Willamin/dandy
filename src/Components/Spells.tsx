@@ -6,13 +6,13 @@ const MapAllKeys = (obj) => {
     return Object.keys(obj).map((k) => ([k, obj[k]]))
 }
 
-type SkillSortOrder = "name" | "level"
+type SpellSortOrder = "name" | "level"
 
 export const Spells: React.FC<{style?: React.style}> = ({style}) => {
     const [character, setCharacter] = React.useContext(CharacterContext);
     const { spells, compendium } = character;
 
-    const [sortOrder, setSortOrder] = useState<SkillSortOrder>("level");
+    const [sortOrder, setSortOrder] = useState<SpellSortOrder>("level");
 
     return (
         <div style={{
