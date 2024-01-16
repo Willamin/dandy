@@ -38,6 +38,9 @@ export type ItemState = {
     equipped?: boolean,
     attuned?: boolean, 
     comment?: string,
+    charges?: number,
+    currency?: boolean,
+    contained?: string | "false",
 }
 
 export type Inventory = {
@@ -212,6 +215,7 @@ export type FeatureEffectAC =
     &
     ({ dexModMultiplier: number, dexModMaximum?: number })
 export type FeatureEffectAttack = {
+    name?: string,
     attackType: "melee",
     reach: number,
     damageType: "slashing",

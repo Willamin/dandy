@@ -20,7 +20,7 @@ export const InventoryHistory: React.FC<{style?: React.style}> = ({style}) => {
             <div
                 style={{
                     display: "grid",
-                    gridTemplateColumns: "repeat(2, auto)",
+                    gridTemplateColumns: "auto 1fr",
                     gap: "0 1em",
                     alignItems: "baseline",
                     margin: "1em",
@@ -39,7 +39,7 @@ export const InventoryHistory: React.FC<{style?: React.style}> = ({style}) => {
                             >
                                 <div className={currentInventory === index ? "checkmark" : ""} />
                             </button>
-                            <div key="comment">{comment}</div>
+                            <div style={{display: "inline-block"}} key="comment">{comment}</div>
                         </React.Fragment>
                     ))
                 }

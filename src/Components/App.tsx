@@ -1,5 +1,5 @@
-import React, { useRef, useContext, useState } from 'react'
-import { AbilityScores, AbilityScoresAndSaves, SavingThrows } from './AbilityScoresAndSaves'
+import React, { useRef, useContext } from 'react'
+import { AbilityScores, SavingThrows } from './AbilityScoresAndSaves'
 import { CharacterName } from './CharacterName'
 import Proficiencies, { OtherStats } from './Proficiencies'
 import { Description } from './Description'
@@ -38,8 +38,6 @@ export const App: React.FC = () => {
                         <Spells />
                         <Items />
                         { inventoryHistoryVisible && (<InventoryHistory />) }
-                        
-                        {/* <Inspector style={{ }} /> */}
                     </Grid>
 
                     <Compendium />
@@ -92,46 +90,51 @@ const Menu = () => {
     const downloadRef = useRef()  
     
     return (
-        <div className="do-not-print" style={{display: "flex", justifyContent: 'flex-start'}}>
-            <input 
-                ref={filePickerRef} 
-                type="file"
-                onChange={handleFileChange} 
-                style={{display: "none"}}
-            />
-            
-            <button onClick={() => {
-                filePickerRef.current.click()
-            }}>Load Sheet</button>
+        <div className="do-not-print" style={{display: "flex", justifyContent: 'space-between'}}>
+            <div style={{display: "flex", justifyContent: "flex-start", gap: "1em"}}>
+                <input 
+                    ref={filePickerRef} 
+                    type="file"
+                    onChange={handleFileChange} 
+                    style={{display: "none"}}
+                />
+                
+                <button onClick={() => {
+                    filePickerRef.current.click()
+                }}>Load Sheet</button>
 
-            <button
-                onClick={() => {
-                    saveCharacter(null)
-                }}
-                disabled={character == null}
-            >Remove Character</button>
+                <button
+                    onClick={() => {
+                        saveCharacter(null)
+                    }}
+                    disabled={character == null}
+                >Remove Character</button>
 
-            <button
-                onClick={() => {
-                    const fileName = "my-character.json";
-                    const fileContent = JSON5.stringify(shrinkToSheet(character))
-                    const myFile = new Blob([fileContent], {type: 'text/plain'});
+                <button
+                    onClick={() => {
+                        const fileName = "my-character.json";
+                        const fileContent = JSON5.stringify(shrinkToSheet(character))
+                        const myFile = new Blob([fileContent], {type: 'text/plain'});
 
-                    const download = downloadRef.current
-                    download.setAttribute("href", window.URL.createObjectURL(myFile))
-                    download.setAttribute("download", fileName)
+                        const download = downloadRef.current
+                        download.setAttribute("href", window.URL.createObjectURL(myFile))
+                        download.setAttribute("download", fileName)
 
-                    download.click()
-                }}
-                disabled={character == null}
-            >Save Sheet</button>
-            <a ref={downloadRef} id="download" style={{display: "none"}}></a>
+                        download.click()
+                    }}
+                    disabled={character == null}
+                >Save Sheet</button>
+                <a ref={downloadRef} id="download" style={{display: "none"}}></a>
 
-            <button onClick={() => {
-                window.open(window.location, "", "menubar=no, location=no")
-            }}>
-                Open in Popup Window
-            </button>
+                <button onClick={() => {
+                    window.open(window.location, "", "menubar=no, location=no")
+                }}>
+                    Open in Popup Window
+                </button>
+            </div>
+
+            <div style={{display: "flex", justifyContent: "flex-end", gap: "1em"}}>
+            </div>
         </div>
     )
 }

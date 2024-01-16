@@ -36,6 +36,8 @@ export type DerivedCharacter = {
     spells: string[],
     armorClass: number,
     currentItems: (AnyItem & ItemState)[],
+    spellMod: number,
+    spellSaveDC: number,
 }
 
 export type FullCharacter = CharacterSheet & DerivedCharacter
@@ -230,6 +232,9 @@ export const transfigure = (character: CharacterSheet): FullCharacter => {
 
         return base + dexBonus + bonusAdded
     })()
+
+    const spellMod = abilityMods.charisma + proficiencyBonus
+    const spellSaveDC = 8 + spellMod
     
     return {
         ...character,
@@ -253,6 +258,8 @@ export const transfigure = (character: CharacterSheet): FullCharacter => {
         spells,
         armorClass,
         currentItems,
+        spellMod,
+        spellSaveDC,
     }
 }
 

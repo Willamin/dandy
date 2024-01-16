@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useLocation } from 'react'
 import ReactDOM from 'react-dom/client'
 import { App } from './Components/App'
 import { FullCharacter, transfigure } from './DataModel/transfigure'
@@ -32,7 +32,9 @@ const Wrapper = () => {
         bouncing,
         setBouncingInterceptor
       ]}>
-        <App />
+        <ScrollIntoView>
+          <App />
+        </ScrollIntoView>
       </BounceHistoryContext.Provider>
     </CharacterContext.Provider>
   )
@@ -48,4 +50,20 @@ if (typeof document !== 'undefined' ) {
       </React.StrictMode>
     ))
   }
+}
+
+const ScrollIntoView = ({ children }) => {
+  const { hash } = window.location
+  React.useEffect(() => {
+    setTimeout(() => {
+      if (!hash) { return }
+      const element = document.querySelector(hash)
+      if (element) {
+        element.scrollIntoView()
+        element.className += " target"
+      }
+    }, 0)
+  }, [hash])
+
+  return children
 }

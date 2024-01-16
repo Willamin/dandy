@@ -23985,11 +23985,11 @@ var require_dist = __commonJS((exports, module) => {
 });
 
 // src/index.tsx
-var import_react12 = __toESM(require_react(), 1);
+var import_react14 = __toESM(require_react(), 1);
 var client = __toESM(require_client(), 1);
 
 // src/Components/App.tsx
-var import_react11 = __toESM(require_react(), 1);
+var import_react13 = __toESM(require_react(), 1);
 
 // src/Components/AbilityScoresAndSaves.tsx
 var import_react2 = __toESM(require_react(), 1);
@@ -23998,14 +23998,15 @@ var import_react2 = __toESM(require_react(), 1);
 var import_react = __toESM(require_react(), 1);
 
 // src/DataModel/CharacterSheet.ts
-var shrinkToSheet = ({ sheetView, descriptive, baseScores, species, background, compendium, levels }) => ({
+var shrinkToSheet = ({ sheetView, descriptive, baseScores, species, background, compendium, levels, inventoryHistory }) => ({
   sheetView,
   descriptive,
   baseScores,
   species,
   background,
   compendium,
-  levels
+  levels,
+  inventoryHistory
 });
 var AbilityScoreOrder = ["strength", "dexterity", "constitution", "intelligence", "wisdom", "charisma"];
 var SkillsToAbilities = {
@@ -24035,6 +24036,7 @@ var prefixify = (value) => {
     return { sign: "-", abs: `${value}`, combined: `-${value}` };
   }
 };
+var titleCase = (string) => string.slice(0, 1).toUpperCase() + string.slice(1, string.length);
 
 // src/Components/StatBlock.tsx
 var StatBlock = ({ name, primary, secondary, style, className }) => import_react.default.createElement("div", {
@@ -24079,30 +24081,31 @@ var StatWrapper = ({ title, primary, secondary, style }) => import_react.default
 })));
 
 // src/Components/AbilityScoresAndSaves.tsx
+var StatBlockMod = (mod) => {
+  const { sign, abs } = prefixify(mod);
+  return import_react2.default.createElement("div", {
+    className: "mono",
+    style: {
+      display: "flex",
+      alignItems: "center"
+    }
+  }, import_react2.default.createElement("span", {
+    style: {
+      fontSize: "0.7em"
+    }
+  }, sign), import_react2.default.createElement("span", null, abs), import_react2.default.createElement("span", {
+    style: {
+      visibility: "hidden",
+      fontSize: "0.7em"
+    }
+  }, sign));
+};
 var AbilityScores = ({ style }) => {
   const [fullCharacter, setCharacter] = import_react2.useContext(CharacterContext);
   return import_react2.default.createElement(StatWrapper, {
     style,
     title: "Abilities",
-    primary: (ability) => {
-      const { sign, abs } = prefixify(fullCharacter.abilityMods[ability]);
-      return import_react2.default.createElement("div", {
-        className: "mono",
-        style: {
-          display: "flex",
-          alignItems: "center"
-        }
-      }, import_react2.default.createElement("span", {
-        style: {
-          fontSize: "0.7em"
-        }
-      }, sign), import_react2.default.createElement("span", null, abs), import_react2.default.createElement("span", {
-        style: {
-          visibility: "hidden",
-          fontSize: "0.7em"
-        }
-      }, sign));
-    },
+    primary: (ability) => StatBlockMod(fullCharacter.abilityMods[ability]),
     secondary: (ability) => import_react2.default.createElement("span", {
       className: "mono"
     }, fullCharacter.finalAbilityScores[ability])
@@ -24186,7 +24189,7 @@ var import_react4 = __toESM(require_react(), 1);
 var Tag = ({ children, className, inline = false }) => import_react4.default.createElement("div", {
   className,
   style: {
-    display: "inline",
+    display: "inline-block",
     border: "1px solid",
     borderColor: "var(--bd-primary)",
     borderRadius: "4px",
@@ -24199,12 +24202,13 @@ var Tag = ({ children, className, inline = false }) => import_react4.default.cre
 }, children);
 var TagRow = ({ title, tags, tagsClassName }) => import_react4.default.createElement("div", {
   style: {
-    display: "flex",
+    display: "block",
     justifyContent: "flex-start",
     alignItems: "center",
     flexWrap: "wrap",
     width: "100%",
-    lineHeight: "1.2em"
+    lineHeight: "1.2em",
+    textIndent: "1em hanging each-line"
   }
 }, import_react4.default.createElement("span", null, title, ":"), (tags ?? []).length == 0 && import_react4.default.createElement(Tag, {
   className: tagsClassName,
@@ -24222,41 +24226,71 @@ var OtherStats = ({ style, className }) => {
     walkingSpeed,
     hitPointMaximum,
     proficiencyBonus,
-    hitDice
+    hitDice,
+    armorClass,
+    spellMod,
+    spellSaveDC
   } = character;
+  const arrayRepeating = (value, quantity) => {
+  };
   let hitDiceDescription = [
-    hitDice.d4 > 0 ? [`${hitDice.d4}d4`] : [],
-    hitDice.d6 > 0 ? [`${hitDice.d6}d6`] : [],
-    hitDice.d8 > 0 ? [`${hitDice.d8}d8`] : [],
-    hitDice.d10 > 0 ? [`${hitDice.d10}d10`] : [],
-    hitDice.d12 > 0 ? [`${hitDice.d12}d12`] : [],
-    hitDice.d20 > 0 ? [`${hitDice.d20}d20`] : []
+    [...Array(hitDice.d4).keys()].map(() => "d4"),
+    [...Array(hitDice.d6).keys()].map(() => "d6"),
+    [...Array(hitDice.d8).keys()].map(() => "d8"),
+    [...Array(hitDice.d10).keys()].map(() => "d10"),
+    [...Array(hitDice.d12).keys()].map(() => "d12"),
+    [...Array(hitDice.d20).keys()].map(() => "d20")
   ].flatMap((x) => x);
   return React5.createElement("div", {
     style: { flexShrink: 1, flexGrow: 0, ...style },
     className: className ?? ""
   }, React5.createElement(TagRow, {
-    title: "Hit Point Maximum",
-    tags: [hitPointMaximum],
-    tagsClassName: "mono accent-color-yellow"
-  }), React5.createElement(TagRow, {
     title: "Hit Dice",
     tags: hitDiceDescription,
     tagsClassName: "mono"
-  }), React5.createElement(TagRow, {
-    title: "Proficiency Bonus",
-    tagsClassName: "mono",
-    tags: [prefixify(proficiencyBonus).combined]
-  }), React5.createElement(TagRow, {
-    title: "Initiative",
-    tagsClassName: "mono accent-color-orange",
-    tags: [prefixify(initiative).combined]
-  }), React5.createElement(TagRow, {
-    title: "Walking Speed",
-    tags: [React5.createElement(React5.Fragment, null, React5.createElement("span", {
+  }), React5.createElement("div", {
+    style: {
+      display: "grid",
+      textAlign: "center",
+      gridTemplateColumns: "repeat(auto-fill, minmax(0, 6em))",
+      gap: "0.5em",
+      margin: "0.5em 0"
+    }
+  }, React5.createElement(StatBlock, {
+    name: "Max HP",
+    primary: hitPointMaximum,
+    secondary: ""
+  }), React5.createElement(StatBlock, {
+    name: "Armor",
+    primary: armorClass,
+    secondary: "Class"
+  }), React5.createElement(StatBlock, {
+    name: "Initiative",
+    primary: StatBlockMod(initiative),
+    secondary: ""
+  }), React5.createElement(StatBlock, {
+    name: "Proficiency",
+    primary: StatBlockMod(proficiencyBonus),
+    secondary: "Bonus"
+  }), React5.createElement(StatBlock, {
+    name: "Walking",
+    primary: React5.createElement(React5.Fragment, null, React5.createElement("span", {
       className: "mono"
-    }, walkingSpeed), " ft")]
-  }));
+    }, walkingSpeed), " ft"),
+    secondary: "Speed"
+  }), React5.createElement(StatBlock, {
+    name: "Perception",
+    primary: 10 + character.skillMods.perception,
+    secondary: "Passive"
+  }), React5.createElement(StatBlock, {
+    name: "Investigation",
+    primary: 10 + character.skillMods.investigation,
+    secondary: "Passive"
+  }), React5.createElement(StatBlock, {
+    name: "Insight",
+    primary: 10 + character.skillMods.insight,
+    secondary: "Passive"
+  })));
 };
 var Proficiencies = ({ style }) => {
   const [character, setCharacter] = React5.useContext(CharacterContext);
@@ -24276,10 +24310,10 @@ var Proficiencies = ({ style }) => {
     tags: toolProficiencies
   }), React5.createElement(TagRow, {
     title: "Weapon Proficiencies",
-    tags: weaponProficiencies
+    tags: weaponProficiencies.map(titleCase)
   }), React5.createElement(TagRow, {
     title: "Armor Proficiencies",
-    tags: armorProficiencies
+    tags: armorProficiencies.map(titleCase)
   }));
 };
 var Proficiencies_default = Proficiencies;
@@ -24373,7 +24407,7 @@ var Description = ({ style, className }) => {
   return import_react5.default.createElement("div", {
     style: { flexShrink: 1, flexGrow: 0, ...style },
     className: className ?? ""
-  }, "A level", " ", import_react5.default.createElement(LevelAdjuster, null), " ", import_react5.default.createElement("em", null, alignment), " ", import_react5.default.createElement("em", null, classes.join("-")), " ", import_react5.default.createElement("em", null, species), " ", "with ", aan(background), " ", import_react5.default.createElement("em", null, background), " background", import_react5.default.createElement("ul", {
+  }, "A level", " ", import_react5.default.createElement(LevelAdjuster, null), " ", import_react5.default.createElement("em", null, alignment), " ", import_react5.default.createElement("em", null, classes.join("-")), " ", import_react5.default.createElement("em", null, species), " ", "with ", aan(background), " ", import_react5.default.createElement("em", null, background), " background.", import_react5.default.createElement("ul", {
     style: { marginBlockStart: 0, paddingInlineStart: "2em" }
   }, [
     ...characteristics.personality,
@@ -24411,7 +24445,7 @@ var Skills = ({ style }) => {
   }, "(sorted by ", sortOrder, ")")), import_react6.default.createElement("div", {
     style: {
       display: "grid",
-      gridTemplateColumns: "repeat(3, auto)",
+      gridTemplateColumns: "repeat(4, auto)",
       gap: "0 1em",
       alignItems: "baseline",
       margin: "1em",
@@ -24501,7 +24535,7 @@ var Skills = ({ style }) => {
     key: skill
   }, import_react6.default.createElement("div", {
     key: "name"
-  }, skill.slice(0, 1).toUpperCase() + skill.slice(1, skill.length)), import_react6.default.createElement("div", {
+  }, titleCase(skill)), import_react6.default.createElement("div", {
     key: "ability",
     style: {
       textAlign: "center"
@@ -24512,14 +24546,16 @@ var Skills = ({ style }) => {
       fontVariantNumeric: "tabular-nums",
       textAlign: "right"
     }
-  }, prefixify(mod).combined)))));
+  }, prefixify(mod).combined), import_react6.default.createElement("div", {
+    key: "prof"
+  })))));
 };
 
 // src/Components/Spells.tsx
 var import_react7 = __toESM(require_react(), 1);
 var Spells = ({ style }) => {
   const [character, setCharacter] = import_react7.default.useContext(CharacterContext);
-  const { spells, compendium } = character;
+  const { spells, compendium, spellMod, spellSaveDC } = character;
   const [sortOrder, setSortOrder] = import_react7.useState("level");
   return import_react7.default.createElement("div", {
     style: {
@@ -24535,7 +24571,7 @@ var Spells = ({ style }) => {
   }, "(sorted by ", sortOrder, ")")), import_react7.default.createElement("div", {
     style: {
       display: "grid",
-      gridTemplateColumns: "repeat(2, auto)",
+      gridTemplateColumns: "1fr auto",
       gap: "0 1em",
       alignItems: "baseline",
       margin: "1em",
@@ -24572,7 +24608,25 @@ var Spells = ({ style }) => {
           break;
       }
     }
-  }, import_react7.default.createElement("div", null, "\u21C5")), spells.map((name) => ({
+  }, import_react7.default.createElement("div", null, "\u21C5")), import_react7.default.createElement("div", {
+    style: {
+      gridColumn: "span 2",
+      display: "grid",
+      textAlign: "center",
+      gridTemplateColumns: "repeat(auto-fill, minmax(0, 8em))",
+      gap: "0.5em",
+      margin: "0.5em 0",
+      justifyContent: "space-around"
+    }
+  }, import_react7.default.createElement(StatBlock, {
+    name: "Spell Attack",
+    primary: StatBlockMod(spellMod),
+    secondary: ""
+  }), import_react7.default.createElement(StatBlock, {
+    name: "Spell Save DC",
+    primary: spellSaveDC,
+    secondary: ""
+  })), spells.map((name) => ({
     ...compendium.spells.find((e) => e.name === name),
     name
   })).sort((left, right) => {
@@ -24603,13 +24657,107 @@ var Spells = ({ style }) => {
   }, level === 0 ? "Cantrip" : `Level ${level}`)))));
 };
 
-// src/Components/FeaturesDescriptions.tsx
+// src/Components/Items.tsx
 var import_react8 = __toESM(require_react(), 1);
-var FeaturesDescriptions = ({ style }) => {
+var FilterBoth = (array, predicate) => {
+  var matching = [];
+  var notMatching = [];
+  array.forEach(function(value) {
+    if (predicate(value)) {
+      matching.push(value);
+    } else {
+      notMatching.push(value);
+    }
+  });
+  return [matching, notMatching];
+};
+var Items = ({ style, className }) => {
+  const [bouncing, setBouncing] = import_react8.default.useContext(BounceHistoryContext);
   const [character, setCharacter] = import_react8.default.useContext(CharacterContext);
-  const { descriptiveFeatures } = character;
-  const [sortOrder, setSortOrder] = import_react8.useState("position");
+  const { currentItems, sheetView } = character;
+  const { currentInventory, inventoryHistoryVisible } = sheetView;
+  const indexedItems = currentItems.map((element, index) => ({ element, index }));
+  const [currency, nonCurrency] = FilterBoth(indexedItems, ({ element: { currency: currency2 = false } }) => currency2);
+  const others = nonCurrency;
+  const toggleStatus = (index, status) => {
+    if (currentInventory != 0) {
+      setBouncing(true);
+      return;
+    }
+    let firstSlice, lastSlice;
+    switch (index) {
+      case 0:
+        firstSlice = [];
+        lastSlice = currentItems.slice(index + 1, currentItems.length);
+      case currentItems.length - 1:
+        firstSlice = currentItems.slice(0, index);
+        lastSlice = [];
+      default:
+        firstSlice = currentItems.slice(0, index);
+        lastSlice = currentItems.slice(index + 1, currentItems.length);
+    }
+    let newStatus = !currentItems[index][status];
+    var containedValue = (() => {
+      if (status === "equipped" && newStatus === true) {
+        return false;
+      } else {
+        return currentItems[index].contained;
+      }
+    })();
+    if (status === "contained" && newStatus === true) {
+      newStatus = window.prompt("what's it contained in?");
+    }
+    const itemWithNewStatus = {
+      ...currentItems[index],
+      contained: containedValue,
+      [status]: newStatus
+    };
+    const newHistory = (() => {
+      if (character.inventoryHistory[0].comment === "uncommitted changes") {
+        return [
+          {
+            comment: "uncommitted changes",
+            items: [
+              ...firstSlice,
+              itemWithNewStatus,
+              ...lastSlice
+            ]
+          },
+          ...character.inventoryHistory.slice(1)
+        ];
+      } else {
+        return [
+          {
+            comment: "uncommitted changes",
+            items: [
+              ...firstSlice,
+              itemWithNewStatus,
+              ...lastSlice
+            ]
+          },
+          ...character.inventoryHistory
+        ];
+      }
+    })();
+    setCharacter({
+      ...character,
+      inventoryHistory: newHistory
+    });
+  };
+  const commitHistory = () => {
+    setCharacter({
+      ...character,
+      inventoryHistory: [
+        {
+          ...character.inventoryHistory[0],
+          comment: window.prompt("commit name?")
+        },
+        ...character.inventoryHistory.slice(1)
+      ]
+    });
+  };
   return import_react8.default.createElement("div", {
+    className,
     style: {
       padding: "4px 1em",
       border: "1px solid",
@@ -24618,9 +24766,160 @@ var FeaturesDescriptions = ({ style }) => {
       position: "relative",
       ...style
     }
-  }, import_react8.default.createElement("strong", null, "Features ", import_react8.default.createElement("span", {
+  }, import_react8.default.createElement("strong", null, "Items"), import_react8.default.createElement("div", {
+    style: {
+      display: "grid",
+      gridTemplateColumns: "auto auto auto 1fr",
+      gap: "5px",
+      alignItems: "first baseline",
+      margin: "1em",
+      marginTop: "1em",
+      justifyContent: "start"
+    }
+  }, import_react8.default.createElement(CornerButton, {
+    title: "Show History",
+    glyph: "H",
+    hoverGlyph: "History",
+    onClick: () => {
+      setCharacter({
+        ...character,
+        sheetView: {
+          ...sheetView,
+          inventoryHistoryVisible: !inventoryHistoryVisible
+        }
+      });
+    }
+  }), import_react8.default.createElement(CornerButton, {
+    title: "Commit to History",
+    glyph: "C",
+    hoverGlyph: "Commit",
+    onClick: commitHistory,
+    top: "15px"
+  }), import_react8.default.createElement("div", {
+    style: {
+      gridColumn: "span 4",
+      display: "grid",
+      gap: "0.5em",
+      gridTemplateColumns: "repeat(3, 1fr)"
+    }
+  }, currency.map(({ element: { name, quantity } }) => import_react8.default.createElement(StatBlock, {
+    key: "currency" + name,
+    name,
+    primary: quantity,
+    secondary: "",
+    style: {
+      ...currency.length === 1 ? { gridColumn: "2" } : {}
+    }
+  }))), others.map(({ element: { name, contained = false, equipped = null, attuned = null, quantity = 1, comment = null }, index }) => import_react8.default.createElement(import_react8.default.Fragment, {
+    key: "others" + name
+  }, import_react8.default.createElement("button", {
+    key: "attuned",
+    className: "checkbox",
+    disabled: attuned == null,
+    onClick: () => {
+      toggleStatus(index, "attuned");
+    }
+  }, import_react8.default.createElement("div", {
+    className: attuned ? "checkmark" : ""
+  }, "A"), import_react8.default.createElement("div", {
+    className: "disablemark"
+  }, "\u2571")), import_react8.default.createElement("button", {
+    key: "equipped",
+    className: "checkbox",
+    disabled: equipped == null,
+    onClick: () => {
+      toggleStatus(index, "equipped");
+    }
+  }, import_react8.default.createElement("div", {
+    className: equipped ? "checkmark" : ""
+  }, "E"), import_react8.default.createElement("div", {
+    className: "disablemark"
+  }, "\u2571")), import_react8.default.createElement("button", {
+    key: "contained",
+    className: "checkbox",
+    onClick: () => {
+      toggleStatus(index, "contained");
+    },
+    disabled: equipped == true
+  }, import_react8.default.createElement("div", {
+    className: contained ? "checkmark" : ""
+  }, "C"), import_react8.default.createElement("div", {
+    className: "disablemark"
+  }, "\u2571")), import_react8.default.createElement("div", {
+    key: "name",
+    style: {
+      textIndent: "1em hanging each-line",
+      lineHeight: "15px"
+    }
+  }, name, quantity > 1 && import_react8.default.createElement("br", null), quantity > 1 && import_react8.default.createElement("small", {
+    style: { display: "inline-block", textIndent: "1em" }
+  }, "\xD7", quantity), contained && import_react8.default.createElement("br", null), contained && import_react8.default.createElement("small", {
+    style: {
+      display: "inline-block",
+      textIndent: "1em",
+      fontStyle: "italic"
+    }
+  }, "in ", import_react8.default.createElement("b", null, contained)), comment && import_react8.default.createElement("br", null), comment && import_react8.default.createElement("small", {
+    style: { display: "inline-block", textIndent: "1em" }
+  }, comment)))), import_react8.default.createElement("div", {
+    key: "name-footer"
+  }), import_react8.default.createElement("div", {
+    key: "equipped-footer"
+  }), import_react8.default.createElement("div", {
+    key: "attuned-footer"
+  })));
+};
+var CornerButton = ({ title, glyph, hoverGlyph, onClick, top = "-10px", side = "left" }) => {
+  const [hover, setHover] = import_react8.useState(false);
+  hoverGlyph = hoverGlyph ?? glyph;
+  return import_react8.default.createElement("button", {
+    title,
+    className: "do-not-print",
+    style: {
+      color: "var(--fg-primary)",
+      background: "var(--bg-secondary)",
+      border: "1px solid var(--bd-primary)",
+      borderRadius: "5px",
+      boxShadow: "none",
+      position: "absolute",
+      top,
+      [side]: "-10px",
+      minWidth: "20px",
+      height: "20px",
+      margin: 0,
+      padding: "5px",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      cursor: "pointer",
+      zIndex: "10"
+    },
+    onClick,
+    onMouseEnter: () => {
+      setHover(true);
+    },
+    onMouseLeave: () => setHover(false)
+  }, import_react8.default.createElement("div", null, hover ? hoverGlyph : glyph));
+};
+
+// src/Components/FeaturesDescriptions.tsx
+var import_react9 = __toESM(require_react(), 1);
+var FeaturesDescriptions = ({ style }) => {
+  const [character, setCharacter] = import_react9.default.useContext(CharacterContext);
+  const { descriptiveFeatures } = character;
+  const [sortOrder, setSortOrder] = import_react9.useState("position");
+  return import_react9.default.createElement("div", {
+    style: {
+      padding: "4px 1em",
+      border: "1px solid",
+      borderRadius: "4px",
+      borderColor: "var(--bd-primary)",
+      position: "relative",
+      ...style
+    }
+  }, import_react9.default.createElement("strong", null, "Features ", import_react9.default.createElement("span", {
     className: "hover-show"
-  }, "(sorted by ", sortOrder, ")")), import_react8.default.createElement("div", {
+  }, "(sorted by ", sortOrder, ")")), import_react9.default.createElement("div", {
     style: {
       display: "grid",
       gridTemplateColumns: "repeat(1, auto)",
@@ -24629,7 +24928,7 @@ var FeaturesDescriptions = ({ style }) => {
       margin: "1em",
       marginTop: "0em"
     }
-  }, import_react8.default.createElement("button", {
+  }, import_react9.default.createElement("button", {
     title: "Cycle through sorting methods",
     className: "do-not-print",
     style: {
@@ -24660,7 +24959,7 @@ var FeaturesDescriptions = ({ style }) => {
           break;
       }
     }
-  }, import_react8.default.createElement("div", null, "\u21C5")), descriptiveFeatures.map((feature) => ({ name: feature.name })).sort((left, right) => {
+  }, import_react9.default.createElement("div", null, "\u21C5")), descriptiveFeatures.map((feature) => ({ name: feature.name })).sort((left, right) => {
     switch (sortOrder) {
       case "name":
         if (left.name < right.name) {
@@ -24673,21 +24972,24 @@ var FeaturesDescriptions = ({ style }) => {
       case "position":
         return 0;
     }
-  }).map(({ name }) => import_react8.default.createElement(import_react8.default.Fragment, {
+  }).map(({ name }) => import_react9.default.createElement(import_react9.default.Fragment, {
     key: name
-  }, import_react8.default.createElement("div", {
+  }, import_react9.default.createElement("div", {
     key: "name"
   }, name)))));
 };
 
 // src/Components/Compendium.tsx
-var import_react10 = __toESM(require_react(), 1);
+var import_react11 = __toESM(require_react(), 1);
 
 // src/Components/CompendiumCard.tsx
-var import_react9 = __toESM(require_react(), 1);
+var import_react10 = __toESM(require_react(), 1);
 var CompendiumCard = ({ title, content }) => {
-  const body = content.replaceAll(/---\n/g, "<hr />");
-  return import_react9.default.createElement("div", {
+  const body = content.replaceAll(/---\n/g, "<hr />").replaceAll(/\n/g, "<br />");
+  const [classes, setClasses] = import_react10.useState("anchor");
+  return import_react10.default.createElement("div", {
+    className: classes,
+    id: "compendium-" + title,
     style: {
       border: "1px solid var(--bd-primary)",
       borderRadius: "5px",
@@ -24695,56 +24997,109 @@ var CompendiumCard = ({ title, content }) => {
       display: "inline-block",
       marginTop: "1em"
     }
-  }, import_react9.default.createElement("b", null, title), import_react9.default.createElement("br", null), import_react9.default.createElement("p", {
+  }, import_react10.default.createElement("b", null, title), import_react10.default.createElement("br", null), import_react10.default.createElement("p", {
     dangerouslySetInnerHTML: { __html: body }
   }));
 };
 
 // src/Components/Compendium.tsx
 var Compendium = () => {
-  const [character, setCharacter] = import_react10.useContext(CharacterContext);
-  return import_react10.default.createElement("div", null, import_react10.default.createElement("h2", {
+  const [character, setCharacter] = import_react11.useContext(CharacterContext);
+  return import_react11.default.createElement("div", null, import_react11.default.createElement("h2", {
     style: { breakBefore: "page" }
-  }, "Compendium \u2013 Spells"), import_react10.default.createElement("div", {
+  }, "Compendium \u2013 Spells"), import_react11.default.createElement("div", {
     className: "compendium-columns"
   }, character.spells.map((name) => {
     const spell = character.compendium.spells.find((s) => s.name === name);
-    return import_react10.default.createElement(CompendiumCard, {
+    return import_react11.default.createElement(CompendiumCard, {
+      key: spell.name,
       title: spell.name,
       content: spell.description
     });
-  })), import_react10.default.createElement("h2", {
+  })), import_react11.default.createElement("h2", {
     style: { breakBefore: "page" }
-  }, "Compendium \u2013 Features"), import_react10.default.createElement("div", {
+  }, "Compendium \u2013 Features"), import_react11.default.createElement("div", {
     className: "compendium-columns"
   }, character.descriptiveFeatures.map(({ name, description }) => {
-    return import_react10.default.createElement(CompendiumCard, {
+    return import_react11.default.createElement(CompendiumCard, {
+      key: name,
       title: name,
       content: description
     });
-  })));
+  })), import_react11.default.createElement("h2", {
+    style: { breakBefore: "page" }
+  }, "Compendium \u2013 Items"), import_react11.default.createElement("div", {
+    className: "compendium-columns"
+  }, character.currentItems.flatMap(({ name, description }) => description ? [import_react11.default.createElement(CompendiumCard, {
+    key: name,
+    title: name,
+    content: description
+  })] : [])));
+};
+
+// src/Components/InventoryHistory.tsx
+var import_react12 = __toESM(require_react(), 1);
+var InventoryHistory = ({ style }) => {
+  const [bouncing, setBouncing] = import_react12.default.useContext(BounceHistoryContext);
+  const [character, setCharacter] = import_react12.default.useContext(CharacterContext);
+  const { inventoryHistory, sheetView } = character;
+  const { currentInventory } = sheetView;
+  return import_react12.default.createElement("div", {
+    className: bouncing ? "bouncing" : "",
+    style: {
+      padding: "4px 1em",
+      border: "1px solid",
+      borderRadius: "4px",
+      borderColor: "var(--bd-primary)",
+      position: "relative",
+      ...style
+    }
+  }, import_react12.default.createElement("strong", null, "Inventory History"), import_react12.default.createElement("div", {
+    style: {
+      display: "grid",
+      gridTemplateColumns: "auto 1fr",
+      gap: "0 1em",
+      alignItems: "baseline",
+      margin: "1em",
+      marginTop: "0em",
+      justifyContent: "flex-start"
+    }
+  }, inventoryHistory.map(({ comment }, index) => import_react12.default.createElement(import_react12.default.Fragment, {
+    key: index
+  }, import_react12.default.createElement("button", {
+    className: "checkbox",
+    onClick: () => {
+      setCharacter({ ...character, sheetView: { ...sheetView, currentInventory: index } });
+    }
+  }, import_react12.default.createElement("div", {
+    className: currentInventory === index ? "checkmark" : ""
+  })), import_react12.default.createElement("div", {
+    style: { display: "inline-block" },
+    key: "comment"
+  }, comment)))));
 };
 
 // src/Components/App.tsx
 var App = () => {
-  const [character, saveCharacter] = import_react11.useContext(CharacterContext);
-  return import_react11.default.createElement("div", {
+  const [character, saveCharacter] = import_react13.useContext(CharacterContext);
+  const { sheetView: { inventoryHistoryVisible } } = character;
+  return import_react13.default.createElement("div", {
     style: { display: "block", justifyContent: "center", padding: "0 2rem" }
-  }, import_react11.default.createElement("div", {
+  }, import_react13.default.createElement("div", {
     style: {}
-  }, import_react11.default.createElement(Menu, null), import_react11.default.createElement(IfPresent, {
+  }, import_react13.default.createElement(Menu, null), import_react13.default.createElement(IfPresent, {
     value: character
-  }, import_react11.default.createElement(CharacterName, null), import_react11.default.createElement(Grid, {
+  }, import_react13.default.createElement(CharacterName, null), import_react13.default.createElement(Grid, {
     className: "main-grid"
-  }, import_react11.default.createElement(Description, {
+  }, import_react13.default.createElement(Description, {
     className: "span2"
-  }), import_react11.default.createElement(AbilityScores, null), import_react11.default.createElement(SavingThrows, null), import_react11.default.createElement(OtherStats, {
+  }), import_react13.default.createElement(AbilityScores, null), import_react13.default.createElement(SavingThrows, null), import_react13.default.createElement(OtherStats, {
     className: "if-3-col-then-row-1-column-3"
-  }), import_react11.default.createElement(Proficiencies_default, null), import_react11.default.createElement(Skills, null), import_react11.default.createElement(FeaturesDescriptions, null), import_react11.default.createElement(Spells, null)), import_react11.default.createElement(Compendium, null)), import_react11.default.createElement(IfNotPresent, {
+  }), import_react13.default.createElement(Proficiencies_default, null), import_react13.default.createElement(Skills, null), import_react13.default.createElement(FeaturesDescriptions, null), import_react13.default.createElement(Spells, null), import_react13.default.createElement(Items, null), inventoryHistoryVisible && import_react13.default.createElement(InventoryHistory, null)), import_react13.default.createElement(Compendium, null)), import_react13.default.createElement(IfNotPresent, {
     value: character
-  }, import_react11.default.createElement("p", null, "No character sheet loaded. Use the load button above."))));
+  }, import_react13.default.createElement("p", null, "No character sheet loaded. Use the load button above."))));
 };
-var Grid = ({ children, style, className }) => import_react11.default.createElement("div", {
+var Grid = ({ children, style, className }) => import_react13.default.createElement("div", {
   style: {
     ...style,
     display: "grid"
@@ -24754,7 +25109,7 @@ var Grid = ({ children, style, className }) => import_react11.default.createElem
 var IfPresent = ({ value, children }) => !!value && children;
 var IfNotPresent = ({ value, children }) => !value && children;
 var Menu = () => {
-  const [character, saveCharacter] = import_react11.useContext(CharacterContext);
+  const [character, saveCharacter] = import_react13.useContext(CharacterContext);
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     const reader = new FileReader;
@@ -24763,26 +25118,28 @@ var Menu = () => {
       saveCharacter(shrinkToSheet(import_json5.default.parse(reader.result)));
     };
   };
-  const filePickerRef = import_react11.useRef();
-  const downloadRef = import_react11.useRef();
-  return import_react11.default.createElement("div", {
+  const filePickerRef = import_react13.useRef();
+  const downloadRef = import_react13.useRef();
+  return import_react13.default.createElement("div", {
     className: "do-not-print",
-    style: { display: "flex", justifyContent: "flex-start" }
-  }, import_react11.default.createElement("input", {
+    style: { display: "flex", justifyContent: "space-between" }
+  }, import_react13.default.createElement("div", {
+    style: { display: "flex", justifyContent: "flex-start", gap: "1em" }
+  }, import_react13.default.createElement("input", {
     ref: filePickerRef,
     type: "file",
     onChange: handleFileChange,
     style: { display: "none" }
-  }), import_react11.default.createElement("button", {
+  }), import_react13.default.createElement("button", {
     onClick: () => {
       filePickerRef.current.click();
     }
-  }, "Load Sheet"), import_react11.default.createElement("button", {
+  }, "Load Sheet"), import_react13.default.createElement("button", {
     onClick: () => {
       saveCharacter(null);
     },
     disabled: character == null
-  }, "Remove Character"), import_react11.default.createElement("button", {
+  }, "Remove Character"), import_react13.default.createElement("button", {
     onClick: () => {
       const fileName = "my-character.json";
       const fileContent = import_json5.default.stringify(shrinkToSheet(character));
@@ -24793,10 +25150,16 @@ var Menu = () => {
       download.click();
     },
     disabled: character == null
-  }, "Save Sheet"), import_react11.default.createElement("a", {
+  }, "Save Sheet"), import_react13.default.createElement("a", {
     ref: downloadRef,
     id: "download",
     style: { display: "none" }
+  }), import_react13.default.createElement("button", {
+    onClick: () => {
+      window.open(window.location, "", "menubar=no, location=no");
+    }
+  }, "Open in Popup Window")), import_react13.default.createElement("div", {
+    style: { display: "flex", justifyContent: "flex-end", gap: "1em" }
   }));
 };
 
@@ -24805,48 +25168,57 @@ var scoreToMod = (score) => Math.floor((score - 10) / 2);
 var transfigure = (character) => {
   const currentLevels = character.levels.slice(0, character.sheetView.currentLevel);
   const proficiencyBonus = 1 + Math.ceil(currentLevels.length / 4);
+  const currentItems = character.inventoryHistory[character.sheetView.currentInventory].items.flatMap((item) => ({
+    ...item,
+    ...character.compendium.items.find((itemDef) => itemDef.name == item.name)
+  }));
+  const currentItemEffects = currentItems.flatMap((item) => [
+    ...(item.equipped ?? false) && (item.attuned ?? false) ? item.equippedAndAttunedEffects ?? [] : [],
+    ...item.equipped ?? false ? item.equippedEffects ?? [] : []
+  ]);
   const allFeatures = [
     character.species.features,
     character.background.features,
     ...currentLevels.map((level) => level.features)
   ].flat();
-  const allEffects = allFeatures.flatMap((feature) => {
+  const featureEffects = allFeatures.flatMap((feature) => {
     if ("effects" in feature) {
       return feature.effects;
     } else {
       return [];
     }
   });
-  const finalAbilityScores = calculateFinalAbilityScores({ ...character, allEffects });
-  const languages = allEffects.flatMap((effect) => {
+  const allActiveEffects = [...featureEffects, ...currentItemEffects];
+  const finalAbilityScores = calculateFinalAbilityScores({ ...character, allActiveEffects });
+  const languages = allActiveEffects.flatMap((effect) => {
     if ("language" in effect) {
       return [effect.language];
     } else {
       return [];
     }
   });
-  const toolProficiencies = allEffects.flatMap((effect) => {
+  const toolProficiencies = allActiveEffects.flatMap((effect) => {
     if ("toolProficiency" in effect) {
       return [effect.toolProficiency];
     } else {
       return [];
     }
   });
-  const weaponProficiencies = allEffects.flatMap((effect) => {
+  const weaponProficiencies = allActiveEffects.flatMap((effect) => {
     if ("weaponProficiency" in effect) {
       return [effect.weaponProficiency];
     } else {
       return [];
     }
   });
-  const armorProficiencies = allEffects.flatMap((effect) => {
+  const armorProficiencies = allActiveEffects.flatMap((effect) => {
     if ("armorProficiency" in effect) {
       return [effect.armorProficiency];
     } else {
       return [];
     }
   });
-  const walkingSpeed = allEffects.reduce((acc, effect) => {
+  const walkingSpeed = allActiveEffects.reduce((acc, effect) => {
     if ("walking" in effect) {
       return Math.max(acc, effect.walking);
     } else {
@@ -24862,7 +25234,7 @@ var transfigure = (character) => {
     wisdom: scoreToMod(finalAbilityScores.wisdom),
     charisma: scoreToMod(finalAbilityScores.charisma)
   };
-  const savingThrowProficiencyBonuses = allEffects.reduce((acc, effect) => {
+  const savingThrowProficiencyBonuses = allActiveEffects.reduce((acc, effect) => {
     if ("savingProficiency" in effect && acc[effect.savingProficiency] == 0) {
       return { ...acc, [effect.savingProficiency]: 1 };
     } else {
@@ -24877,7 +25249,7 @@ var transfigure = (character) => {
     wisdom: abilityMods.wisdom + proficiencyBonus * savingThrowProficiencyBonuses.wisdom,
     charisma: abilityMods.charisma + proficiencyBonus * savingThrowProficiencyBonuses.charisma
   };
-  const skillProficiencyBonuses = allEffects.reduce((acc, effect) => {
+  const skillProficiencyBonuses = allActiveEffects.reduce((acc, effect) => {
     if ("skillProficiency" in effect) {
       return {
         ...acc,
@@ -24934,13 +25306,34 @@ var transfigure = (character) => {
       return [...accumulator, level.class];
     }
   }, []);
-  const spells = allEffects.reduce((acc, effect) => {
+  const spells = allActiveEffects.reduce((acc, effect) => {
     if ("spell" in effect) {
       return [...acc, effect.spell];
     } else {
       return acc;
     }
   }, []);
+  const armorClass = (() => {
+    const { base, dexModMultiplier, dexModMaximum, bonusAdded } = allActiveEffects.reduce(({ base: base2, dexModMultiplier: dexModMultiplier2, dexModMaximum: dexModMaximum2, bonusAdded: bonusAdded2 }, effect) => {
+      if ("armorClassBase" in effect) {
+        base2 = Math.max(effect.armorClassBase, base2);
+      }
+      if ("dexModMultiplier" in effect) {
+        dexModMultiplier2 = dexModMultiplier2 * (effect.dexModMultiplier ?? 1);
+      }
+      if ("dexModMaximum" in effect) {
+        dexModMaximum2 = Math.min(dexModMaximum2, effect.dexModMaximum);
+      }
+      if ("armorClassBonus" in effect) {
+        bonusAdded2 = bonusAdded2 + effect.armorClassBonus;
+      }
+      return { base: base2, dexModMultiplier: dexModMultiplier2, dexModMaximum: dexModMaximum2, bonusAdded: bonusAdded2 };
+    }, { base: 10, dexModMultiplier: 1, dexModMaximum: Number.MAX_SAFE_INTEGER, bonusAdded: 0 });
+    const dexBonus = Math.min(abilityMods.dexterity * dexModMultiplier, dexModMaximum);
+    return base + dexBonus + bonusAdded;
+  })();
+  const spellMod = abilityMods.charisma + proficiencyBonus;
+  const spellSaveDC = 8 + spellMod;
   return {
     ...character,
     currentLevels,
@@ -24960,13 +25353,17 @@ var transfigure = (character) => {
     hitPointMaximum,
     hitDice,
     classes,
-    spells
+    spells,
+    armorClass,
+    currentItems,
+    spellMod,
+    spellSaveDC
   };
 };
-var calculateFinalAbilityScores = ({ baseScores, allEffects }) => {
+var calculateFinalAbilityScores = ({ baseScores, allActiveEffects }) => {
   let increaseAbilityEffects = [];
   let setAbilityEffects = [];
-  allEffects.forEach((effect) => {
+  allActiveEffects.forEach((effect) => {
     if ("increaseAbility" in effect) {
       increaseAbilityEffects.push(effect);
     } else if ("setAbility" in effect) {
@@ -24986,8 +25383,10 @@ var calculateFinalAbilityScores = ({ baseScores, allEffects }) => {
 // src/example-character.ts
 var example = {
   sheetView: {
-    currentLevel: 3,
-    namePreference: "short"
+    currentLevel: 4,
+    namePreference: "short",
+    inventoryHistoryVisible: true,
+    currentInventory: 0
   },
   descriptive: {
     longName: "Finnian Darkthorn",
@@ -25062,16 +25461,6 @@ var example = {
           { skillProficiency: "arcana" },
           { skillProficiency: "history" }
         ]
-      },
-      {
-        name: "Starting Magic Item",
-        description: "Gauntlets of Ogre Power\n\nYour Strength score is 19 while you wear these gauntlets. They have no effect on you if your Strength is 19 or higher without them.",
-        effects: [
-          {
-            setAbility: "strength",
-            minimum: 19
-          }
-        ]
       }
     ],
     characteristics: {
@@ -25090,6 +25479,66 @@ var example = {
       ]
     }
   },
+  inventoryHistory: [
+    {
+      comment: "Shopping",
+      items: [
+        { name: "Gold Pieces", quantity: 612, currency: true },
+        { name: "Gauntlets of Ogre Power", equipped: true, attuned: true },
+        { name: "Studded Leather Armor", equipped: true },
+        { name: "Components Pouch", comment: "Spell Focus" },
+        { name: "Cultist Outfit", equipped: false, contained: "Bag of Holding" },
+        { name: "Cultist Sword", equipped: false, contained: "Bag of Holding" },
+        { name: "Sleepy Hat", equipped: false, comment: "Magical, see compendium" },
+        { name: "Bag of Holding" },
+        { name: "Nine Lives Stealer Longsword", attuned: true, equipped: true },
+        { name: "Dragon Egg", quantity: 2, contained: "Bag of Holding" },
+        { name: "Rapier +1" }
+      ]
+    },
+    {
+      comment: "Session",
+      items: [
+        { name: "Gauntlets of Ogre Power", equipped: true, attuned: true },
+        { name: "Studded Leather Armor", equipped: true },
+        { name: "Components Pouch", comment: "Spell Focus" },
+        { name: "Exsanguinated Bat Corpse" },
+        { name: "Cultist Outfit", equipped: false },
+        { name: "Cultist Sword", equipped: false },
+        { name: "Sleepy Hat", equipped: false, comment: "Magical, see compendium" },
+        { name: "Greatsword +1", comment: "Bonded Pact Weapon", equipped: false }
+      ]
+    },
+    {
+      comment: "Starting Magic Item",
+      items: [
+        { name: "Gold Pieces", quantity: 23, currency: true },
+        { name: "Gauntlets of Ogre Power", equipped: true, attuned: true },
+        { name: "Studded Leather Armor", equipped: true },
+        { name: "Waterskin" },
+        { name: "Rations", quantity: 5 },
+        { name: "Torch", quantity: 2 },
+        { name: "Component Pouch" }
+      ]
+    },
+    {
+      comment: "Starting Equipment",
+      items: [
+        { name: "Gold Pieces", quantity: 23, currency: true },
+        { name: "Studded Leather Armor", equipped: true },
+        { name: "Waterskin" },
+        { name: "Rations", quantity: 5 },
+        { name: "Torch", quantity: 2 },
+        { name: "Component Pouch" }
+      ]
+    },
+    {
+      comment: "Starting Gold",
+      items: [
+        { name: "Gold Pieces", quantity: 100, currency: true }
+      ]
+    }
+  ],
   compendium: {
     classes: [
       {
@@ -25339,31 +25788,131 @@ Duration: Concentration, up to 1 minute
 A beam of crackling, blue energy lances out toward a creature within range, forming a sustained arc of lightning between you and the target. Make a ranged spell attack against that creature. On a hit, the target takes 1d12 lightning damage, and on each of your turns for the duration, you can use your action to deal 1d12 lightning damage to the target automatically. The spell ends if you use your action to do anything else. The spell also ends if the target is ever outside the spell\u2019s range or if it has total cover from you.
 At Higher Levels. When you cast this spell using a spell slot of 2nd level or higher, the initial damage increases by 1d12 for each slot level above 1st.`
       }
+    ],
+    items: [
+      {
+        name: "Studded Leather Armor",
+        type: "armor",
+        armorType: "light",
+        description: "Light armor\nAC: 12 + Dex modifier\n---\nMade from tough but flexible leather, studded leather is reinforced with close-set rivets or spikes.",
+        equippedEffects: [
+          {
+            armorClassBase: 12,
+            dexModMultiplier: 1
+          }
+        ]
+      },
+      {
+        name: "Gauntlets of Ogre Power",
+        description: "Wondrous item, uncommon (requires attunement)\n---\nYour Strength score is 19 while you wear these gauntlets. They have no effect on you if your Strength is 19 or higher without them.",
+        type: "item",
+        equippedAndAttunedEffects: [
+          {
+            setAbility: "strength",
+            minimum: 19
+          }
+        ]
+      },
+      {
+        name: "Crystal",
+        description: "An arcane focus is a special item designed to channel the power of arcane spells. A sorcerer, warlock, or wizard can use such an item as a spellcasting focus, as described in the Spellcasting section.",
+        type: "item"
+      },
+      {
+        name: "Greatsword +1",
+        description: "You have a +1 bonus to attack and damage rolls made with this magic weapon.",
+        type: "weapon",
+        heavy: true,
+        twoHanded: true,
+        equippedEffects: [
+          {
+            attackType: "melee",
+            reach: 5,
+            damageType: "slashing",
+            damage: {
+              d6: 2,
+              bonus: 1
+            }
+          }
+        ]
+      },
+      {
+        name: "Nine Lives Stealer: Longsword",
+        description: "You gain a +2 bonus to attack and damage rolls made with this magic weapon.\nThe sword has 1d8 + 1 charges. If you score a critical hit against a creature that has fewer than 100 hit points, it must succeed on a DC 15 Constitution saving throw or be slain instantly as the sword tears its life force from its body (a construct or an undead is immune). The sword loses 1 charge if the creature is slain. When the sword has no charges remaining, it loses this property.",
+        type: "weapon",
+        versatile: true,
+        equippedEffects: [
+          {
+            name: "one-handed",
+            attackType: "melee",
+            reach: 5,
+            damageType: "slashing",
+            damage: {
+              d8: 1,
+              bonus: 2
+            }
+          },
+          {
+            name: "two-handed",
+            attackType: "melee",
+            reach: 5,
+            damageType: "slashing",
+            damage: {
+              d10: 1,
+              bonus: 2
+            }
+          }
+        ]
+      }
     ]
   },
   levels: [
     {
-      class: "Warlock",
+      class: "Fighter",
       features: [
         {
           name: "Armor Proficiency",
           effects: [
-            { armorProficiency: "Light Armor" }
+            { armorProficiency: "light" },
+            { armorProficiency: "medium" },
+            { armorProficiency: "heavy" },
+            { armorProficiency: "shields" }
           ]
         },
         {
           name: "Weapon Proficiency",
           effects: [
-            { weaponProficiency: "Simple Weapons" }
+            { weaponProficiency: "simple" },
+            { weaponProficiency: "martial" }
           ]
         },
         {
           name: "Saving Throw Proficiency",
           effects: [
-            { savingProficiency: "wisdom" },
-            { savingProficiency: "charisma" }
+            { savingProficiency: "strength" },
+            { savingProficiency: "constitution" }
           ]
         },
+        {
+          name: "Skill Proficiency",
+          effects: [
+            { skillProficiency: "perception" },
+            { skillProficiency: "insight" }
+          ]
+        },
+        {
+          name: "Fighting Style: Two Weapon Fighting",
+          description: "When you engage in two-weapon fighting, you can add your ability modifier to the damage of the second attack."
+        },
+        {
+          name: "Second Wind",
+          description: "You have a limited well of stamina that you can draw on to protect yourself from harm. On your turn, you can use a bonus action to regain hit points equal to 1d10 + your fighter level. Once you use this feature, you must finish a short or long rest before you can use it again."
+        }
+      ]
+    },
+    {
+      class: "Warlock",
+      features: [
         {
           name: "Skill Proficiency",
           effects: [
@@ -25446,25 +25995,58 @@ You can transform one magic weapon into your pact weapon by performing a special
 var example_character_default = example;
 
 // src/index.tsx
-var CharacterContext = import_react12.default.createContext([{}, () => {
+var CharacterContext = import_react14.default.createContext([{}, () => {
 }]);
+var BounceHistoryContext = import_react14.default.createContext(false, () => {
+});
 var Wrapper = () => {
-  const [character, setCharacter] = import_react12.useState(example_character_default);
+  const [character, setCharacter] = import_react14.useState(example_character_default);
   const transfiguredCharacter = character != null ? transfigure(character) : null;
-  return import_react12.default.createElement(CharacterContext.Provider, {
+  const [bouncing, setBouncing] = import_react14.useState(false);
+  const setBouncingInterceptor = (value) => {
+    if (value === true) {
+      setTimeout(() => {
+        setBouncing(false);
+      }, 500);
+    }
+    setBouncing(value);
+  };
+  return import_react14.default.createElement(CharacterContext.Provider, {
     value: [
       transfiguredCharacter,
       setCharacter
     ]
-  }, import_react12.default.createElement(App, null));
+  }, import_react14.default.createElement(BounceHistoryContext.Provider, {
+    value: [
+      bouncing,
+      setBouncingInterceptor
+    ]
+  }, import_react14.default.createElement(ScrollIntoView, null, import_react14.default.createElement(App, null))));
 };
 if (typeof document !== "undefined") {
   const rootElement = document.getElementById("root");
   if (rootElement) {
     const root = client.default.createRoot(rootElement);
-    root.render(import_react12.default.createElement(import_react12.default.StrictMode, null, import_react12.default.createElement(Wrapper, null)));
+    root.render(import_react14.default.createElement(import_react14.default.StrictMode, null, import_react14.default.createElement(Wrapper, null)));
   }
 }
+var ScrollIntoView = ({ children }) => {
+  const { hash } = window.location;
+  import_react14.default.useEffect(() => {
+    setTimeout(() => {
+      if (!hash) {
+        return;
+      }
+      const element = document.querySelector(hash);
+      if (element) {
+        element.scrollIntoView();
+        element.className += " target";
+      }
+    }, 0);
+  }, [hash]);
+  return children;
+};
 export {
-  CharacterContext
+  CharacterContext,
+  BounceHistoryContext
 };

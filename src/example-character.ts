@@ -4,7 +4,7 @@ const example: CharacterSheet = {
     sheetView: {
         currentLevel: 4,
         namePreference: "short",
-        inventoryHistoryVisible: false,
+        inventoryHistoryVisible: true,
         currentInventory: 0,
     },
     descriptive: {
@@ -100,42 +100,63 @@ const example: CharacterSheet = {
     },
     inventoryHistory: [
         {
-            comment: "Starting Inventory",
+            comment: "Shopping",
             items: [
-                {
-                    name: "Gauntlets of Ogre Power",
-                    equipped: true,
-                    attuned: true,
-                },
-                {
-                    name: "Studded Leather Armor",
-                    equipped: true,
-                },
-                {
-                    name: "Crystal",
-                },
-                {
-                    name: "Exsanguinated Bat Corpse",
-                },
-                {
-                    name: "Cultist Outfit",
-                    equipped: false,
-                },
-                {
-                    name: "Cultist Sword",
-                    equipped: false,
-                },
-                {
-                    name: "Sleepy Hat",
-                    equipped: false,
-                    comment: "Magical, sometimes puts people to sleep"
-                },
-                {
-                    name: "Greatsword +1",
-                    comment: "Bonded Pact Weapon",
-                    equipped: false,
-                }
+                { name: "Gold Pieces", quantity: 612, currency: true },
+                { name: "Gauntlets of Ogre Power", equipped: true, attuned: true },
+                { name: "Studded Leather Armor", equipped: true },
+                { name: "Components Pouch", comment: "Spell Focus" },
+                { name: "Cultist Outfit", equipped: false, contained: "Bag of Holding" },
+                { name: "Cultist Sword", equipped: false, contained: "Bag of Holding" },
+                { name: "Sleepy Hat", equipped: false, comment: "Magical, see compendium" },
+                { name: "Bag of Holding" },
+                { name: "Nine Lives Stealer Longsword", attuned: true, equipped: true },
+                { name: "Dragon Egg", quantity: 2, contained: "Bag of Holding" },
+                { name: "Rapier +1" },
+            ]
+        },
+        {
+            comment: "Session",
+            items: [
+                { name: "Gauntlets of Ogre Power", equipped: true, attuned: true },
+                { name: "Studded Leather Armor", equipped: true },
+                { name: "Components Pouch", comment: "Spell Focus" },
+                { name: "Exsanguinated Bat Corpse" },
+                { name: "Cultist Outfit", equipped: false },
+                { name: "Cultist Sword", equipped: false },
+                { name: "Sleepy Hat", equipped: false, comment: "Magical, see compendium" },
+                { name: "Greatsword +1", comment: "Bonded Pact Weapon", equipped: false }
             ],
+        },
+
+        {
+            comment: "Starting Magic Item",
+            items: [
+                { name: "Gold Pieces", quantity: 23, currency: true },
+                { name: "Gauntlets of Ogre Power", equipped: true, attuned: true },
+                { name: "Studded Leather Armor", equipped: true },
+                { name: "Waterskin" },
+                { name: "Rations", quantity: 5 },
+                { name: "Torch", quantity: 2 },
+                { name: "Component Pouch" }
+            ]
+        },
+        {
+            comment: "Starting Equipment",
+            items: [
+                { name: "Gold Pieces", quantity: 23, currency: true },
+                { name: "Studded Leather Armor", equipped: true },
+                { name: "Waterskin" },
+                { name: "Rations", quantity: 5 },
+                { name: "Torch", quantity: 2 },
+                { name: "Component Pouch" }
+            ]
+        },
+        {
+            comment: "Starting Gold",
+            items: [
+                { name: "Gold Pieces", quantity: 100, currency: true }
+            ]
         },
     ],
     compendium: {
@@ -322,11 +343,43 @@ const example: CharacterSheet = {
                         damageType: "slashing",
                         damage: {
                             d6: 2,
-                            bonus: 5,
+                            bonus: 1,
+                        },       
+                    },
+                ]
+            },
+            {
+                name: "Nine Lives Stealer: Longsword",
+                description: "You gain a +2 bonus to attack and damage rolls made with this magic weapon.\nThe sword has 1d8 + 1 charges. If you score a critical hit against a creature that has fewer than 100 hit points, it must succeed on a DC 15 Constitution saving throw or be slain instantly as the sword tears its life force from its body (a construct or an undead is immune). The sword loses 1 charge if the creature is slain. When the sword has no charges remaining, it loses this property.",
+                type: "weapon",
+
+                versatile: true,
+                equippedEffects: [
+                    {
+                        name: "one-handed",
+                        attackType: "melee",
+                        reach: 5, // feet
+        
+                        damageType: "slashing",
+                        damage: {
+                            d8: 1,
+                            bonus: 2,
+                        },       
+                    },
+                    {
+                        name: "two-handed",
+                        attackType: "melee",
+                        reach: 5, // feet
+        
+                        damageType: "slashing",
+                        damage: {
+                            d10: 1,
+                            bonus: 2,
                         },       
                     },
                 ]
             }
+
         ]
     },
     levels: [

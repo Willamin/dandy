@@ -1,6 +1,8 @@
 import React, { useState } from "react"
 import { CharacterContext } from "..";
 import { AbilityScoreOrder, SkillsToAbilities, prefixify } from "../DataModel/CharacterSheet";
+import { StatBlock, StatWrapper } from "./StatBlock";
+import { StatBlockMod } from "./AbilityScoresAndSaves";
 
 const MapAllKeys = (obj) => {
     return Object.keys(obj).map((k) => ([k, obj[k]]))
@@ -10,7 +12,7 @@ type SpellSortOrder = "name" | "level"
 
 export const Spells: React.FC<{style?: React.style}> = ({style}) => {
     const [character, setCharacter] = React.useContext(CharacterContext);
-    const { spells, compendium } = character;
+    const { spells, compendium, spellMod, spellSaveDC } = character;
 
     const [sortOrder, setSortOrder] = useState<SpellSortOrder>("level");
 
@@ -27,7 +29,7 @@ export const Spells: React.FC<{style?: React.style}> = ({style}) => {
             <div
                 style={{
                     display: "grid",
-                    gridTemplateColumns: "repeat(2, auto)",
+                    gridTemplateColumns: "1fr auto",
                     gap: "0 1em",
                     alignItems: "baseline",
                     margin: "1em",
@@ -63,6 +65,27 @@ export const Spells: React.FC<{style?: React.style}> = ({style}) => {
                 }}>
                     <div>⇅</div>
                 </button>
+
+                <div style={{
+                    gridColumn: "span 2",
+                    display: "grid",
+                    textAlign: "center",
+                    gridTemplateColumns: "repeat(auto-fill, minmax(0, 8em))",
+                    gap: "0.5em",
+                    margin: "0.5em 0",
+                    justifyContent: "space-around",
+                }}>
+                    <StatBlock
+                        name="Spell Attack"
+                        primary={StatBlockMod(spellMod)}
+                        secondary=""
+                    />
+                    <StatBlock
+                        name="Spell Save DC"
+                        primary={spellSaveDC}
+                        secondary=""
+                    />
+                </div>
 
                 { 
                     spells

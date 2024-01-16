@@ -1,17 +1,20 @@
-import React from "react"
+import React, { useState } from "react"
+import { CornerButton } from "./Items"
 
 export const CompendiumCard: React.FC<{title: string, content: string}> = ({ title, content }) => {
     const body = content
         .replaceAll(/---\n/g, '<hr />')
         .replaceAll(/\n/g, '<br />')
 
+    const [classes, setClasses] = useState("anchor")
+
     return (
-        <div style={{
+        <div className={classes} id={"compendium-" + title} style={{
             border: "1px solid var(--bd-primary)",
             borderRadius: "5px",
             padding: "5px 10px",
             display: "inline-block",
-            marginTop: "1em"
+            marginTop: "1em",
         }}>
             <b>{title}</b>
             <br/>
