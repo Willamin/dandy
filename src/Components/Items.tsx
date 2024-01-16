@@ -232,8 +232,8 @@ export const Items: React.FC<{style?: React.style}> = ({style, className}) => {
                                     }}
                                     className={
                                         (character.compendium.items.map((i) => (i.name)).includes(name))
-                                        ? "pointer compendium-present"
-                                        : ""
+                                        ? "pointer compendium-present compendium-potential"
+                                        : "compendium-potential"
                                     }
                                     style={{
                                         textIndent: "1em hanging each-line",

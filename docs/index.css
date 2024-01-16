@@ -82,10 +82,10 @@ body {
     cursor: pointer;
 }
 
-.compendium-present {
+.compendium-potential, .compendium-present {
     border: 1px solid transparent;
-    border-radius: 2px;
-    padding: 0 4px;
+    border-radius: 5px;
+    padding: 0 5px;
 }
 
 .compendium-present:hover {
@@ -157,6 +157,9 @@ button.checkbox:disabled > .disablemark { display: inline; }
 
 button.checkbox:disabled { opacity: 0.25; }
 
+body {
+    padding: 0 0.5em;
+}
 
 .main-grid {
     grid-template-columns: 1fr;
@@ -169,6 +172,10 @@ button.checkbox:disabled { opacity: 0.25; }
 .compendium-columns { columns: 1; }
 
 @media screen and (min-width: calc(22em + 22em + 4em)) {
+    body {
+        padding: 0 2rem;
+    }
+
     .main-grid {
         grid-template-columns: 1fr 1fr;
     }

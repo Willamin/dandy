@@ -106,7 +106,7 @@ export const Spells: React.FC<{style?: React.style}> = ({style}) => {
                         }
                     })
                     .map(({ name, level }) => (
-                        <React.Fragment key={name}>
+                        <div key={name} style={{display: "contents"}}>
                             <div key="name"
                                 onClick={() => {
                                     const spellCard = document.getElementById(`compendium-${name.replace(" ", "-")}`)
@@ -129,7 +129,7 @@ export const Spells: React.FC<{style?: React.style}> = ({style}) => {
                             <div key="level">{
                                 level === 0 ? "Cantrip" : `Level ${level}`
                             }</div>
-                        </React.Fragment>
+                        </div>
                     ))
                 }
             </div>

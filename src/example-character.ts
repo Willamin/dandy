@@ -99,36 +99,289 @@ const example: CharacterSheet = {
           },
     },
     inventoryHistory: [
+        // {
+        //     comment: "Shopping: sold",
+        //     items: [
+        //         { name: "Gold Pieces", quantity: 612, currency: true },
+        //         { name: "Gauntlets of Ogre Power", equipped: true, attuned: true },
+        //         { name: "Studded Leather Armor", equipped: true },
+        //         { name: "Component Pouch", comment: "Spell Focus" },
+        //         { name: "Cultist Outfit", equipped: false, contained: "Bag of Holding" },
+        //         { name: "Cultist Sword", equipped: false, contained: "Bag of Holding" },
+        //         { name: "Sleepy Hat", equipped: false, comment: "Magical, see compendium" },
+        //         { name: "Bag of Holding" },
+        //         { name: "Nine Lives Stealer Longsword", attuned: true, equipped: true },
+        //         { name: "Dragon Egg", quantity: 2, contained: "Bag of Holding" },
+        //         { name: "Rapier +1" },
+        //     ]
+        // },
         {
-            comment: "Shopping",
+            comment: "Shopping: got mystery potions for free",
             items: [
-                { name: "Gold Pieces", quantity: 612, currency: true },
+                { name: "Gold Pieces", quantity: 635, currency: true },
                 { name: "Gauntlets of Ogre Power", equipped: true, attuned: true },
                 { name: "Studded Leather Armor", equipped: true },
-                { name: "Components Pouch", comment: "Spell Focus" },
-                { name: "Cultist Outfit", equipped: false, contained: "Bag of Holding" },
-                { name: "Cultist Sword", equipped: false, contained: "Bag of Holding" },
-                { name: "Sleepy Hat", equipped: false, comment: "Magical, see compendium" },
+                { name: "Waterskin" },
+                { name: "Rations", quantity: 5 },
+                { name: "Torch", quantity: 2 },
+                { name: "Component Pouch" },
+                { name: "Cultist Outfit", equipped: false },
+                { name: "Cultist Sword", equipped: false },
+                { name: "Sleepy Hat", equipped: true },
                 { name: "Bag of Holding" },
                 { name: "Nine Lives Stealer Longsword", attuned: true, equipped: true },
-                { name: "Dragon Egg", quantity: 2, contained: "Bag of Holding" },
+                { name: "Dragon Egg", quantity: 2, contained: "Bag of Holding"},
                 { name: "Rapier +1" },
+                { name: "Mysterious Potion", quantity: 2, comment: "probably not health potions", contained: "Bag of Holding" },
             ]
         },
         {
-            comment: "Session",
+            comment: "Shopping: bought rapier for 80gp",
             items: [
+                { name: "Gold Pieces", quantity: 635, currency: true },
                 { name: "Gauntlets of Ogre Power", equipped: true, attuned: true },
                 { name: "Studded Leather Armor", equipped: true },
-                { name: "Components Pouch", comment: "Spell Focus" },
-                { name: "Exsanguinated Bat Corpse" },
+                { name: "Waterskin" },
+                { name: "Rations", quantity: 5 },
+                { name: "Torch", quantity: 2 },
+                { name: "Component Pouch" },
                 { name: "Cultist Outfit", equipped: false },
                 { name: "Cultist Sword", equipped: false },
-                { name: "Sleepy Hat", equipped: false, comment: "Magical, see compendium" },
-                { name: "Greatsword +1", comment: "Bonded Pact Weapon", equipped: false }
-            ],
+                { name: "Sleepy Hat", equipped: false },
+                { name: "Bag of Holding" },
+                { name: "Nine Lives Stealer Longsword", attuned: true, equipped: true },
+                { name: "Dragon Egg", quantity: 2, contained: "Bag of Holding" },
+                { name: "Rapier +1", contained: "Bag of Holding" },
+            ]
         },
-
+        {
+            comment: "Shopping: gave away bat corpse",
+            items: [
+                { name: "Gold Pieces", quantity: 715, currency: true },
+                { name: "Gauntlets of Ogre Power", equipped: true, attuned: true },
+                { name: "Studded Leather Armor", equipped: true },
+                { name: "Waterskin" },
+                { name: "Rations", quantity: 5 },
+                { name: "Torch", quantity: 2 },
+                { name: "Component Pouch" },
+                { name: "Cultist Outfit", equipped: false },
+                { name: "Cultist Sword", equipped: false },
+                { name: "Sleepy Hat", equipped: false },
+                { name: "Bag of Holding" },
+                { name: "Nine Lives Stealer Longsword", attuned: true, equipped: true },
+                { name: "Dragon Egg", quantity: 2, contained: "Bag of Holding"},
+            ]
+        },
+        {
+            comment: "Shopping: sold Greatsword for 45gp",
+            items: [
+                { name: "Gold Pieces", quantity: 715, currency: true },
+                { name: "Gauntlets of Ogre Power", equipped: true, attuned: true },
+                { name: "Studded Leather Armor", equipped: true },
+                { name: "Waterskin" },
+                { name: "Rations", quantity: 5 },
+                { name: "Torch", quantity: 2 },
+                { name: "Component Pouch" },
+                { name: "Cultist Outfit", equipped: false },
+                { name: "Cultist Sword", equipped: false },
+                { name: "Sleepy Hat", equipped: false },
+                { name: "Exsanguinated Bat Corpse" },
+                { name: "Bag of Holding" },
+                { name: "Nine Lives Stealer Longsword", attuned: true, equipped: true },
+                { name: "Dragon Egg", quantity: 2, contained: "Bag of Holding"},
+            ]
+        },
+        {
+            comment: "Camped outside: gave wand to Di and broke an egg",
+            items: [
+                { name: "Gold Pieces", quantity: 670, currency: true },
+                { name: "Gauntlets of Ogre Power", equipped: true, attuned: true },
+                { name: "Studded Leather Armor", equipped: true },
+                { name: "Waterskin" },
+                { name: "Rations", quantity: 5 },
+                { name: "Torch", quantity: 2 },
+                { name: "Component Pouch" },
+                { name: "Cultist Outfit", equipped: false },
+                { name: "Cultist Sword", equipped: false },
+                { name: "Sleepy Hat", equipped: false },
+                { name: "Greatsword +1", equipped: false },
+                { name: "Exsanguinated Bat Corpse" },
+                { name: "Bag of Holding" },
+                { name: "Nine Lives Stealer Longsword", attuned: true, equipped: true },
+                { name: "Dragon Egg", quantity: 2, contained: "Bag of Holding"},
+            ]
+        },
+        {
+            comment: "Looted from hatchery",
+            items: [
+                { name: "Gold Pieces", quantity: 670, currency: true },
+                { name: "Gauntlets of Ogre Power", equipped: true, attuned: true },
+                { name: "Studded Leather Armor", equipped: true },
+                { name: "Waterskin" },
+                { name: "Rations", quantity: 5 },
+                { name: "Torch", quantity: 2 },
+                { name: "Component Pouch" },
+                { name: "Cultist Outfit", equipped: false },
+                { name: "Cultist Sword", equipped: false },
+                { name: "Sleepy Hat", equipped: false },
+                { name: "Greatsword +1", equipped: true, comment: "bonded as pact weapon" },
+                { name: "Exsanguinated Bat Corpse" },
+                { name: "Bag of Holding" },
+                { name: "Wand of Wonder", attuned: true },
+                { name: "Nine Lives Stealer Longsword", attuned: false, equipped: true },
+                { name: "Dragon Egg", quantity: 3, contained: "Bag of Holding"},
+            ]
+        },
+        {
+            comment: "Looted from treasure chest",
+            items: [
+                { name: "Gold Pieces", quantity: 670, currency: true },
+                { name: "Gauntlets of Ogre Power", equipped: true, attuned: true },
+                { name: "Studded Leather Armor", equipped: true },
+                { name: "Waterskin" },
+                { name: "Rations", quantity: 5 },
+                { name: "Torch", quantity: 2 },
+                { name: "Component Pouch" },
+                { name: "Cultist Outfit", equipped: false },
+                { name: "Cultist Sword", equipped: false },
+                { name: "Sleepy Hat", equipped: false },
+                { name: "Greatsword +1", equipped: true, comment: "bonded as pact weapon" },
+                { name: "Exsanguinated Bat Corpse" },
+                { name: "Bag of Holding" },
+                { name: "Wand of Wonder", attuned: true },
+            ]
+        },
+        {
+            comment: "Looted from barracks",
+            items: [
+                { name: "Gold Pieces", quantity: 345, currency: true },
+                { name: "Gauntlets of Ogre Power", equipped: true, attuned: true },
+                { name: "Studded Leather Armor", equipped: true },
+                { name: "Waterskin" },
+                { name: "Rations", quantity: 5 },
+                { name: "Torch", quantity: 2 },
+                { name: "Component Pouch" },
+                { name: "Cultist Outfit", equipped: false },
+                { name: "Cultist Sword", equipped: false },
+                { name: "Sleepy Hat", equipped: false },
+                { name: "Greatsword +1", equipped: true, comment: "bonded as pact weapon" },
+                { name: "Exsanguinated Bat Corpse" },
+                { name: "Bag of Holding" },
+                { name: "Wand of Wonder", attuned: true },
+            ]
+        },
+        {
+            comment: "Looted after fighting Cyanwrath",
+            items: [
+                { name: "Gold Pieces", quantity: 335, currency: true },
+                { name: "Gauntlets of Ogre Power", equipped: true, attuned: true },
+                { name: "Studded Leather Armor", equipped: true },
+                { name: "Waterskin" },
+                { name: "Rations", quantity: 5 },
+                { name: "Torch", quantity: 2 },
+                { name: "Component Pouch" },
+                { name: "Cultist Outfit", equipped: false },
+                { name: "Cultist Sword", equipped: false },
+                { name: "Sleepy Hat", equipped: false },
+                { name: "Greatsword +1", equipped: true, comment: "bonded as pact weapon" },
+                { name: "Exsanguinated Bat Corpse" },
+                { name: "Bag of Holding" },
+                { name: "Wand of Wonder", attuned: true },
+            ]
+        },
+        {
+            comment: "Looted after fighting trash monsters",
+            items: [
+                { name: "Gold Pieces", quantity: 335, currency: true },
+                { name: "Gauntlets of Ogre Power", equipped: true, attuned: true },
+                { name: "Studded Leather Armor", equipped: true },
+                { name: "Waterskin" },
+                { name: "Rations", quantity: 5 },
+                { name: "Torch", quantity: 2 },
+                { name: "Component Pouch" },
+                { name: "Cultist Outfit", equipped: false },
+                { name: "Cultist Sword", equipped: false },
+                { name: "Sleepy Hat", equipped: false },
+                { name: "Greatsword +1", equipped: true, comment: "bonded as pact weapon" },
+                { name: "Exsanguinated Bat Corpse" },
+            ]
+        },
+        {
+            comment: "Looted after fighting stirges",
+            items: [
+                { name: "Gold Pieces", quantity: 222, currency: true },
+                { name: "Gauntlets of Ogre Power", equipped: true, attuned: true },
+                { name: "Studded Leather Armor", equipped: true },
+                { name: "Waterskin" },
+                { name: "Rations", quantity: 5 },
+                { name: "Torch", quantity: 2 },
+                { name: "Component Pouch" },
+                { name: "Cultist Outfit", equipped: false },
+                { name: "Cultist Sword", equipped: false },
+                { name: "Sleepy Hat", equipped: false },
+                { name: "Greatsword +1", equipped: true, comment: "bonded as pact weapon" },
+                { name: "Exsanguinated Bat Corpse" },
+            ]
+        },
+        {
+            comment: "Shopping: bought greatsword for 50gp",
+            items: [
+                { name: "Gold Pieces", quantity: 222, currency: true },
+                { name: "Gauntlets of Ogre Power", equipped: true, attuned: true },
+                { name: "Studded Leather Armor", equipped: true },
+                { name: "Waterskin" },
+                { name: "Rations", quantity: 5 },
+                { name: "Torch", quantity: 2 },
+                { name: "Component Pouch" },
+                { name: "Cultist Outfit", equipped: false },
+                { name: "Cultist Sword", equipped: false },
+                { name: "Sleepy Hat", equipped: true },
+                { name: "Greatsword +1", equipped: true, comment: "bonded as pact weapon" }
+            ]
+        },
+        {
+            comment: "Shopping: bought hat for 1gp",
+            items: [
+                { name: "Gold Pieces", quantity: 272, currency: true },
+                { name: "Gauntlets of Ogre Power", equipped: true, attuned: true },
+                { name: "Studded Leather Armor", equipped: true },
+                { name: "Waterskin" },
+                { name: "Rations", quantity: 5 },
+                { name: "Torch", quantity: 2 },
+                { name: "Component Pouch" },
+                { name: "Cultist Outfit", equipped: false },
+                { name: "Cultist Sword", equipped: false },
+                { name: "Sleepy Hat", equipped: true },
+            ]
+        },
+        {
+            comment: "Reward for returning with info about the camp",
+            items: [
+                { name: "Gold Pieces", quantity: 273, currency: true },
+                { name: "Gauntlets of Ogre Power", equipped: true, attuned: true },
+                { name: "Studded Leather Armor", equipped: true },
+                { name: "Waterskin" },
+                { name: "Rations", quantity: 5 },
+                { name: "Torch", quantity: 2 },
+                { name: "Component Pouch" },
+                { name: "Cultist Outfit", equipped: false },
+                { name: "Cultist Sword", equipped: false },
+            ]
+        },
+        {
+            comment: "Looted equipment from encounter",
+            items: [
+                { name: "Gold Pieces", quantity: 23, currency: true },
+                { name: "Gauntlets of Ogre Power", equipped: true, attuned: true },
+                { name: "Studded Leather Armor", equipped: true },
+                { name: "Waterskin" },
+                { name: "Rations", quantity: 5 },
+                { name: "Torch", quantity: 2 },
+                { name: "Component Pouch" },
+                { name: "Cultist Outfit", equipped: false },
+                { name: "Cultist Sword", equipped: false },
+            ]
+        },
         {
             comment: "Starting Magic Item",
             items: [
@@ -323,8 +576,8 @@ const example: CharacterSheet = {
                 ]
             },
             {
-                name: "Components Pouch",
-                description: "A component pouch is a small, watertight leather belt pouch that has compartments to hold all the material components and other special items you need to cast your spells, except for those components that have a specific cost (as indicated in a spell's description).",
+                name: "Component Pouch",
+                description: "A Component Pouch is a small, watertight leather belt pouch that has compartments to hold all the material components and other special items you need to cast your spells, except for those components that have a specific cost (as indicated in a spell's description).",
                 type: "item",
             },
             {
@@ -350,7 +603,7 @@ const example: CharacterSheet = {
             },
             {
                 name: "Nine Lives Stealer Longsword",
-                description: "Weapon (longsword), very rare (requires attunement)\n---\nYou gain a +2 bonus to attack and damage rolls made with this magic weapon.\n\nThe sword has 1d8 + 1 charges. If you score a critical hit against a creature that has fewer than 100 hit points, it must succeed on a DC 15 Constitution saving throw or be slain instantly as the sword tears its life force from its body (a construct or an undead is immune). The sword loses 1 charge if the creature is slain. When the sword has no charges remaining, it loses this property.",
+                description: "Weapon (longsword), very rare (requires attunement)\n---\nOne-handed: melee, 5 ft reach, slashing: 1d8 + STR mod + 2\n\nTwo-handed: melee, 5ft reach, slashing: 1d10 + STR mod + 2\n---\nYou gain a +2 bonus to attack and damage rolls made with this magic weapon.\n\nThe sword has 1d8 + 1 charges. If you score a critical hit against a creature that has fewer than 100 hit points, it must succeed on a DC 15 Constitution saving throw or be slain instantly as the sword tears its life force from its body (a construct or an undead is immune). The sword loses 1 charge if the creature is slain. When the sword has no charges remaining, it loses this property.",
                 type: "weapon",
 
                 versatile: true,
@@ -383,6 +636,11 @@ const example: CharacterSheet = {
                 name: "Bag of Holding",
                 type: "item",
                 description: "This bag has an interior space considerably larger than its outside dimensions, roughly 2 feet in diameter at the mouth and 4 feet deep. The bag can hold up to 500 pounds, not exceeding a volume of 64 cubic feet. The bag weighs 15 pounds, regardless of its contents. Retrieving an item from the bag requires an action.\n\nIf the bag is overloaded, pierced, or torn, it ruptures and is destroyed, and its contents are scattered in the Astral Plane. If the bag is turned inside out, its contents spill forth, unharmed, but the bag must be put right before it can be used again. Breathing creatures inside the bag can survive up to a number of minutes equal to 10 divided by the number of creatures (minimum 1 minute), after which time they begin to suffocate.\n\nPlacing a bag of holding inside an extradimensional space created by a handy haversack, portable hole, or similar item instantly destroys both items and opens a gate to the Astral Plane. The gate originates where the one item was placed inside the other. Any creature within 10 feet of the gate is sucked through it to a random location on the Astral Plane. The gate then closes. The gate is one-way only and can’t be reopened."
+            },
+            {
+                name: "Sleepy Hat",
+                type: "item",
+                description: "When willingly worn, puts the wearer to sleep.",
             }
         ]
     },

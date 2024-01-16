@@ -23,7 +23,7 @@ export const App: React.FC = () => {
     }, [character])
 
     return (
-        <div style={{ display: "block", justifyContent: "center", padding: "0 2rem" }}>
+        <div style={{ display: "block", justifyContent: "center" }}>
             <div style={{ }}>
                 <Menu />
                 <IfPresent value={character}>
