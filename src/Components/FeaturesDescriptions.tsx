@@ -79,7 +79,25 @@ export const FeaturesDescriptions: React.FC<{style?: React.style}> = ({style}) =
                     })
                     .map(({ name }) => (
                         <React.Fragment key={name}>
-                            <div key="name">{name}</div>
+                            <div key="name"
+                            onClick={() => {
+                                const featCard = document.getElementById(`compendium-${name.replace(" ", "-")}`)
+                                
+                                if (featCard) {
+                                    featCard.classList.add("target")
+                                    featCard.scrollIntoView({ behavior: "smooth", block: "start" })
+
+                                    setTimeout(() => {
+                                        featCard.classList.remove("target")
+                                    }, 1000)
+                                }
+                            }}
+                            className={
+                                (character.descriptiveFeatures.map((i) => (i.name)).includes(name))
+                                ? "pointer compendium-present"
+                                : ""
+                            }
+                            >{name}</div>
                         </React.Fragment>
                     ))
                 }

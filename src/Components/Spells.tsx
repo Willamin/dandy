@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useState, useContext } from "react"
 import { CharacterContext } from "..";
 import { AbilityScoreOrder, SkillsToAbilities, prefixify } from "../DataModel/CharacterSheet";
 import { StatBlock, StatWrapper } from "./StatBlock";
@@ -107,7 +107,25 @@ export const Spells: React.FC<{style?: React.style}> = ({style}) => {
                     })
                     .map(({ name, level }) => (
                         <React.Fragment key={name}>
-                            <div key="name">{name}</div>
+                            <div key="name"
+                                onClick={() => {
+                                    const spellCard = document.getElementById(`compendium-${name.replace(" ", "-")}`)
+                                    
+                                    if (spellCard) {
+                                        spellCard.classList.add("target")
+                                        spellCard.scrollIntoView({ behavior: "smooth", block: "start" })
+
+                                        setTimeout(() => {
+                                            spellCard.classList.remove("target")
+                                        }, 1000)
+                                    }
+                                }}
+                                className={
+                                    (character.compendium.spells.map((i) => (i.name)).includes(name))
+                                    ? "pointer compendium-present"
+                                    : ""
+                                }
+                            >{name}</div>
                             <div key="level">{
                                 level === 0 ? "Cantrip" : `Level ${level}`
                             }</div>

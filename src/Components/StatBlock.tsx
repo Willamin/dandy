@@ -1,8 +1,8 @@
 import React from 'react'
 import { AbilityScoreOrder } from '../DataModel/CharacterSheet'
 
-export const StatBlock: React.FC<{ name: string, primary: string | React.ReactChild, secondary: string, style?: React.style, className?: string}> = ({name, primary, secondary, style, className}) => (
-    <div key={`row-${name}`} className={`stat-block pointer ${className}`} style={{
+export const StatBlock: React.FC<{ name?: string, primary: string | React.ReactChild, secondary?: string, style?: React.style, className?: string}> = ({name, primary, secondary, style, className}) => (
+    <div key={`row-${name}`} className={`stat-block secondary pointer ${className}`} style={{
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
@@ -10,12 +10,11 @@ export const StatBlock: React.FC<{ name: string, primary: string | React.ReactCh
         border: "1px solid",
         borderRadius: "4px",
         borderColor: "var(--bd-primary)",
-        backgroundColor: "var(--bg-secondary)",
         ...style,
     }}>
-        <div style={{fontSize: "0.7em"}}>{name}</div>
+        { name && (<div style={{fontSize: "0.7em"}}>{name}</div>) }
         <div style={{fontSize: "1.3em"}}>{primary}</div>
-        <div style={{fontSize: "0.7em"}}>{secondary}</div>
+        { secondary && (<div style={{fontSize: "0.7em"}}>{secondary}</div>) }
     </div>
 )
 

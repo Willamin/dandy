@@ -24041,7 +24041,7 @@ var titleCase = (string) => string.slice(0, 1).toUpperCase() + string.slice(1, s
 // src/Components/StatBlock.tsx
 var StatBlock = ({ name, primary, secondary, style, className }) => import_react.default.createElement("div", {
   key: `row-${name}`,
-  className: `stat-block pointer ${className}`,
+  className: `stat-block secondary pointer ${className}`,
   style: {
     display: "flex",
     flexDirection: "column",
@@ -24050,14 +24050,13 @@ var StatBlock = ({ name, primary, secondary, style, className }) => import_react
     border: "1px solid",
     borderRadius: "4px",
     borderColor: "var(--bd-primary)",
-    backgroundColor: "var(--bg-secondary)",
     ...style
   }
-}, import_react.default.createElement("div", {
+}, name && import_react.default.createElement("div", {
   style: { fontSize: "0.7em" }
 }, name), import_react.default.createElement("div", {
   style: { fontSize: "1.3em" }
-}, primary), import_react.default.createElement("div", {
+}, primary), secondary && import_react.default.createElement("div", {
   style: { fontSize: "0.7em" }
 }, secondary));
 var StatWrapper = ({ title, primary, secondary, style }) => import_react.default.createElement("div", {
@@ -24651,7 +24650,18 @@ var Spells = ({ style }) => {
   }).map(({ name, level }) => import_react7.default.createElement(import_react7.default.Fragment, {
     key: name
   }, import_react7.default.createElement("div", {
-    key: "name"
+    key: "name",
+    onClick: () => {
+      const spellCard = document.getElementById(`compendium-${name.replace(" ", "-")}`);
+      if (spellCard) {
+        spellCard.classList.add("target");
+        spellCard.scrollIntoView({ behavior: "smooth", block: "start" });
+        setTimeout(() => {
+          spellCard.classList.remove("target");
+        }, 1000);
+      }
+    },
+    className: character.compendium.spells.map((i) => i.name).includes(name) ? "pointer compendium-present" : ""
   }, name), import_react7.default.createElement("div", {
     key: "level"
   }, level === 0 ? "Cantrip" : `Level ${level}`)))));
@@ -24847,6 +24857,17 @@ var Items = ({ style, className }) => {
     className: "disablemark"
   }, "\u2571")), import_react8.default.createElement("div", {
     key: "name",
+    onClick: () => {
+      const itemCard = document.getElementById(`compendium-${name.replace(" ", "-")}`);
+      if (itemCard) {
+        itemCard.classList.add("target");
+        itemCard.scrollIntoView({ behavior: "smooth", block: "start" });
+        setTimeout(() => {
+          itemCard.classList.remove("target");
+        }, 1000);
+      }
+    },
+    className: character.compendium.items.map((i) => i.name).includes(name) ? "pointer compendium-present" : "",
     style: {
       textIndent: "1em hanging each-line",
       lineHeight: "15px"
@@ -24975,7 +24996,18 @@ var FeaturesDescriptions = ({ style }) => {
   }).map(({ name }) => import_react9.default.createElement(import_react9.default.Fragment, {
     key: name
   }, import_react9.default.createElement("div", {
-    key: "name"
+    key: "name",
+    onClick: () => {
+      const featCard = document.getElementById(`compendium-${name.replace(" ", "-")}`);
+      if (featCard) {
+        featCard.classList.add("target");
+        featCard.scrollIntoView({ behavior: "smooth", block: "start" });
+        setTimeout(() => {
+          featCard.classList.remove("target");
+        }, 1000);
+      }
+    },
+    className: character.descriptiveFeatures.map((i) => i.name).includes(name) ? "pointer compendium-present" : ""
   }, name)))));
 };
 
@@ -24989,13 +25021,14 @@ var CompendiumCard = ({ title, content }) => {
   const [classes, setClasses] = import_react10.useState("anchor");
   return import_react10.default.createElement("div", {
     className: classes,
-    id: "compendium-" + title,
+    id: "compendium-" + title.replace(" ", "-"),
     style: {
       border: "1px solid var(--bd-primary)",
       borderRadius: "5px",
       padding: "5px 10px",
       display: "inline-block",
-      marginTop: "1em"
+      marginTop: "1em",
+      scrollMarginTop: "5em"
     }
   }, import_react10.default.createElement("b", null, title), import_react10.default.createElement("br", null), import_react10.default.createElement("p", {
     dangerouslySetInnerHTML: { __html: body }
@@ -25083,6 +25116,9 @@ var InventoryHistory = ({ style }) => {
 var App = () => {
   const [character, saveCharacter] = import_react13.useContext(CharacterContext);
   const { sheetView: { inventoryHistoryVisible } } = character;
+  import_react13.default.useEffect(() => {
+    window.character = character;
+  }, [character]);
   return import_react13.default.createElement("div", {
     style: { display: "block", justifyContent: "center", padding: "0 2rem" }
   }, import_react13.default.createElement("div", {
@@ -25095,7 +25131,10 @@ var App = () => {
     className: "span2"
   }), import_react13.default.createElement(AbilityScores, null), import_react13.default.createElement(SavingThrows, null), import_react13.default.createElement(OtherStats, {
     className: "if-3-col-then-row-1-column-3"
-  }), import_react13.default.createElement(Proficiencies_default, null), import_react13.default.createElement(Skills, null), import_react13.default.createElement(FeaturesDescriptions, null), import_react13.default.createElement(Spells, null), import_react13.default.createElement(Items, null), inventoryHistoryVisible && import_react13.default.createElement(InventoryHistory, null)), import_react13.default.createElement(Compendium, null)), import_react13.default.createElement(IfNotPresent, {
+  }), import_react13.default.createElement(Proficiencies_default, null), import_react13.default.createElement(Skills, null), import_react13.default.createElement(FeaturesDescriptions, null), import_react13.default.createElement(Spells, null), import_react13.default.createElement(Items, null), inventoryHistoryVisible && import_react13.default.createElement(InventoryHistory, null)), import_react13.default.createElement(Compendium, null), import_react13.default.createElement("div", {
+    className: "do-not-print",
+    style: { height: "80vh" }
+  })), import_react13.default.createElement(IfNotPresent, {
     value: character
   }, import_react13.default.createElement("p", null, "No character sheet loaded. Use the load button above."))));
 };
@@ -25814,8 +25853,8 @@ At Higher Levels. When you cast this spell using a spell slot of 2nd level or hi
         ]
       },
       {
-        name: "Crystal",
-        description: "An arcane focus is a special item designed to channel the power of arcane spells. A sorcerer, warlock, or wizard can use such an item as a spellcasting focus, as described in the Spellcasting section.",
+        name: "Components Pouch",
+        description: "A component pouch is a small, watertight leather belt pouch that has compartments to hold all the material components and other special items you need to cast your spells, except for those components that have a specific cost (as indicated in a spell's description).",
         type: "item"
       },
       {
@@ -25837,8 +25876,8 @@ At Higher Levels. When you cast this spell using a spell slot of 2nd level or hi
         ]
       },
       {
-        name: "Nine Lives Stealer: Longsword",
-        description: "You gain a +2 bonus to attack and damage rolls made with this magic weapon.\nThe sword has 1d8 + 1 charges. If you score a critical hit against a creature that has fewer than 100 hit points, it must succeed on a DC 15 Constitution saving throw or be slain instantly as the sword tears its life force from its body (a construct or an undead is immune). The sword loses 1 charge if the creature is slain. When the sword has no charges remaining, it loses this property.",
+        name: "Nine Lives Stealer Longsword",
+        description: "Weapon (longsword), very rare (requires attunement)\n---\nYou gain a +2 bonus to attack and damage rolls made with this magic weapon.\n\nThe sword has 1d8 + 1 charges. If you score a critical hit against a creature that has fewer than 100 hit points, it must succeed on a DC 15 Constitution saving throw or be slain instantly as the sword tears its life force from its body (a construct or an undead is immune). The sword loses 1 charge if the creature is slain. When the sword has no charges remaining, it loses this property.",
         type: "weapon",
         versatile: true,
         equippedEffects: [
@@ -25863,6 +25902,15 @@ At Higher Levels. When you cast this spell using a spell slot of 2nd level or hi
             }
           }
         ]
+      },
+      {
+        name: "Bag of Holding",
+        type: "item",
+        description: `This bag has an interior space considerably larger than its outside dimensions, roughly 2 feet in diameter at the mouth and 4 feet deep. The bag can hold up to 500 pounds, not exceeding a volume of 64 cubic feet. The bag weighs 15 pounds, regardless of its contents. Retrieving an item from the bag requires an action.
+
+If the bag is overloaded, pierced, or torn, it ruptures and is destroyed, and its contents are scattered in the Astral Plane. If the bag is turned inside out, its contents spill forth, unharmed, but the bag must be put right before it can be used again. Breathing creatures inside the bag can survive up to a number of minutes equal to 10 divided by the number of creatures (minimum 1 minute), after which time they begin to suffocate.
+
+Placing a bag of holding inside an extradimensional space created by a handy haversack, portable hole, or similar item instantly destroys both items and opens a gate to the Astral Plane. The gate originates where the one item was placed inside the other. Any creature within 10 feet of the gate is sucked through it to a random location on the Astral Plane. The gate then closes. The gate is one-way only and can\u2019t be reopened.`
       }
     ]
   },
@@ -26021,7 +26069,7 @@ var Wrapper = () => {
       bouncing,
       setBouncingInterceptor
     ]
-  }, import_react14.default.createElement(ScrollIntoView, null, import_react14.default.createElement(App, null))));
+  }, import_react14.default.createElement(App, null)));
 };
 if (typeof document !== "undefined") {
   const rootElement = document.getElementById("root");
@@ -26030,22 +26078,6 @@ if (typeof document !== "undefined") {
     root.render(import_react14.default.createElement(import_react14.default.StrictMode, null, import_react14.default.createElement(Wrapper, null)));
   }
 }
-var ScrollIntoView = ({ children }) => {
-  const { hash } = window.location;
-  import_react14.default.useEffect(() => {
-    setTimeout(() => {
-      if (!hash) {
-        return;
-      }
-      const element = document.querySelector(hash);
-      if (element) {
-        element.scrollIntoView();
-        element.className += " target";
-      }
-    }, 0);
-  }, [hash]);
-  return children;
-};
 export {
   CharacterContext,
   BounceHistoryContext

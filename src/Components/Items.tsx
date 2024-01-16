@@ -217,10 +217,28 @@ export const Items: React.FC<{style?: React.style}> = ({style, className}) => {
                                     <div className={contained ? "checkmark" : ""}>C</div>
                                     <div className="disablemark">╱</div>
                                 </button>
-                                <div key="name" style={{
-                                    textIndent: "1em hanging each-line",
-                                    lineHeight: "15px",
-                                }}>
+                                <div key="name" 
+                                    onClick={() => {
+                                        const itemCard = document.getElementById(`compendium-${name.replace(" ", "-")}`)
+                                        
+                                        if (itemCard) {
+                                            itemCard.classList.add("target")
+                                            itemCard.scrollIntoView({ behavior: "smooth", block: "start" })
+
+                                            setTimeout(() => {
+                                                itemCard.classList.remove("target")
+                                            }, 1000)
+                                        }
+                                    }}
+                                    className={
+                                        (character.compendium.items.map((i) => (i.name)).includes(name))
+                                        ? "pointer compendium-present"
+                                        : ""
+                                    }
+                                    style={{
+                                        textIndent: "1em hanging each-line",
+                                        lineHeight: "15px",
+                                    }}>
                                     {name}
                                     { quantity > 1 && (<br/>) }
                                     { quantity > 1 && (<small style={{ display: "inline-block", textIndent: "1em"}}>×{quantity}</small>) }

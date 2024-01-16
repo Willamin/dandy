@@ -12,10 +12,15 @@ import { Items } from './Items'
 import { FeaturesDescriptions } from './FeaturesDescriptions'
 import { Compendium } from './Compendium'
 import { InventoryHistory } from './InventoryHistory'
+import { StatBlock } from './StatBlock'
 
 export const App: React.FC = () => {
     const [character, saveCharacter] = useContext(CharacterContext)
     const { sheetView: { inventoryHistoryVisible } } = character
+
+    React.useEffect(() => {
+        window.character = character
+    }, [character])
 
     return (
         <div style={{ display: "block", justifyContent: "center", padding: "0 2rem" }}>
@@ -41,6 +46,8 @@ export const App: React.FC = () => {
                     </Grid>
 
                     <Compendium />
+
+                    <div className="do-not-print" style={{height: "80vh"}}></div>
                 </IfPresent>
                 <IfNotPresent value={character}>
                     <p>No character sheet loaded. Use the load button above.</p>
