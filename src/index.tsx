@@ -1,4 +1,4 @@
-import React, { useState, useLocation } from 'react'
+import React, { useState, useContext } from 'react'
 import ReactDOM from 'react-dom/client'
 import { App } from './Components/App'
 import { FullCharacter, transfigure } from './DataModel/transfigure'
@@ -7,6 +7,10 @@ import ExampleCharacter from './example-character.ts'
 
 export const CharacterContext = React.createContext<[FullCharacter, (newChar: FullCharacter) => void]>([{} as FullCharacter, ()=>{}])
 export const BounceHistoryContext = React.createContext<[boolean, (newBounce: boolean) => void]>(false, ()=>{})
+
+export const useCharacter = () => {
+  return useContext(CharacterContext)
+}
 
 const Wrapper = () => {
   const [character, setCharacter] = useState(ExampleCharacter)

@@ -46,7 +46,7 @@ export type ItemState = {
 export type Inventory = {
     comment: string,
     items: Array<ItemState>
-}
+} | { comment: "---" }
 
 export type AnyItem = 
     ( 
@@ -100,8 +100,14 @@ export type Ability = keyof AbilityScores
 
 export type Compendium = {
     classes: Array<{name: string, hitDice: DiceSize}>,
-    spells: Array<{name: string, level: number, description: string}>,
+    spells: Array<SpellDefinition>,
     items: Array<AnyItem>,
+}
+
+export type SpellDefinition = {
+    name: string,
+    level: number,
+    description: string,
 }
 
 export type Species = {
@@ -218,7 +224,7 @@ export type FeatureEffectAttack = {
     name?: string,
     attackType: "melee",
     reach: number,
-    damageType: "slashing",
+    damageType: "slashing" | "piercing",
     damage: DiceCollection & { bonus: number },
 }
 

@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { CharacterContext } from "..";
+import { useCharacter } from "..";
 
 import { prefixify, titleCase } from "../DataModel/CharacterSheet";
 import { TagRow } from "./TagRow";
@@ -8,7 +8,7 @@ import { StatBlock } from "./StatBlock";
 import { StatBlockMod } from "./AbilityScoresAndSaves";
 
 export const OtherStats: React.FC<{style?: React.style, className?: string}> = ({style, className}) => {
-  const [character, setCharacter] = React.useContext(CharacterContext)
+  const [character, setCharacter] = useCharacter()
 
   const {
     initiative,
@@ -21,32 +21,19 @@ export const OtherStats: React.FC<{style?: React.style, className?: string}> = (
     spellSaveDC,
   } = character
 
-  // let hitDiceDescription = [
-  //   hitDice.d4 > 0 ? [`${hitDice.d4}d4`] : [],
-  //   hitDice.d6 > 0 ? [`${hitDice.d6}d6`] : [],
-  //   hitDice.d8 > 0 ? [`${hitDice.d8}d8`] : [],
-  //   hitDice.d10 > 0 ? [`${hitDice.d10}d10`] : [],
-  //   hitDice.d12 > 0 ? [`${hitDice.d12}d12`] : [],
-  //   hitDice.d20 > 0 ? [`${hitDice.d20}d20`] : [],
-  // ].flatMap(x=>(x))
-
-  const arrayRepeating = (value, quantity) => {
-    
-  }
-
   let hitDiceDescription = [
-    [...Array(hitDice.d4).keys()].map(() => ("d4")),
-    [...Array(hitDice.d6).keys()].map(() => ("d6")),
-    [...Array(hitDice.d8).keys()].map(() => ("d8")),
-    [...Array(hitDice.d10).keys()].map(() => ("d10")),
-    [...Array(hitDice.d12).keys()].map(() => ("d12")),
-    [...Array(hitDice.d20).keys()].map(() => ("d20")),
-  ].flatMap(x=>(x))
+    [...Array(hitDice.d4)].map(() => ("d4")),
+    [...Array(hitDice.d6)].map(() => ("d6")),
+    [...Array(hitDice.d8)].map(() => ("d8")),
+    [...Array(hitDice.d10)].map(() => ("d10")),
+    [...Array(hitDice.d12)].map(() => ("d12")),
+    [...Array(hitDice.d20)].map(() => ("d20")),
+  ]
+  .flatMap((x) => (x))
+  .map((x, i)=>((<React.Fragment key={i}>{x}</React.Fragment>)))
 
   return (
     <div style={{flexShrink: 1, flexGrow: 0, ...style}} className={className ?? ""}>
-      <TagRow title="Hit Dice" tags={hitDiceDescription} tagsClassName="mono"/>
-
       <div style={{
           display: "grid",
           textAlign: "center",
@@ -98,12 +85,15 @@ export const OtherStats: React.FC<{style?: React.style, className?: string}> = (
               secondary="Passive"
           />
       </div>
+
+      <TagRow title="Hit Dice" tags={hitDiceDescription} tagsClassName="mono"/>
+
     </div>
   )
 }
 
 const Proficiencies: React.FC<{style?: React.style}> = ({style}) => {
-  const [character, setCharacter] = React.useContext(CharacterContext);
+  const [character, setCharacter] = useCharacter();
   const {
     languages,
     toolProficiencies,

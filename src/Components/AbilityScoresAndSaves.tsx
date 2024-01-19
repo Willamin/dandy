@@ -1,7 +1,7 @@
-import React, { useContext } from "react"
+import React from "react"
 
 import { FullCharacter } from "../DataModel/transfigure"
-import { CharacterContext } from ".."
+import { CharacterContext, useCharacter } from ".."
 import { StatBlock, StatWrapper } from "./StatBlock"
 import { prefixify } from "../DataModel/CharacterSheet"
 
@@ -25,7 +25,7 @@ export const StatBlockMod = (mod) => {
 }
 
 export const AbilityScores: React.FC<{style?: React.style}> = ({style}) => {
-    const [fullCharacter, setCharacter] = useContext(CharacterContext)
+    const [fullCharacter, setCharacter] = useCharacter()
 
     return (
         <StatWrapper style={style} title="Abilities"
@@ -40,7 +40,7 @@ export const AbilityScores: React.FC<{style?: React.style}> = ({style}) => {
 }
 
 export const SavingThrows: React.FC<{style?: React.style}> = (style) => {
-    const [fullCharacter, setCharacter] = useContext(CharacterContext)
+    const [fullCharacter, setCharacter] = useCharacter()
 
     return (
         <StatWrapper style={style} title="Saving Throws"
@@ -71,7 +71,7 @@ export const SavingThrows: React.FC<{style?: React.style}> = (style) => {
 }
 
 export const AbilityScoresAndSaves = () => {
-    const [fullCharacter, setCharacter] = useContext(CharacterContext)
+    const [fullCharacter, setCharacter] = useCharacter()
 
     return (
         <div style={{display: 'flex', gap: '2em 5em', flexWrap: 'wrap', WebkitUserSelect: "none", cursor: "default"}}>

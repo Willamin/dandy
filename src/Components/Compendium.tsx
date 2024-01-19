@@ -1,10 +1,10 @@
-import React, { useContext } from "react"
+import React from "react"
 import { CompendiumCard } from "./CompendiumCard"
-import { CharacterContext } from ".."
+import { CharacterContext, useCharacter } from ".."
 
 export const Compendium = () => {
-    const [character, setCharacter] = useContext(CharacterContext)
-
+    const [character, setCharacter] = useCharacter()
+    
     return (
         <div>
             <h2 style={{ breakBefore: "page" }}>Compendium – Spells</h2>

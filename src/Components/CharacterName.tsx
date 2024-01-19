@@ -1,8 +1,8 @@
 import React from "react";
-import { CharacterContext } from "..";
+import { CharacterContext, useCharacter } from "..";
 
 export const CharacterName: React.FC<{style?: React.style}> = ({style}) => {
-    const [character, setCharacter] = React.useContext(CharacterContext);
+    const [character, setCharacter] = useCharacter();
 
     const { descriptive: { longName, shortName }, sheetView: { namePreference } } = character;
 

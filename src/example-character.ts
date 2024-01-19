@@ -99,22 +99,6 @@ const example: CharacterSheet = {
           },
     },
     inventoryHistory: [
-        // {
-        //     comment: "Shopping: sold",
-        //     items: [
-        //         { name: "Gold Pieces", quantity: 612, currency: true },
-        //         { name: "Gauntlets of Ogre Power", equipped: true, attuned: true },
-        //         { name: "Studded Leather Armor", equipped: true },
-        //         { name: "Component Pouch", comment: "Spell Focus" },
-        //         { name: "Cultist Outfit", equipped: false, contained: "Bag of Holding" },
-        //         { name: "Cultist Sword", equipped: false, contained: "Bag of Holding" },
-        //         { name: "Sleepy Hat", equipped: false, comment: "Magical, see compendium" },
-        //         { name: "Bag of Holding" },
-        //         { name: "Nine Lives Stealer Longsword", attuned: true, equipped: true },
-        //         { name: "Dragon Egg", quantity: 2, contained: "Bag of Holding" },
-        //         { name: "Rapier +1" },
-        //     ]
-        // },
         {
             comment: "Shopping: got mystery potions for free",
             items: [
@@ -131,7 +115,7 @@ const example: CharacterSheet = {
                 { name: "Bag of Holding" },
                 { name: "Nine Lives Stealer Longsword", attuned: true, equipped: true },
                 { name: "Dragon Egg", quantity: 2, contained: "Bag of Holding"},
-                { name: "Rapier +1" },
+                { name: "Rapier +1 (Lamp)" },
                 { name: "Mysterious Potion", quantity: 2, comment: "probably not health potions", contained: "Bag of Holding" },
             ]
         },
@@ -151,7 +135,7 @@ const example: CharacterSheet = {
                 { name: "Bag of Holding" },
                 { name: "Nine Lives Stealer Longsword", attuned: true, equipped: true },
                 { name: "Dragon Egg", quantity: 2, contained: "Bag of Holding" },
-                { name: "Rapier +1", contained: "Bag of Holding" },
+                { name: "Rapier +1 (Lamp)", contained: "Bag of Holding" },
             ]
         },
         {
@@ -289,6 +273,7 @@ const example: CharacterSheet = {
                 { name: "Wand of Wonder", attuned: true },
             ]
         },
+        { comment: "---" },
         {
             comment: "Looted after fighting trash monsters",
             items: [
@@ -323,6 +308,7 @@ const example: CharacterSheet = {
                 { name: "Exsanguinated Bat Corpse" },
             ]
         },
+        { comment: "---" },
         {
             comment: "Shopping: bought greatsword for 50gp",
             items: [
@@ -382,6 +368,7 @@ const example: CharacterSheet = {
                 { name: "Cultist Sword", equipped: false },
             ]
         },
+        { comment: "---" },
         {
             comment: "Starting Magic Item",
             items: [
@@ -641,6 +628,26 @@ const example: CharacterSheet = {
                 name: "Sleepy Hat",
                 type: "item",
                 description: "When willingly worn, puts the wearer to sleep.",
+            },
+            {
+                name: "Rapier +1 (Lamp)",
+                type: "weapon",
+                description: "a button on the hilt toggles the blade being lit",
+                
+                finesse: true,
+                equippedEffects: [
+                    {
+                        name: "attack",
+                        attackType: "melee",
+                        reach: 5, // feet
+        
+                        damageType: "piercing",
+                        damage: {
+                            d8: 1,
+                            bonus: 1,
+                        },       
+                    },
+                ],
             }
         ]
     },

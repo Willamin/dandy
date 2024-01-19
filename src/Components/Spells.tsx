@@ -1,138 +1,70 @@
-import React, { useState, useContext } from "react"
-import { CharacterContext } from "..";
-import { AbilityScoreOrder, SkillsToAbilities, prefixify } from "../DataModel/CharacterSheet";
-import { StatBlock, StatWrapper } from "./StatBlock";
-import { StatBlockMod } from "./AbilityScoresAndSaves";
+import React from "react"
+import { CharacterContext, useCharacter } from "..";
 
-const MapAllKeys = (obj) => {
-    return Object.keys(obj).map((k) => ([k, obj[k]]))
+import { StatBlock } from "./StatBlock";
+import { StatBlockMod } from "./AbilityScoresAndSaves";
+import { GeneralList } from "./GeneralList";
+import { useCompendiumJump } from "../Helpers/useCompendiumJump";
+
+export const makeSortFun = (key, direction = "asc") => {
+    const multiplier: number = (() => {
+        switch (direction) {
+        case "asc": return +1
+        case "desc": return -1
+        default: return 0
+        }
+    })()
+
+    return ((left, right) => {
+        if (left[key] < right[key]) { return -1 * multiplier }
+        if (left[key] > right[key]) { return +1 * multiplier }
+        return 0
+    })
 }
 
-type SpellSortOrder = "name" | "level"
-
-export const Spells: React.FC<{style?: React.style}> = ({style}) => {
-    const [character, setCharacter] = React.useContext(CharacterContext);
+export const Spells: React.FC = () => {
+    const [character, setCharacter] = useCharacter()
     const { spells, compendium, spellMod, spellSaveDC } = character;
 
-    const [sortOrder, setSortOrder] = useState<SpellSortOrder>("level");
-
-    return (
-        <div style={{
-            padding: "4px 1em", 
-            border: "1px solid", 
-            borderRadius: "4px",
-            borderColor: "var(--bd-primary)",
-            position: 'relative', 
-             ...style
-        }}>
-            <strong>Spells <span className="hover-show">(sorted by {sortOrder})</span></strong>
-            <div
-                style={{
-                    display: "grid",
-                    gridTemplateColumns: "1fr auto",
-                    gap: "0 1em",
-                    alignItems: "baseline",
-                    margin: "1em",
-                    marginTop: "0em",
-                    
-                }}
-            >    
-                <button
-                    title="Cycle through sorting methods"
-                    className="do-not-print"
-                    style={{
-                    color: 'var(--fg-primary)',
-                    background: 'var(--bg-secondary)',
-                    border: '1px solid var(--bd-primary)',
-                    borderRadius: '5px',
-                    boxShadow: 'none',
-                    position: 'absolute',
-                    top: '-10px',
-                    left: '-10px',
-                    width: '20px',
-                    height: '20px',
-                    margin: 0,
-                    padding: 0,
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    cursor: 'pointer'
-                }} onClick={()=>{ 
-                    switch (sortOrder) {
-                        case "name": setSortOrder("level"); break
-                        case "level": setSortOrder("name"); break
-                    }
-                }}>
-                    <div>⇅</div>
-                </button>
-
-                <div style={{
-                    gridColumn: "span 2",
-                    display: "grid",
-                    textAlign: "center",
-                    gridTemplateColumns: "repeat(auto-fill, minmax(0, 8em))",
-                    gap: "0.5em",
-                    margin: "0.5em 0",
-                    justifyContent: "space-around",
-                }}>
-                    <StatBlock
-                        name="Spell Attack"
-                        primary={StatBlockMod(spellMod)}
-                        secondary=""
-                    />
-                    <StatBlock
-                        name="Spell Save DC"
-                        primary={spellSaveDC}
-                        secondary=""
-                    />
-                </div>
-
-                { 
-                    spells
-                    .map((name) => ({
-                        ...compendium.spells.find((e) => (e.name === name)),
-                        name
-                    }))
-                    .sort((left, right) => {
-                        switch (sortOrder) {
-                            case "name":
-                                if (left.name < right.name) { return -1 }
-                                if (left.name > right.name) { return +1 }
-                                return 0
-                            case "level":
-                                if (left.level < right.level) { return -1 }
-                                if (left.level > right.level) { return +1 }
-                                return 0
-                        }
-                    })
-                    .map(({ name, level }) => (
-                        <div key={name} style={{display: "contents"}}>
-                            <div key="name"
-                                onClick={() => {
-                                    const spellCard = document.getElementById(`compendium-${name.replace(" ", "-")}`)
-                                    
-                                    if (spellCard) {
-                                        spellCard.classList.add("target")
-                                        spellCard.scrollIntoView({ behavior: "smooth", block: "start" })
-
-                                        setTimeout(() => {
-                                            spellCard.classList.remove("target")
-                                        }, 1000)
-                                    }
-                                }}
-                                className={
-                                    (character.compendium.spells.map((i) => (i.name)).includes(name))
-                                    ? "pointer compendium-present"
-                                    : ""
-                                }
-                            >{name}</div>
-                            <div key="level">{
-                                level === 0 ? "Cantrip" : `Level ${level}`
-                            }</div>
-                        </div>
-                    ))
-                }
-            </div>
-        </div>
+    const topChunk = (
+        <>
+            <StatBlock
+                name="Spell Attack"
+                primary={StatBlockMod(character.spellMod)}
+                secondary=""
+            />
+            <StatBlock
+                name="Spell Save DC"
+                primary={character.spellSaveDC}
+                secondary=""
+            />
+        </>
     )
+
+    const SpellNameInList = ({ name }) => {
+        const doJump = useCompendiumJump(name)
+
+        return <div key="name"
+            onClick={doJump}
+            className={
+                (character.compendium.spells.map((i) => (i.name)).includes(name))
+                ? "pointer compendium-present"
+                : ""
+            }
+        >{name}</div>
+    }
+
+    const SpellLevelInList = ({ level }) => (<div key="level">{level === 0 ? "Cantrip" : `Level ${level}`}</div>)
+
+    return <GeneralList
+            title="Spells" 
+            topChunk={topChunk}
+            data={ character.fullSpells }
+            sortOptions={[
+                { name: "level", sort: makeSortFun("level") },
+                { name: "name", sort: makeSortFun("name") },
+            ]}
+            columns={[ SpellNameInList, SpellLevelInList ]}   
+            gridTemplateColumns="1fr auto"
+    />
 }

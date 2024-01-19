@@ -162,6 +162,7 @@ body {
 }
 
 .main-grid {
+    display: grid;
     grid-template-columns: 1fr;
     row-gap: 1em;
     column-gap: 4em;
@@ -227,6 +228,8 @@ body {
     }
 }
 
+.break-page { break-before: page; }
+
 @media print and (orientation: portrait) {
     .main-grid {
         grid-template-columns: 1fr 1fr;
@@ -290,4 +293,12 @@ body {
 
 .anchor.target hr {
     border-color: var(--fg-yellow) !important;
+}
+
+.box {
+    padding: 4px 1em;
+    border: 1px solid;
+    border-radius: 4px;
+    border-color: var(--bd-primary);
+    position: relative;
 }

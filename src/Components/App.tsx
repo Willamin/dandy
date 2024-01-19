@@ -1,9 +1,9 @@
-import React, { useRef, useContext } from 'react'
-import { AbilityScores, SavingThrows } from './AbilityScoresAndSaves'
+import React, { useRef } from 'react'
+import { AbilityScores, SavingThrows, StatBlockMod } from './AbilityScoresAndSaves'
 import { CharacterName } from './CharacterName'
 import Proficiencies, { OtherStats } from './Proficiencies'
 import { Description } from './Description'
-import { CharacterContext } from '..'
+import { CharacterContext, useCharacter } from '..'
 import JSON5 from 'json5'
 import { shrinkToSheet } from '../DataModel/CharacterSheet'
 import { Skills } from './Skills'
@@ -13,9 +13,10 @@ import { FeaturesDescriptions } from './FeaturesDescriptions'
 import { Compendium } from './Compendium'
 import { InventoryHistory } from './InventoryHistory'
 import { StatBlock } from './StatBlock'
+import { GeneralList } from './GeneralList'
 
 export const App: React.FC = () => {
-    const [character, saveCharacter] = useContext(CharacterContext)
+    const [character, saveCharacter] = useCharacter()
     const { sheetView: { inventoryHistoryVisible } } = character
 
     React.useEffect(() => {
@@ -29,21 +30,29 @@ export const App: React.FC = () => {
                 <IfPresent value={character}>
                     <CharacterName />
 
-                    <Grid className="main-grid">
-                        <Description className="span2" />
+                    <div className="main-grid">
+                        <div className="box">
+                            <Description />
+                            <Proficiencies />
+                        </div>
                         
-                        <AbilityScores />
-                        <SavingThrows />
+                        <div className="box">
+                            <strong>Stats</strong>
+                            <OtherStats />
+                            <hr style={{margin: "1em 0"}}/>
+                            <AbilityScores />
+                            <hr style={{margin: "1em 0"}}/>
+                            <SavingThrows />
+                        </div>
                         
-                        <OtherStats className="if-3-col-then-row-1-column-3" />
-                        <Proficiencies />
+                        
 
                         <Skills />
-                        <FeaturesDescriptions />
                         <Spells />
+                        <FeaturesDescriptions />
                         <Items />
                         { inventoryHistoryVisible && (<InventoryHistory />) }
-                    </Grid>
+                    </div>
 
                     <Compendium />
 
@@ -81,7 +90,7 @@ const IfNotPresent: React.FC<{value: any, children: React.ReactChild}> = ({value
 )
 
 const Menu = () => {
-    const [character, saveCharacter] = useContext(CharacterContext)
+    const [character, saveCharacter] = useCharacter()
 
     const handleFileChange = (event) => {
         const file = event.target.files[0]

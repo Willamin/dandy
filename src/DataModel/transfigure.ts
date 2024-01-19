@@ -13,6 +13,7 @@ import {
     AnyItem,
     ItemState,
     FeatureEffectSpell,
+    SpellDefinition,
 } from "./CharacterSheet";
 
 export type DerivedCharacter = {
@@ -34,6 +35,7 @@ export type DerivedCharacter = {
     savingThrowProficiencyBonuses: AbilityScores, // structurally it's the same
     classes: string[],
     spells: string[],
+    fullSpells: SpellDefinition[],
     armorClass: number,
     currentItems: (AnyItem & ItemState)[],
     spellMod: number,
@@ -235,6 +237,11 @@ export const transfigure = (character: CharacterSheet): FullCharacter => {
 
     const spellMod = abilityMods.charisma + proficiencyBonus
     const spellSaveDC = 8 + spellMod
+
+    const fullSpells = spells.map((name) => ({
+        ...character.compendium.spells.find(s=>(s.name === name)),
+        name
+    }))
     
     return {
         ...character,
@@ -260,6 +267,7 @@ export const transfigure = (character: CharacterSheet): FullCharacter => {
         currentItems,
         spellMod,
         spellSaveDC,
+        fullSpells,
     }
 }
 

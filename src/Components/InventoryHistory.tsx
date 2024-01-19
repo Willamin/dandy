@@ -1,9 +1,9 @@
-import React, { useState } from "react"
-import { BounceHistoryContext, CharacterContext } from "..";
+import React, { useState, useContext } from "react"
+import { BounceHistoryContext, useCharacter } from "..";
 
 export const InventoryHistory: React.FC<{style?: React.style}> = ({style}) => {
-    const [bouncing, setBouncing] = React.useContext(BounceHistoryContext)
-    const [character, setCharacter] = React.useContext(CharacterContext);
+    const [bouncing, setBouncing] = useContext(BounceHistoryContext)
+    const [character, setCharacter] = useCharacter()
     const { inventoryHistory, sheetView } = character;
     const { currentInventory } = sheetView
 
@@ -31,17 +31,24 @@ export const InventoryHistory: React.FC<{style?: React.style}> = ({style}) => {
 
                 { 
                     inventoryHistory
-                    .map(({ comment }, index) => (
-                        <React.Fragment key={index}>
-                            <button
-                                className="checkbox"
-                                onClick={ () => { setCharacter({...character, sheetView: {...sheetView, currentInventory: index }}) }}
-                            >
-                                <div className={currentInventory === index ? "checkmark" : ""} />
-                            </button>
-                            <div style={{display: "inline-block"}} key="comment">{comment}</div>
-                        </React.Fragment>
-                    ))
+                    .map(({ comment }, index) => {
+                        if (comment === "---") {
+                            return (<React.Fragment key={index}>
+                               <div style={{display: "inline-block"}}></div><hr style={{display: "inline-block", margin: "1em 0"}}/>
+                            </React.Fragment>)
+                        } else {
+                            return (<React.Fragment key={index}>
+                                <button
+                                    className="checkbox"
+                                    style={{top: "3px"}}
+                                    onClick={ () => { setCharacter({...character, sheetView: {...sheetView, currentInventory: index }}) }}
+                                >
+                                    <div className={currentInventory === index ? "checkmark" : ""} />
+                                </button>
+                                <div style={{display: "inline-block"}} key="comment">{comment}</div>
+                            </React.Fragment>
+                        )}
+                    })
                 }
             </div>
         </div>

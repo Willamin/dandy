@@ -1,11 +1,11 @@
 
 import React from "react"
-import { CharacterContext } from "..";
+import { CharacterContext, useCharacter } from "..";
 import { Tag } from "./TagRow";
 import { aan } from "../Helpers/aan";
 
 export const Description: React.FC<{style?: React.style, className?: string}> = ({style, className}) => {
-    const [character, saveCharacter] = React.useContext(CharacterContext);
+    const [character, saveCharacter] = useCharacter();
     const {
         levels,
         sheetView: { currentLevel },

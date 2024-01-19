@@ -14,7 +14,7 @@ export const Tag: React.FC<{children: React.ReactChild, className?: string, inli
     }}>{children}</div>
 )
 
-export const TagRow: React.FC<{title: string, tags: React.ReactChild[], tagsClassName?: string}> = ({title, tags, tagsClassName}) => (
+export const TagRow: React.FC<{title: string, tags: React.ReactChild[], tagsClassName?: string, key?: string}> = ({title, tags, tagsClassName}) => (
     <div style={{
         display: "block",
         justifyContent: "flex-start",
@@ -27,7 +27,7 @@ export const TagRow: React.FC<{title: string, tags: React.ReactChild[], tagsClas
         <span>{title}:</span>
         { (tags ?? []).length == 0 && (<Tag className={tagsClassName} key={"none"}>None</Tag>)}
         {[...(tags ?? [])].map(tag => (
-            <Tag className={tagsClassName} key={tag}>{tag}</Tag>
+            <Tag className={tagsClassName} key={tag.key ?? tag}>{tag}</Tag>
         ))}
     </div>
 )

@@ -1,7 +1,8 @@
 import React, { useState } from "react"
-import { BounceHistoryContext, CharacterContext } from "..";
+import { BounceHistoryContext, CharacterContext, useCharacter } from "..";
 import { AbilityScoreOrder, SkillsToAbilities, prefixify, titleCase } from "../DataModel/CharacterSheet";
 import { StatBlock } from "./StatBlock";
+import { useCompendiumJump } from "../Helpers/useCompendiumJump";
 
 const MapAllKeys = (obj) => {
     return Object.keys(obj).map((k) => ([k, obj[k]]))
@@ -22,7 +23,7 @@ const FilterBoth = <T,>(array : T[], predicate: ((T) => [T[], T[]])) => {
 
 export const Items: React.FC<{style?: React.style}> = ({style, className}) => {
     const [bouncing, setBouncing] = React.useContext(BounceHistoryContext);
-    const [character, setCharacter] = React.useContext(CharacterContext);
+    const [character, setCharacter] = useCharacter();
 
     const { currentItems, sheetView } = character;
     const { currentInventory, inventoryHistoryVisible } = sheetView
@@ -115,6 +116,46 @@ export const Items: React.FC<{style?: React.style}> = ({style, className}) => {
                 ...character.inventoryHistory.slice(1),
             ]
         })
+    }
+
+    const ItemNameAndCommentInList = ({ name, quantity, comment, contained}) => {
+        return <div key="name"
+            onClick={() => {
+                const itemCard = document.getElementById(`compendium-${name.replace(" ", "-")}`)
+                
+                if (itemCard) {
+                    itemCard.classList.add("target")
+                    itemCard.scrollIntoView({ behavior: "smooth", block: "start" })
+
+                    setTimeout(() => {
+                        itemCard.classList.remove("target")
+                    }, 1000)
+                }
+            }}
+            className={
+                (character.compendium.items.map((i) => (i.name)).includes(name))
+                ? "pointer compendium-present compendium-potential"
+                : "compendium-potential"
+            }
+            style={{
+                textIndent: "1em hanging each-line",
+                lineHeight: "15px",
+            }}>
+            {name}
+            { quantity > 1 && (<br/>) }
+            { quantity > 1 && (<small style={{ display: "inline-block", textIndent: "1em"}}>×{quantity}</small>) }
+
+            { contained && (<br/>) }
+            { contained && (
+                <small style={{ 
+                    display: "inline-block", 
+                    textIndent: "1em", 
+                    fontStyle: "italic"
+                }}>in <b>{contained}</b></small>) }
+
+            { comment && (<br/>) }
+            { comment && (<small style={{ display: "inline-block", textIndent: "1em"}}>{comment}</small>) }
+        </div>
     }
 
     return (
@@ -217,43 +258,7 @@ export const Items: React.FC<{style?: React.style}> = ({style, className}) => {
                                     <div className={contained ? "checkmark" : ""}>C</div>
                                     <div className="disablemark">╱</div>
                                 </button>
-                                <div key="name" 
-                                    onClick={() => {
-                                        const itemCard = document.getElementById(`compendium-${name.replace(" ", "-")}`)
-                                        
-                                        if (itemCard) {
-                                            itemCard.classList.add("target")
-                                            itemCard.scrollIntoView({ behavior: "smooth", block: "start" })
-
-                                            setTimeout(() => {
-                                                itemCard.classList.remove("target")
-                                            }, 1000)
-                                        }
-                                    }}
-                                    className={
-                                        (character.compendium.items.map((i) => (i.name)).includes(name))
-                                        ? "pointer compendium-present compendium-potential"
-                                        : "compendium-potential"
-                                    }
-                                    style={{
-                                        textIndent: "1em hanging each-line",
-                                        lineHeight: "15px",
-                                    }}>
-                                    {name}
-                                    { quantity > 1 && (<br/>) }
-                                    { quantity > 1 && (<small style={{ display: "inline-block", textIndent: "1em"}}>×{quantity}</small>) }
-
-                                    { contained && (<br/>) }
-                                    { contained && (
-                                        <small style={{ 
-                                            display: "inline-block", 
-                                            textIndent: "1em", 
-                                            fontStyle: "italic"
-                                        }}>in <b>{contained}</b></small>) }
-
-                                    { comment && (<br/>) }
-                                    { comment && (<small style={{ display: "inline-block", textIndent: "1em"}}>{comment}</small>) }
-                                </div>
+                                <ItemNameAndCommentInList name={name} quantity={quantity} comment={comment} contained={contained} />
                             </React.Fragment>
                         ))
                 }
