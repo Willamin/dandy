@@ -4,6 +4,7 @@ import { App } from './Components/App'
 import { FullCharacter, transfigure } from './DataModel/transfigure'
 
 import ExampleCharacter from './example-character.ts'
+import { PagesVisibleProvider } from './Hooks/usePagesVisibile.tsx'
 
 export const CharacterContext = React.createContext<[FullCharacter, (newChar: FullCharacter) => void]>([{} as FullCharacter, ()=>{}])
 export const BounceHistoryContext = React.createContext<[boolean, (newBounce: boolean) => void]>(false, ()=>{})
@@ -26,6 +27,8 @@ const Wrapper = () => {
     setBouncing(value)
   }
 
+  const [visiblePages, setVisiblePages] = useState(["main", "inventory", "spells", "features", "items"])
+
   return (
     <CharacterContext.Provider value={[
       transfiguredCharacter, 
@@ -35,7 +38,9 @@ const Wrapper = () => {
         bouncing,
         setBouncingInterceptor
       ]}>
-        <App />
+        <PagesVisibleProvider value={[visiblePages, setVisiblePages]}>
+          <App />
+        </PagesVisibleProvider>
       </BounceHistoryContext.Provider>
     </CharacterContext.Provider>
   )

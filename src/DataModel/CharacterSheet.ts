@@ -43,12 +43,20 @@ export type ItemState = {
     contained?: string | "false",
 }
 
-export type Inventory = {
+export type Inventory = InventoryRow | InventoryRule
+
+export type InventoryRow = {
     comment: string,
     items: Array<ItemState>
-} | { comment: "---" }
+} 
 
-export type AnyItem = 
+export type InventoryRule = { comment: "---" }
+
+export type WeaponTraits = 
+    "light" | "heavy" | "versatile" 
+    | "finesse" | "thrown" | "two handed"
+
+export type AnyItemBase = 
     ( 
         { type: "item" } 
         | 
@@ -59,21 +67,26 @@ export type AnyItem =
         | 
         {
             type: "weapon",
-            light?: boolean,
-            heavy?: boolean,
-            versatile?: boolean,
-            finesse?: boolean,
-            thrown?: boolean,
-            twoHanded?: boolean,
+            traits: WeaponTraits[],
         }
     ) 
     & 
     {  
         name: string,
         description?: string,
-        equippedEffects?: FeatureEffect[],
-        equippedAndAttunedEffects?: FeatureEffect[],
     }
+
+export type AnyItem = AnyItemBase & AnyItemEffects
+export type SourcedAnyItem = AnyItemBase & SourcedAnyItemEffects
+
+export type AnyItemEffects = {
+    equippedEffects?: FeatureEffect[],
+    equippedAndAttunedEffects?: FeatureEffect[],
+}
+export type SourcedAnyItemEffects = {
+    equippedEffects?: Sourced<FeatureEffect>[],
+    equippedAndAttunedEffects?: Sourced<FeatureEffect>[],
+}
 
 export type DiceSize = 4 | 6 | 8 | 10 | 12 | 20
 
@@ -99,7 +112,7 @@ export type AbilityScores = {
 export type Ability = keyof AbilityScores
 
 export type Compendium = {
-    classes: Array<{name: string, hitDice: DiceSize}>,
+    classes: Array<{name: string, hitDice: DiceSize, spellcastingAbility?: string}>,
     spells: Array<SpellDefinition>,
     items: Array<AnyItem>,
 }
@@ -108,6 +121,7 @@ export type SpellDefinition = {
     name: string,
     level: number,
     description: string,
+    attacks?: FeatureEffectAttack[],
 }
 
 export type Species = {
@@ -138,7 +152,7 @@ export type FeatureOnlyDescription = {
 }
 
 export type Feature 
-=  FeatureWithEffect | FeatureOnlyDescription
+= (FeatureWithEffect | FeatureOnlyDescription) & { sourceClass?: string }
 
 export const SkillsToAbilities = {
     "acrobatics": "dexterity",
@@ -200,6 +214,8 @@ export type FeatureEffect
 | FeatureEffectAC
 | FeatureEffectAttack
 
+export type Sourced<FE extends FeatureEffect> = FE & { source: string }
+
 export type Level = {
     class: string,
     features: Array<Feature>,
@@ -220,13 +236,19 @@ export type FeatureEffectAC =
     ({ armorClassBase: number } | { armorClassBonus: number })
     &
     ({ dexModMultiplier: number, dexModMaximum?: number })
-export type FeatureEffectAttack = {
-    name?: string,
-    attackType: "melee",
-    reach: number,
-    damageType: "slashing" | "piercing",
-    damage: DiceCollection & { bonus: number },
-}
+export type FeatureEffectAttack = 
+    { damageTypes: DamageType[], name?: string } 
+    & 
+    (
+        { attackType: "melee", reach: number }
+        |
+        { attackType: "ranged", range: number }
+    )
+
+export type DamageType = 
+    "acid" | "bludgeoning" | "cold" | "fire" | "force"
+    | "lightning" | "necrotic" | "piercing" | "piercing"
+    | "poison" | "psychic" | "radiant" | "slashing" | "thunder"
 
 export const prefixify = (value: number): {sign: string, abs: string, combined: string} => {
     if (value >= 0) {

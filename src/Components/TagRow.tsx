@@ -1,21 +1,20 @@
 import React from "react"
 
-export const Tag: React.FC<{children: React.ReactChild, className?: string, inline?: boolean}> = ({ children, className, inline = false }) => (
-    <div className={className} style={{
+export const Tag: React.FC<{children: React.ReactChild, className?: string, inline?: boolean, style?: object}> = ({ children, className, inline = false, style = {} }) => (
+    <div className={"tag " + className} style={{
         display: "inline-block",
         border: "1px solid",
-        borderColor: "var(--bd-primary)",
         borderRadius: "4px",
         padding: "0 4px",
         margin: inline ? "0px" : "4px 4px",
         lineHeight: inline ? "1em" : "1.2em",
         position: "relative",
-        backgroundColor: "var(--bg-secondary)"
+        ...style
     }}>{children}</div>
 )
 
-export const TagRow: React.FC<{title: string, tags: React.ReactChild[], tagsClassName?: string, key?: string}> = ({title, tags, tagsClassName}) => (
-    <div style={{
+export const TagRow: React.FC<{title: string, tags: React.ReactChild[], tagsClassName?: string, key?: string, classNameCallback?: (string)=>(string)}> = ({title = "", tags, tagsClassName = "", classNameCallback = (tagName) => ("")}) => {
+    return <div style={{
         display: "block",
         justifyContent: "flex-start",
         alignItems: "center",
@@ -24,10 +23,17 @@ export const TagRow: React.FC<{title: string, tags: React.ReactChild[], tagsClas
         lineHeight: "1.2em",
         textIndent: "1em hanging each-line",
     }}>
-        <span>{title}:</span>
+        { title != "" && <span>{title}:</span> }
         { (tags ?? []).length == 0 && (<Tag className={tagsClassName} key={"none"}>None</Tag>)}
-        {[...(tags ?? [])].map(tag => (
-            <Tag className={tagsClassName} key={tag.key ?? tag}>{tag}</Tag>
-        ))}
+        {[...(tags ?? [])].map(tag => {
+            const extraClassNames = (() => {
+                if (typeof tag === "string") {
+                    return classNameCallback(tag)
+                } else {
+                    return ""
+                }
+            })()
+            return <Tag className={tagsClassName + " " + extraClassNames} key={typeof tag == "object" ? tag.key ?? tag : tag}>{tag}</Tag>
+        })}
     </div>
-)
+}

@@ -1,7 +1,9 @@
 :root {
     /* Mostly from FlatWhite theme */
+    /* --bg-nullary: hsl(30, 30%, 98%); */
+    --bg-nullary: #E4DDD2;
     --bg-primary: #F6F3EE;
-    --bg-secondary: hsl(35, 25%, 86%);
+    --bg-secondary: #E4DDD2; 
     --fg-primary: #5F5B53;
     --bd-primary: #5F5B53;
 
@@ -24,6 +26,7 @@
 
 @media(prefers-color-scheme: dark) {
     :root {
+        --bg-nullary: #1c1717;
         --bg-primary: #2B2525;
         --bg-secondary: #362F2F;
         --fg-primary: #FDF1F3;
@@ -47,16 +50,25 @@
     }
 }
 
+@media print {
+    :root {
+        --bg-nullary: white;
+        --bd-primary: black;
+        --fg-primary: black;
+        --bg-primary: white;
+        --bg-secondary: white;
+    }
+}
+
 .secondary { background-color: var(--bg-secondary); }
 
-.red { color: var(--fg-red); background-color: var(--bg-red); }
-.orange { color: var(--fg-orange); background-color: var(--bg-orange); }
-.yellow { color: var(--fg-yellow); background-color: var(--bg-yellow); }
-.green { color: var(--fg-green); background-color: var(--bg-green); }
-.cyan { color: var(--fg-cyan); background-color: var(--bg-cyan); }
-.blue { color: var(--fg-blue); background-color: var(--bg-blue); }
-.violet { color: var(--fg-violet); background-color: var(--bg-violet); }
-
+.red { color: var(--fg-red) !important; background-color: var(--bg-red) !important; }
+.orange { color: var(--fg-orange) !important; background-color: var(--bg-orange) !important; }
+.yellow { color: var(--fg-yellow) !important; background-color: var(--bg-yellow) !important; }
+.green { color: var(--fg-green) !important; background-color: var(--bg-green) !important; }
+.cyan { color: var(--fg-cyan) !important; background-color: var(--bg-cyan) !important; }
+.blue { color: var(--fg-blue) !important; background-color: var(--bg-blue) !important; }
+.violet { color: var(--fg-violet) !important; background-color: var(--bg-violet) !important; }
 
 body { 
     font-size: 14px;
@@ -71,8 +83,8 @@ body {
                  "Droid Sans", 
                  "Helvetica Neue", 
                  Arial, sans-serif;
-    background-color: var(--bg-primary);
     color: var(--fg-primary);
+    background-color: var(--bg-nullary);
 }
 
 .hover-show { display: none; }
@@ -86,6 +98,8 @@ body {
     border: 1px solid transparent;
     border-radius: 5px;
     padding: 0 5px;
+    /* position: relative; */
+    /* margin-left: -5px; */
 }
 
 .compendium-present:hover {
@@ -143,7 +157,8 @@ button.checkbox > * {
 }
 
 button.checkbox:not(:disabled) > .checkmark {
-    box-shadow: inset 0 0 0 10px var(--fg-primary);
+    /* box-shadow: inset 0 0 0 10px var(--fg-primary); */
+    background-color: var(--fg-primary);
     color: var(--bg-primary);
 }
 
@@ -165,12 +180,12 @@ body {
     display: grid;
     grid-template-columns: 1fr;
     row-gap: 1em;
-    column-gap: 4em;
+    column-gap: 1em;
 }
 
 .span2 { /* */ }
 
-.compendium-columns { columns: 1; }
+.compendium-columns { columns: 1; column-fill: balance; }
 
 @media screen and (min-width: calc(22em + 22em + 4em)) {
     body {
@@ -219,11 +234,8 @@ body {
     .do-not-print { display: none !important; }
 
     body {
-        background-color: none;
         font-size: 12px;
-        --fg-primary: black;
-        --bg-primary: white;
-        --bg-secondary: white;
+        background-color: none;
         color-adjust: exact;
     }
 }
@@ -234,7 +246,7 @@ body {
     .main-grid {
         grid-template-columns: 1fr 1fr;
         row-gap: 1em;
-        column-gap: 4em;
+        column-gap: 1em;
     }
 
     .span2 {
@@ -248,7 +260,7 @@ body {
     .main-grid {
         grid-template-columns: 1fr 1fr 1fr;
         row-gap: 1em;
-        column-gap: 4em;
+        column-gap: 1em;
     }
 
     .span2 {
@@ -299,6 +311,37 @@ body {
     padding: 4px 1em;
     border: 1px solid;
     border-radius: 4px;
+    background-color: var(--bg-primary);
+    color: var(--fg-primary);
     border-color: var(--bd-primary);
     position: relative;
+    /* box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2); */
+}
+
+@media print {
+    .box.no-box-border-on-print {
+        border-color: transparent;
+    }
+}
+
+.tag {
+    color: var(--fg-primary);
+    border-color: var(--bd-primary);
+    background-color: var(--bg-secondary);
+}
+
+
+@media print {
+    .inventory-history {
+        grid-template-columns: 1fr !important;
+        gap: 0.5em !important;
+    }
+
+    .inventory-history div {
+        text-indent: 1em hanging each-line;
+    }
+
+    .inventory-history hr {
+        margin: 0 !important;
+    }
 }

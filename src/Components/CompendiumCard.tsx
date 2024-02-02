@@ -9,19 +9,22 @@ export const CompendiumCard: React.FC<{title: string, content: string}> = ({ tit
     const [classes, setClasses] = useState("anchor")
 
     return (
-        <div className={classes} id={"compendium-" + title.replace(" ", "-")} style={{
-            border: "1px solid var(--bd-primary)",
-            borderRadius: "5px",
-            padding: "5px 10px",
-            display: "inline-block",
-            marginTop: "1em",
-            scrollMarginTop: "5em",
-        }}>
-            <b>{title}</b>
-            <br/>
-            <p 
-                dangerouslySetInnerHTML={{__html: body}}
-            />
+        <div style={{breakInside: "avoid"}}>
+            <div className={classes + " box"} id={"compendium-" + title.replace(" ", "-")} style={{
+                display: "block",
+                margin: "0 0 0 0",
+                scrollMarginTop: "5em",
+                breakInside: "avoid",
+            }}>
+                <b>{title}</b>
+                <br/>
+                <p 
+                    dangerouslySetInnerHTML={{__html: body}}
+                />
+            </div>
+
+            { /* stupid hack to force a "row gap" that doesn't widow itself at the top of the next column */ }
+            <div style={{display: "inline-block", height: "1em", margin: 0, padding: 0}}></div>
         </div>
     )
 }

@@ -1,7 +1,7 @@
 import React from "react";
 import { CharacterContext, useCharacter } from "..";
 
-export const CharacterName: React.FC<{style?: React.style}> = ({style}) => {
+export const CharacterName: React.FC<{style?: React.style, preferredName: string}> = ({style, preferredName}) => {
     const [character, setCharacter] = useCharacter();
 
     const { descriptive: { longName, shortName }, sheetView: { namePreference } } = character;
@@ -23,13 +23,7 @@ export const CharacterName: React.FC<{style?: React.style}> = ({style}) => {
                     }
                 })
             }}>
-                {(()=>{
-                    switch(namePreference) {
-                    case "long": return longName;
-                    case "short": return shortName;
-                    default: return "error";
-                    }
-                })()}
+                {preferredName}
             </h1>
         </div>
     )

@@ -45,7 +45,7 @@ const example: CharacterSheet = {
                 name: "Skill Versatility",
                 effects: [
                   { skillProficiency: "persuasion" },
-                  { skillProficiency: "performance" },
+                  { skillProficiency: "deception" },
                 ],
             },
             {
@@ -65,7 +65,7 @@ const example: CharacterSheet = {
         ],
     },
     background: {
-        name: "Sage",
+        name: "Sage / Military",
         features: [
             {
                 name: "Languages",
@@ -78,7 +78,7 @@ const example: CharacterSheet = {
                 name: "Skill Proficiency",
                 effects: [
                     { skillProficiency: "arcana" },
-                    { skillProficiency: "history" },
+                    { skillProficiency: "intimidation" },
                 ],
             },
         ],
@@ -100,6 +100,29 @@ const example: CharacterSheet = {
     },
     inventoryHistory: [
         {
+            comment: "Adjusting bags",
+            items: [
+                { name: "Gold Pieces", quantity: 635, currency: true },
+                { name: "Gauntlets of Ogre Power", equipped: true, attuned: true },
+                { name: "Studded Leather Armor", equipped: true },
+                { name: "Sleepy Hat", equipped: true },
+                { name: "Bag of Holding" },
+                { name: "Nine Lives Stealer Longsword", attuned: true, equipped: true },
+                { name: "Lightsaber +1", equipped: false, contained: "Bag of Holding" },
+                
+                { name: "Dragon Egg", quantity: 2, contained: "Bag of Holding"},
+                { name: "Mysterious Potion", quantity: 2, comment: "probably not health potions", contained: "Bag of Holding" },
+
+                { name: "Waterskin" },
+                { name: "Rations", quantity: 5 },
+                { name: "Torch", quantity: 2 },
+                { name: "Component Pouch" },
+
+                { name: "Cultist Outfit", equipped: false, contained: "Bag of Holding" },
+                { name: "Cultist Sword", equipped: false, contained: "Bag of Holding" },
+            ]
+        },
+        {
             comment: "Shopping: got mystery potions for free",
             items: [
                 { name: "Gold Pieces", quantity: 635, currency: true },
@@ -115,7 +138,7 @@ const example: CharacterSheet = {
                 { name: "Bag of Holding" },
                 { name: "Nine Lives Stealer Longsword", attuned: true, equipped: true },
                 { name: "Dragon Egg", quantity: 2, contained: "Bag of Holding"},
-                { name: "Rapier +1 (Lamp)" },
+                { name: "Lightsaber +1", equipped: false, contained: "Bag of Holding" },
                 { name: "Mysterious Potion", quantity: 2, comment: "probably not health potions", contained: "Bag of Holding" },
             ]
         },
@@ -135,7 +158,7 @@ const example: CharacterSheet = {
                 { name: "Bag of Holding" },
                 { name: "Nine Lives Stealer Longsword", attuned: true, equipped: true },
                 { name: "Dragon Egg", quantity: 2, contained: "Bag of Holding" },
-                { name: "Rapier +1 (Lamp)", contained: "Bag of Holding" },
+                { name: "Lightsaber +1", equipped: false, contained: "Bag of Holding" },
             ]
         },
         {
@@ -404,6 +427,7 @@ const example: CharacterSheet = {
             {
                 name: "Warlock",
                 hitDice: 8,
+                spellcastingAbility: "charisma",
             },
             {
                 name: "Fighter",
@@ -424,12 +448,26 @@ const example: CharacterSheet = {
             {
                 "name": "Vicious Mockery",
                 "level": 0,
-                "description": "Enchantment Cantrip\n---\nCasting Time: 1 action\nRange/Area: 60 feet\nComponents: V\nDuration: Instantaneous\n---\nYou unleash a string of insults laced with subtle enchantments at a creature you can see within range. If the target can hear you (though it need not understand you), it must succeed on a Wisdom saving throw or take 1d4 psychic damage and have disadvantage on the next attack roll it makes before the end of its next turn.\nThis spell's damage increases by 1d4 when you reach 5th level (2d4), 11th level (3d4), and 17th level (4d4).\n"
+                "description": "Enchantment Cantrip\n---\nCasting Time: 1 action\nRange/Area: 60 feet\nComponents: V\nDuration: Instantaneous\n---\nYou unleash a string of insults laced with subtle enchantments at a creature you can see within range. If the target can hear you (though it need not understand you), it must succeed on a Wisdom saving throw or take 1d4 psychic damage and have disadvantage on the next attack roll it makes before the end of its next turn.\nThis spell's damage increases by 1d4 when you reach 5th level (2d4), 11th level (3d4), and 17th level (4d4).\n",
+                attacks: [
+                    {
+                        attackType: "ranged",
+                        range: 60, //feet
+                        damageTypes: ["psychic"],
+                    }
+                ]
             },
             {
                 "name": "Eldritch Blast",
                 "level": 0,
-                "description": "Evocation Cantrip\n---\nCasting Time: 1 action\nRange: 120 feet\nComponents: V, S\nDuration: Instantaneous\n---\nA beam of crackling energy straks toward a creature within range. Make a ranged spell attack against the target. On a hit, the target takes 1d10 force damage.\nThe spell creates more than one beam when you reach higher levels: two beams at 5th level, three beams at 11th level, and four beams at 17th level. You can direct the beams at the same target or at different ones. Make a separate attack roll for each beam.\n"
+                "description": "Evocation Cantrip\n---\nCasting Time: 1 action\nRange: 120 feet\nComponents: V, S\nDuration: Instantaneous\n---\nA beam of crackling energy straks toward a creature within range. Make a ranged spell attack against the target. On a hit, the target takes 1d10 force damage.\nThe spell creates more than one beam when you reach higher levels: two beams at 5th level, three beams at 11th level, and four beams at 17th level. You can direct the beams at the same target or at different ones. Make a separate attack roll for each beam.\n",
+                attacks: [
+                    { 
+                        attackType: "ranged",
+                        range: 120, // feet
+                        damageTypes: ["force"],
+                    }
+                ]
             },
             {
                 "name": "Bestow Curse",
@@ -524,7 +562,14 @@ const example: CharacterSheet = {
             {
                 "name": "Scorching Ray",
                 "level": 2,
-                "description": "2nd-level evocation\n---\nCasting Time: 1 action\nRange: 120 feet\nComponents: V, S\nDuration: Instantaneous\n---\nYou create three rays of fire and hurl them at targets within range. You can hurl them at one target or several.\nMake a ranged spell attack for each ray. On a hit, the target takes 2d6 fire damage.\nAt Higher Levels. When you cast this spell using a spell slot of 3rd level or higher, you create one additional ray for each slot level above 2nd."
+                "description": "2nd-level evocation\n---\nCasting Time: 1 action\nRange: 120 feet\nComponents: V, S\nDuration: Instantaneous\n---\nYou create three rays of fire and hurl them at targets within range. You can hurl them at one target or several.\nMake a ranged spell attack for each ray. On a hit, the target takes 2d6 fire damage.\nAt Higher Levels. When you cast this spell using a spell slot of 3rd level or higher, you create one additional ray for each slot level above 2nd.",
+                "attacks": [
+                    {
+                        attackType: "ranged",
+                        range: 120,
+                        damageTypes: ["fire"],
+                    }
+                ]
             },
             {
                 "name": "Hex",
@@ -534,7 +579,14 @@ const example: CharacterSheet = {
             {
                 "name": "Witch Bolt",
                 "level": 1,
-                "description": "1st-level evocation\n---\nCasting Time: 1 action\nRange: 30 feet\nComponents: V, S, M (a twig from a tree that has been struck by lightning)\nDuration: Concentration, up to 1 minute\n---\nA beam of crackling, blue energy lances out toward a creature within range, forming a sustained arc of lightning between you and the target. Make a ranged spell attack against that creature. On a hit, the target takes 1d12 lightning damage, and on each of your turns for the duration, you can use your action to deal 1d12 lightning damage to the target automatically. The spell ends if you use your action to do anything else. The spell also ends if the target is ever outside the spell’s range or if it has total cover from you.\nAt Higher Levels. When you cast this spell using a spell slot of 2nd level or higher, the initial damage increases by 1d12 for each slot level above 1st."
+                "description": "1st-level evocation\n---\nCasting Time: 1 action\nRange: 30 feet\nComponents: V, S, M (a twig from a tree that has been struck by lightning)\nDuration: Concentration, up to 1 minute\n---\nA beam of crackling, blue energy lances out toward a creature within range, forming a sustained arc of lightning between you and the target. Make a ranged spell attack against that creature. On a hit, the target takes 1d12 lightning damage, and on each of your turns for the duration, you can use your action to deal 1d12 lightning damage to the target automatically. The spell ends if you use your action to do anything else. The spell also ends if the target is ever outside the spell’s range or if it has total cover from you.\nAt Higher Levels. When you cast this spell using a spell slot of 2nd level or higher, the initial damage increases by 1d12 for each slot level above 1st.",
+                attacks: [
+                    {
+                        attackType: "ranged",
+                        range: 30, // feet
+                        damageTypes: ["lightning"],
+                    }
+                ]
             }
               
         ],
@@ -572,19 +624,14 @@ const example: CharacterSheet = {
                 description: "You have a +1 bonus to attack and damage rolls made with this magic weapon.",
                 type: "weapon",
 
-                heavy: true,
-                twoHanded: true,
+                traits: ["heavy", "two handed"],
 
                 equippedEffects: [
                     {
                         attackType: "melee",
                         reach: 5, // feet
         
-                        damageType: "slashing",
-                        damage: {
-                            d6: 2,
-                            bonus: 1,
-                        },       
+                        damageTypes: ["slashing"],
                     },
                 ]
             },
@@ -593,36 +640,14 @@ const example: CharacterSheet = {
                 description: "Weapon (longsword), very rare (requires attunement)\n---\nOne-handed: melee, 5 ft reach, slashing: 1d8 + STR mod + 2\n\nTwo-handed: melee, 5ft reach, slashing: 1d10 + STR mod + 2\n---\nYou gain a +2 bonus to attack and damage rolls made with this magic weapon.\n\nThe sword has 1d8 + 1 charges. If you score a critical hit against a creature that has fewer than 100 hit points, it must succeed on a DC 15 Constitution saving throw or be slain instantly as the sword tears its life force from its body (a construct or an undead is immune). The sword loses 1 charge if the creature is slain. When the sword has no charges remaining, it loses this property.",
                 type: "weapon",
 
-                versatile: true,
+                traits: ["versatile"],
                 equippedEffects: [
                     {
-                        name: "one-handed",
                         attackType: "melee",
                         reach: 5, // feet
-        
-                        damageType: "slashing",
-                        damage: {
-                            d8: 1,
-                            bonus: 2,
-                        },       
-                    },
-                    {
-                        name: "two-handed",
-                        attackType: "melee",
-                        reach: 5, // feet
-        
-                        damageType: "slashing",
-                        damage: {
-                            d10: 1,
-                            bonus: 2,
-                        },       
-                    },
+                        damageTypes: ["slashing"],
+                    }
                 ]
-            },
-            {
-                name: "Bag of Holding",
-                type: "item",
-                description: "This bag has an interior space considerably larger than its outside dimensions, roughly 2 feet in diameter at the mouth and 4 feet deep. The bag can hold up to 500 pounds, not exceeding a volume of 64 cubic feet. The bag weighs 15 pounds, regardless of its contents. Retrieving an item from the bag requires an action.\n\nIf the bag is overloaded, pierced, or torn, it ruptures and is destroyed, and its contents are scattered in the Astral Plane. If the bag is turned inside out, its contents spill forth, unharmed, but the bag must be put right before it can be used again. Breathing creatures inside the bag can survive up to a number of minutes equal to 10 divided by the number of creatures (minimum 1 minute), after which time they begin to suffocate.\n\nPlacing a bag of holding inside an extradimensional space created by a handy haversack, portable hole, or similar item instantly destroys both items and opens a gate to the Astral Plane. The gate originates where the one item was placed inside the other. Any creature within 10 feet of the gate is sucked through it to a random location on the Astral Plane. The gate then closes. The gate is one-way only and can’t be reopened."
             },
             {
                 name: "Sleepy Hat",
@@ -630,25 +655,38 @@ const example: CharacterSheet = {
                 description: "When willingly worn, puts the wearer to sleep.",
             },
             {
-                name: "Rapier +1 (Lamp)",
+                name: "Lightsaber +1",
                 type: "weapon",
-                description: "a button on the hilt toggles the blade being lit",
+                description: "+1 Rapier\n---\na button on the hilt toggles the blade illuminating",
                 
-                finesse: true,
+                traits: ["finesse"],
                 equippedEffects: [
                     {
-                        name: "attack",
                         attackType: "melee",
                         reach: 5, // feet
         
-                        damageType: "piercing",
-                        damage: {
-                            d8: 1,
-                            bonus: 1,
-                        },       
+                        damageTypes: ["piercing"],
                     },
                 ],
-            }
+            },
+            {
+                name: "Cultist Sword",
+                type: "weapon",
+                description: "a normal Scimitar",
+                traits: ["light", "finesse"],
+                equippedEffects: [
+                    {
+                        attackType: "melee",
+                        reach: 5,
+                        damageTypes: ["slashing"],
+                    }
+                ],
+            },
+            {
+                name: "Bag of Holding",
+                type: "item",
+                description: "This bag has an interior space considerably larger than its outside dimensions, roughly 2 feet in diameter at the mouth and 4 feet deep. The bag can hold up to 500 pounds, not exceeding a volume of 64 cubic feet. The bag weighs 15 pounds, regardless of its contents. Retrieving an item from the bag requires an action.\n\nIf the bag is overloaded, pierced, or torn, it ruptures and is destroyed, and its contents are scattered in the Astral Plane. If the bag is turned inside out, its contents spill forth, unharmed, but the bag must be put right before it can be used again. Breathing creatures inside the bag can survive up to a number of minutes equal to 10 divided by the number of creatures (minimum 1 minute), after which time they begin to suffocate.\n\nPlacing a bag of holding inside an extradimensional space created by a handy haversack, portable hole, or similar item instantly destroys both items and opens a gate to the Astral Plane. The gate originates where the one item was placed inside the other. Any creature within 10 feet of the gate is sucked through it to a random location on the Astral Plane. The gate then closes. The gate is one-way only and can’t be reopened."
+            },
         ]
     },
     levels: [
@@ -699,12 +737,6 @@ const example: CharacterSheet = {
             class: "Warlock",
             features: [
                 {
-                    name: "Skill Proficiency",
-                    effects: [
-                        { skillProficiency: "deception" },
-                        { skillProficiency: "intimidation" },
-                    ],
-                }, {
                     name: "Otherworldly Patron: The Fiend",
                     description: "At 1st level, you have struck a bargain with an otherworldly being of your choice: the Fiend, which is detailed at the end of the class description, or one from another source. Your choice grants you features at 1st level and again at 6th, 10th, and 14th level.",
                 }, {

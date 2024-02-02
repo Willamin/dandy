@@ -1,5 +1,6 @@
 import React, { useState, useContext } from "react"
 import { BounceHistoryContext, useCharacter } from "..";
+import { CornerButton } from "./Items";
 
 export const InventoryHistory: React.FC<{style?: React.style}> = ({style}) => {
     const [bouncing, setBouncing] = useContext(BounceHistoryContext)
@@ -7,17 +8,16 @@ export const InventoryHistory: React.FC<{style?: React.style}> = ({style}) => {
     const { inventoryHistory, sheetView } = character;
     const { currentInventory } = sheetView
 
+    const [sortOrder, setSortOrder] = useState<"asc"|"desc">("asc")
+
     return (
-        <div className={bouncing ? "bouncing" : ""} style={{
-            padding: "4px 1em", 
-            border: "1px solid", 
-            borderRadius: "4px",
-            borderColor: "var(--bd-primary)",
+        <div className={(bouncing ? "bouncing" : "" + " box no-box-border-on-print")} style={{ 
             position: 'relative', 
              ...style
         }}>
-            <strong>Inventory History</strong>
+            <strong>Inventory History ({sortOrder})</strong>
             <div
+                className="inventory-history"
                 style={{
                     display: "grid",
                     gridTemplateColumns: "auto 1fr",
@@ -29,17 +29,38 @@ export const InventoryHistory: React.FC<{style?: React.style}> = ({style}) => {
                 }}
             >
 
+                <CornerButton
+                    title="Toggle Order"
+                    glyph="⇅"
+                    hoverGlyph={null}
+                    onClick={() => {
+                        switch (sortOrder) {
+                        case "asc": setSortOrder("desc"); break
+                        case "desc": setSortOrder("asc"); break
+                        default: console.error(`can't toggle order from '${sortOrder}'`)
+                        }
+                    }}
+                />
+
                 { 
                     inventoryHistory
-                    .map(({ comment }, index) => {
+                        .map((element, index) => ({ element, index }))
+                        .reduce((accumulator, value) => {
+                            switch (sortOrder) {
+                                case "asc": return [...accumulator, value]
+                                case "desc": return [value, ...accumulator]
+                                default: return accumulator
+                            }
+                        }, [])
+                    .map(({ element: { comment }, index }) => {
                         if (comment === "---") {
                             return (<React.Fragment key={index}>
-                               <div style={{display: "inline-block"}}></div><hr style={{display: "inline-block", margin: "1em 0"}}/>
+                               <div className="do-not-print" style={{display: "inline-block"}}></div><hr style={{display: "inline-block", margin: "1em 0"}}/>
                             </React.Fragment>)
                         } else {
                             return (<React.Fragment key={index}>
                                 <button
-                                    className="checkbox"
+                                    className="checkbox do-not-print"
                                     style={{top: "3px"}}
                                     onClick={ () => { setCharacter({...character, sheetView: {...sheetView, currentInventory: index }}) }}
                                 >

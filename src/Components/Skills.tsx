@@ -10,18 +10,26 @@ const MapAllKeys = (obj) => {
 
 export const Skills = () => {
     const [character, setCharacter] = useCharacter()
-    const { skillMods, finalAbilityScores } = character
+    const { skillMods, finalAbilityScores, skillProficiencyBonuses } = character
     const skillsInfo = MapAllKeys(skillMods)
     .map(([name, value]) => ({
         skill: name,
         mod: value,
-        ability: SkillsToAbilities[name]
+        ability: SkillsToAbilities[name],
+        prof: skillProficiencyBonuses[name] ?? 0
     }))
 
     const SkillCell = ({ skill }) => (<div key="name">{titleCase(skill)}</div>)
     const AbilityCell = ({ ability }) => (<div key="ability" style={{textAlign: 'center' }}>{ability.slice(0, 3).toUpperCase()}</div>)
     const ModCell = ({mod}) => (<div key="value" style={{fontVariantNumeric: "tabular-nums", textAlign: "right"}}>{prefixify(mod).combined}</div>)
-    const ProfCell = ({prof}) => (<div key="prof"></div>)
+    const ProfCell = ({prof}) => (<div key="prof">{(() => {
+        switch (prof) {
+            case 0: return ""
+            case 0.5: return "half proficient"
+            case 1: return "proficient"
+            case 2: return "expertise"
+        }
+    })()}</div>)
 
     return <GeneralList
         title="Skills"
@@ -44,7 +52,7 @@ export const Skills = () => {
                 return 0
             }},
         ]}
-        columns={[ SkillCell, AbilityCell, ModCell, ProfCell ]}
-        gridTemplateColumns="repeat(4, auto)"
+        columns={[ AbilityCell, SkillCell, ModCell, ProfCell ]}
+        gridTemplateColumns="auto auto auto 1fr"
     />
 }

@@ -1,8 +1,8 @@
 import React, { useState } from "react"
 
-export const Box = ({ children, title, titleOnHover }) => {
-    return <div className="box">
-        <strong>{title} <span className="hover-show">{titleOnHover}</span></strong>
+export const Box = ({ children, title, titleOnHover, style = {}}) => {
+    return <div className="box" style={style}>
+        {title && <strong>{title} <span className="hover-show">{titleOnHover}</span></strong>}
         {children}
     </div>
 }
@@ -15,6 +15,7 @@ export const GeneralList: React.FC<{style?: React.style}> = ({
     topChunk,
     data = [],
     columns = [],
+    headers = [],
 }) => {
     const [sortOrderIndex, realSetSortOrderIndex] = useState(0)
     const setSortOrderIndex = (newIndex) => {
@@ -27,6 +28,7 @@ export const GeneralList: React.FC<{style?: React.style}> = ({
     return (
         <Box title={title} titleOnHover={`(sorted by ${sortName})`}>
             <div
+                className="general-list"
                 style={{
                     display: "grid",
                     gridTemplateColumns: gridTemplateColumns,
@@ -34,6 +36,7 @@ export const GeneralList: React.FC<{style?: React.style}> = ({
                     alignItems: "baseline",
                     margin: "1em",
                     marginTop: "0em",
+                    ...style,
                 }}
             >    
                 {sortOptions && (
@@ -64,6 +67,7 @@ export const GeneralList: React.FC<{style?: React.style}> = ({
                 </button>
                 )}
 
+                {topChunk &&
                 <div style={{
                     gridColumn: `span ${columns.length}`,
                     display: "grid",
@@ -75,6 +79,28 @@ export const GeneralList: React.FC<{style?: React.style}> = ({
                 }}>
                     {topChunk}
                 </div>
+                }
+
+                {
+                    headers
+                        .map((header, index) => {
+                            if (typeof header === "string") {
+                                return (
+                                    <React.Fragment key={`header-${index}`}>
+                                        <div style={{
+                                            borderBottomWidth: "1px",
+                                            borderBottomStyle: "solid",
+                                            borderBottomColor: header === "" ? "transparent" : "var(--bd-primary)",
+                                        }}>
+                                            {header}
+                                        </div>
+                                    </React.Fragment>
+                                )
+                            } else {
+                                return header
+                            }
+                        })
+                }
 
                 { 
                     data

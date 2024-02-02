@@ -1,4 +1,4 @@
-import React, { useRef } from 'react'
+import React, { useRef, useState } from 'react'
 import { AbilityScores, SavingThrows, StatBlockMod } from './AbilityScoresAndSaves'
 import { CharacterName } from './CharacterName'
 import Proficiencies, { OtherStats } from './Proficiencies'
@@ -14,10 +14,25 @@ import { Compendium } from './Compendium'
 import { InventoryHistory } from './InventoryHistory'
 import { StatBlock } from './StatBlock'
 import { GeneralList } from './GeneralList'
+import { Attacks } from './Attacks'
+import { usePagesVisible } from '../Hooks/usePagesVisibile'
 
 export const App: React.FC = () => {
     const [character, saveCharacter] = useCharacter()
-    const { sheetView: { inventoryHistoryVisible } } = character
+    const { 
+        sheetView: { inventoryHistoryVisible, namePreference },
+        descriptive: { longName, shortName },
+    } = character
+
+    const preferredName = (()=>{
+        switch(namePreference) {
+        case "long": return longName;
+        case "short": return shortName;
+        default: return "error";
+        }
+    })()
+
+    const [pages, setPages, togglePages, resetPages] = usePagesVisible()
 
     React.useEffect(() => {
         window.character = character
@@ -28,31 +43,65 @@ export const App: React.FC = () => {
             <div style={{ }}>
                 <Menu />
                 <IfPresent value={character}>
-                    <CharacterName />
+                    { pages.includes("main") && (
+                        <>
+                        <CharacterName {preferredName} />
 
-                    <div className="main-grid">
-                        <div className="box">
-                            <Description />
-                            <Proficiencies />
-                        </div>
-                        
-                        <div className="box">
-                            <strong>Stats</strong>
-                            <OtherStats />
-                            <hr style={{margin: "1em 0"}}/>
-                            <AbilityScores />
-                            <hr style={{margin: "1em 0"}}/>
-                            <SavingThrows />
-                        </div>
-                        
-                        
+                        <div className="main-grid">
+                            <div className="box">
+                                <strong>Overview</strong>
+                                <Description />
+                                <Proficiencies />
+                            </div>
 
-                        <Skills />
-                        <Spells />
-                        <FeaturesDescriptions />
-                        <Items />
-                        { inventoryHistoryVisible && (<InventoryHistory />) }
-                    </div>
+                            <Attacks />
+                            
+                            <div className="box">
+                                <strong>Stats</strong>
+                                <OtherStats />
+                                <hr style={{margin: "1em 0"}}/>
+                                <AbilityScores />
+                                <hr style={{margin: "1em 0"}}/>
+                                <SavingThrows />
+                            </div>
+                            
+                            <Skills />
+                            <Spells />
+                            <FeaturesDescriptions />
+                        </div>
+                        </>
+                    )}
+
+                    { pages.includes("inventory") && (
+                        <>
+                            <h2 style={{ breakBefore: "page", pageBreakBefore: "always" }}
+                                onClick={() => {
+                                    if (pages.length === 1) {
+                                        saveCharacter({
+                                            ...character,
+                                            sheetView: {
+                                                ...character.sheetView,
+                                                namePreference: (()=>{
+                                                    switch (namePreference) {
+                                                    case "long": return "short"
+                                                    case "short": return "long"
+                                                    default: return namePreference
+                                                    }
+                                                })()
+                                            }
+                                        })
+                                    }
+                                }}
+                            >
+                                {pages.length === 1 && (preferredName + " – ")}
+                                Inventory
+                            </h2>
+                            <div style={{ marginTop: "1em", display: "grid", gap: "1em", gridTemplateColumns: "1fr 1fr" }}>
+                                <Items />
+                                { inventoryHistoryVisible && (<InventoryHistory />) }
+                            </div>
+                        </>
+                    )}
 
                     <Compendium />
 
@@ -104,6 +153,8 @@ const Menu = () => {
 
     const filePickerRef = useRef()
     const downloadRef = useRef()  
+
+    const [pages, setPages, togglePages, resetPages] = usePagesVisible()
     
     return (
         <div className="do-not-print" style={{display: "flex", justifyContent: 'space-between'}}>
@@ -146,6 +197,18 @@ const Menu = () => {
                     window.open(window.location, "", "menubar=no, location=no")
                 }}>
                     Open in Popup Window
+                </button>
+
+                <button onClick={() => {
+                    togglePages()
+                }}>
+                    Toggle Visible Pages
+                </button>
+
+                <button onClick={() => {
+                    resetPages()
+                }}>
+                    Reset Visible Pages
                 </button>
             </div>
 

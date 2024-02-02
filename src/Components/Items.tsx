@@ -140,30 +140,32 @@ export const Items: React.FC<{style?: React.style}> = ({style, className}) => {
             style={{
                 textIndent: "1em hanging each-line",
                 lineHeight: "15px",
+                left: 0,
             }}>
             {name}
-            { quantity > 1 && (<br/>) }
-            { quantity > 1 && (<small style={{ display: "inline-block", textIndent: "1em"}}>×{quantity}</small>) }
-
-            { contained && (<br/>) }
-            { contained && (
-                <small style={{ 
-                    display: "inline-block", 
-                    textIndent: "1em", 
-                    fontStyle: "italic"
-                }}>in <b>{contained}</b></small>) }
 
             { comment && (<br/>) }
             { comment && (<small style={{ display: "inline-block", textIndent: "1em"}}>{comment}</small>) }
+
+            { quantity > 1 && (<br className="do-not-print"/>) }
+            { quantity > 1 && (<small className="do-not-print" style={{ display: "inline-block", textIndent: "1em"}}>×{quantity}</small>)}
+
+            { contained && (<br/>) }
+            { contained && (
+                <small className="do-not-print" style={{ 
+                    display: "inline-block", 
+                    textIndent: "1em", 
+                    fontStyle: "italic"
+                }}>in <b>{contained}</b></small>
+            )}
+
+            <br className="only-printed" />
+            <br className="only-printed" />
         </div>
     }
 
     return (
-        <div className={className} style={{
-            padding: "4px 1em", 
-            border: "1px solid", 
-            borderRadius: "4px",
-            borderColor: "var(--bd-primary)",
+        <div className={className + " box no-box-border-on-print"} style={{
             position: 'relative', 
              ...style
         }}>
@@ -205,7 +207,7 @@ export const Items: React.FC<{style?: React.style}> = ({style, className}) => {
                 <div style={{ 
                     gridColumn: "span 4", 
                     display: "grid", 
-                    gap: "0.5em", 
+                    gap: "1em", 
                     gridTemplateColumns: "repeat(3, 1fr)" 
                 }}>
                     {

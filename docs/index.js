@@ -23985,11 +23985,11 @@ var require_dist = __commonJS((exports, module) => {
 });
 
 // src/index.tsx
-var import_react15 = __toESM(require_react(), 1);
+var import_react17 = __toESM(require_react(), 1);
 var client = __toESM(require_client(), 1);
 
 // src/Components/App.tsx
-var import_react14 = __toESM(require_react(), 1);
+var import_react16 = __toESM(require_react(), 1);
 
 // src/Components/AbilityScoresAndSaves.tsx
 var import_react2 = __toESM(require_react(), 1);
@@ -24143,7 +24143,7 @@ var SavingThrows = (style) => {
 
 // src/Components/CharacterName.tsx
 var import_react3 = __toESM(require_react(), 1);
-var CharacterName = ({ style }) => {
+var CharacterName = ({ style, preferredName }) => {
   const [character, setCharacter] = useCharacter();
   const { descriptive: { longName, shortName }, sheetView: { namePreference } } = character;
   return import_react3.default.createElement("div", {
@@ -24168,16 +24168,7 @@ var CharacterName = ({ style }) => {
         }
       });
     }
-  }, (() => {
-    switch (namePreference) {
-      case "long":
-        return longName;
-      case "short":
-        return shortName;
-      default:
-        return "error";
-    }
-  })()));
+  }, preferredName));
 };
 
 // src/Components/Proficiencies.tsx
@@ -24185,37 +24176,47 @@ var React5 = __toESM(require_react(), 1);
 
 // src/Components/TagRow.tsx
 var import_react4 = __toESM(require_react(), 1);
-var Tag = ({ children, className, inline = false }) => import_react4.default.createElement("div", {
-  className,
+var Tag = ({ children, className, inline = false, style = {} }) => import_react4.default.createElement("div", {
+  className: "tag " + className,
   style: {
     display: "inline-block",
     border: "1px solid",
-    borderColor: "var(--bd-primary)",
     borderRadius: "4px",
     padding: "0 4px",
     margin: inline ? "0px" : "4px 4px",
     lineHeight: inline ? "1em" : "1.2em",
     position: "relative",
-    backgroundColor: "var(--bg-secondary)"
+    ...style
   }
 }, children);
-var TagRow = ({ title, tags, tagsClassName }) => import_react4.default.createElement("div", {
-  style: {
-    display: "block",
-    justifyContent: "flex-start",
-    alignItems: "center",
-    flexWrap: "wrap",
-    width: "100%",
-    lineHeight: "1.2em",
-    textIndent: "1em hanging each-line"
-  }
-}, import_react4.default.createElement("span", null, title, ":"), (tags ?? []).length == 0 && import_react4.default.createElement(Tag, {
-  className: tagsClassName,
-  key: "none"
-}, "None"), [...tags ?? []].map((tag) => import_react4.default.createElement(Tag, {
-  className: tagsClassName,
-  key: tag.key ?? tag
-}, tag)));
+var TagRow = ({ title = "", tags, tagsClassName = "", classNameCallback = (tagName) => "" }) => {
+  return import_react4.default.createElement("div", {
+    style: {
+      display: "block",
+      justifyContent: "flex-start",
+      alignItems: "center",
+      flexWrap: "wrap",
+      width: "100%",
+      lineHeight: "1.2em",
+      textIndent: "1em hanging each-line"
+    }
+  }, title != "" && import_react4.default.createElement("span", null, title, ":"), (tags ?? []).length == 0 && import_react4.default.createElement(Tag, {
+    className: tagsClassName,
+    key: "none"
+  }, "None"), [...tags ?? []].map((tag) => {
+    const extraClassNames = (() => {
+      if (typeof tag === "string") {
+        return classNameCallback(tag);
+      } else {
+        return "";
+      }
+    })();
+    return import_react4.default.createElement(Tag, {
+      className: tagsClassName + " " + extraClassNames,
+      key: typeof tag == "object" ? tag.key ?? tag : tag
+    }, tag);
+  }));
+};
 
 // src/Components/Proficiencies.tsx
 var OtherStats = ({ style, className }) => {
@@ -24426,10 +24427,11 @@ var import_react8 = __toESM(require_react(), 1);
 
 // src/Components/GeneralList.tsx
 var import_react6 = __toESM(require_react(), 1);
-var Box = ({ children, title, titleOnHover }) => {
+var Box = ({ children, title, titleOnHover, style = {} }) => {
   return import_react6.default.createElement("div", {
-    className: "box"
-  }, import_react6.default.createElement("strong", null, title, " ", import_react6.default.createElement("span", {
+    className: "box",
+    style
+  }, title && import_react6.default.createElement("strong", null, title, " ", import_react6.default.createElement("span", {
     className: "hover-show"
   }, titleOnHover)), children);
 };
@@ -24440,7 +24442,8 @@ var GeneralList = ({
   gridTemplateColumns,
   topChunk,
   data = [],
-  columns = []
+  columns = [],
+  headers = []
 }) => {
   const [sortOrderIndex, realSetSortOrderIndex] = import_react6.useState(0);
   const setSortOrderIndex = (newIndex) => {
@@ -24452,13 +24455,15 @@ var GeneralList = ({
     title,
     titleOnHover: `(sorted by ${sortName})`
   }, import_react6.default.createElement("div", {
+    className: "general-list",
     style: {
       display: "grid",
       gridTemplateColumns,
       gap: "0 1em",
       alignItems: "baseline",
       margin: "1em",
-      marginTop: "0em"
+      marginTop: "0em",
+      ...style
     }
   }, sortOptions && import_react6.default.createElement("button", {
     title: "Cycle through sorting methods",
@@ -24484,7 +24489,7 @@ var GeneralList = ({
     onClick: () => {
       setSortOrderIndex(sortOrderIndex + 1);
     }
-  }, import_react6.default.createElement("div", null, "\u21C5")), import_react6.default.createElement("div", {
+  }, import_react6.default.createElement("div", null, "\u21C5")), topChunk && import_react6.default.createElement("div", {
     style: {
       gridColumn: `span ${columns.length}`,
       display: "grid",
@@ -24494,7 +24499,21 @@ var GeneralList = ({
       margin: "0.5em 0",
       justifyContent: "space-around"
     }
-  }, topChunk), data.sort(sortFun).map((row, index) => import_react6.default.createElement(import_react6.default.Fragment, {
+  }, topChunk), headers.map((header, index) => {
+    if (typeof header === "string") {
+      return import_react6.default.createElement(import_react6.default.Fragment, {
+        key: `header-${index}`
+      }, import_react6.default.createElement("div", {
+        style: {
+          borderBottomWidth: "1px",
+          borderBottomStyle: "solid",
+          borderBottomColor: header === "" ? "transparent" : "var(--bd-primary)"
+        }
+      }, header));
+    } else {
+      return header;
+    }
+  }), data.sort(sortFun).map((row, index) => import_react6.default.createElement(import_react6.default.Fragment, {
     key: index
   }, columns.map((columnDef) => {
     if (typeof columnDef === "string") {
@@ -24588,11 +24607,12 @@ var MapAllKeys = (obj) => {
 };
 var Skills = () => {
   const [character, setCharacter] = useCharacter();
-  const { skillMods, finalAbilityScores } = character;
+  const { skillMods, finalAbilityScores, skillProficiencyBonuses } = character;
   const skillsInfo = MapAllKeys(skillMods).map(([name, value]) => ({
     skill: name,
     mod: value,
-    ability: SkillsToAbilities[name]
+    ability: SkillsToAbilities[name],
+    prof: skillProficiencyBonuses[name] ?? 0
   }));
   const SkillCell = ({ skill }) => import_react8.default.createElement("div", {
     key: "name"
@@ -24607,7 +24627,18 @@ var Skills = () => {
   }, prefixify(mod).combined);
   const ProfCell = ({ prof }) => import_react8.default.createElement("div", {
     key: "prof"
-  });
+  }, (() => {
+    switch (prof) {
+      case 0:
+        return "";
+      case 0.5:
+        return "half proficient";
+      case 1:
+        return "proficient";
+      case 2:
+        return "expertise";
+    }
+  })());
   return import_react8.default.createElement(GeneralList, {
     title: "Skills",
     data: skillsInfo,
@@ -24637,8 +24668,8 @@ var Skills = () => {
         return 0;
       } }
     ],
-    columns: [SkillCell, AbilityCell, ModCell, ProfCell],
-    gridTemplateColumns: "repeat(4, auto)"
+    columns: [AbilityCell, SkillCell, ModCell, ProfCell],
+    gridTemplateColumns: "auto auto auto 1fr"
   });
 };
 
@@ -24757,27 +24788,32 @@ var Items = ({ style, className }) => {
       className: character.compendium.items.map((i) => i.name).includes(name) ? "pointer compendium-present compendium-potential" : "compendium-potential",
       style: {
         textIndent: "1em hanging each-line",
-        lineHeight: "15px"
+        lineHeight: "15px",
+        left: 0
       }
-    }, name, quantity > 1 && import_react9.default.createElement("br", null), quantity > 1 && import_react9.default.createElement("small", {
+    }, name, comment && import_react9.default.createElement("br", null), comment && import_react9.default.createElement("small", {
+      style: { display: "inline-block", textIndent: "1em" }
+    }, comment), quantity > 1 && import_react9.default.createElement("br", {
+      className: "do-not-print"
+    }), quantity > 1 && import_react9.default.createElement("small", {
+      className: "do-not-print",
       style: { display: "inline-block", textIndent: "1em" }
     }, "\xD7", quantity), contained && import_react9.default.createElement("br", null), contained && import_react9.default.createElement("small", {
+      className: "do-not-print",
       style: {
         display: "inline-block",
         textIndent: "1em",
         fontStyle: "italic"
       }
-    }, "in ", import_react9.default.createElement("b", null, contained)), comment && import_react9.default.createElement("br", null), comment && import_react9.default.createElement("small", {
-      style: { display: "inline-block", textIndent: "1em" }
-    }, comment));
+    }, "in ", import_react9.default.createElement("b", null, contained)), import_react9.default.createElement("br", {
+      className: "only-printed"
+    }), import_react9.default.createElement("br", {
+      className: "only-printed"
+    }));
   };
   return import_react9.default.createElement("div", {
-    className,
+    className: className + " box no-box-border-on-print",
     style: {
-      padding: "4px 1em",
-      border: "1px solid",
-      borderRadius: "4px",
-      borderColor: "var(--bd-primary)",
       position: "relative",
       ...style
     }
@@ -24814,7 +24850,7 @@ var Items = ({ style, className }) => {
     style: {
       gridColumn: "span 4",
       display: "grid",
-      gap: "0.5em",
+      gap: "1em",
       gridTemplateColumns: "repeat(3, 1fr)"
     }
   }, currency.map(({ element: { name, quantity } }) => import_react9.default.createElement(StatBlock, {
@@ -24932,7 +24968,7 @@ var FeaturesDescriptions = () => {
 };
 
 // src/Components/Compendium.tsx
-var import_react12 = __toESM(require_react(), 1);
+var import_react13 = __toESM(require_react(), 1);
 
 // src/Components/CompendiumCard.tsx
 var import_react11 = __toESM(require_react(), 1);
@@ -24940,74 +24976,102 @@ var CompendiumCard = ({ title, content }) => {
   const body = content.replaceAll(/---\n/g, "<hr />").replaceAll(/\n/g, "<br />");
   const [classes, setClasses] = import_react11.useState("anchor");
   return import_react11.default.createElement("div", {
-    className: classes,
+    style: { breakInside: "avoid" }
+  }, import_react11.default.createElement("div", {
+    className: classes + " box",
     id: "compendium-" + title.replace(" ", "-"),
     style: {
-      border: "1px solid var(--bd-primary)",
-      borderRadius: "5px",
-      padding: "5px 10px",
-      display: "inline-block",
-      marginTop: "1em",
-      scrollMarginTop: "5em"
+      display: "block",
+      margin: "0 0 0 0",
+      scrollMarginTop: "5em",
+      breakInside: "avoid"
     }
   }, import_react11.default.createElement("b", null, title), import_react11.default.createElement("br", null), import_react11.default.createElement("p", {
     dangerouslySetInnerHTML: { __html: body }
+  })), import_react11.default.createElement("div", {
+    style: { display: "inline-block", height: "1em", margin: 0, padding: 0 }
   }));
+};
+
+// src/Hooks/usePagesVisibile.tsx
+var import_react12 = __toESM(require_react(), 1);
+var PagesVisibleContext = import_react12.createContext();
+var PagesVisibleProvider = PagesVisibleContext.Provider;
+var usePagesVisible = () => {
+  const [get, set] = import_react12.useContext(PagesVisibleContext);
+  const toggle = () => {
+    if (get.length === 1 && get[0] == "main") {
+      set(["inventory"]);
+    } else if (get.length === 1 && get[0] == "inventory") {
+      set(["spells"]);
+    } else if (get.length === 1 && get[0] == "spells") {
+      set(["features"]);
+    } else if (get.length === 1 && get[0] == "features") {
+      set(["items"]);
+    } else if (get.length === 1 && get[0] == "items") {
+      set(["main"]);
+    } else {
+      set(["main"]);
+    }
+  };
+  const reset = () => {
+    set(["main", "inventory", "spells", "features", "items"]);
+  };
+  return [get, set, toggle, reset];
 };
 
 // src/Components/Compendium.tsx
 var Compendium = () => {
   const [character, setCharacter] = useCharacter();
-  return import_react12.default.createElement("div", null, import_react12.default.createElement("h2", {
+  const [pages, setVisiblePages] = usePagesVisible();
+  return import_react13.default.createElement("div", null, pages.includes("spells") && import_react13.default.createElement(import_react13.default.Fragment, null, import_react13.default.createElement("h2", {
     style: { breakBefore: "page" }
-  }, "Compendium \u2013 Spells"), import_react12.default.createElement("div", {
+  }, "Compendium \u2013 Spells"), import_react13.default.createElement("div", {
     className: "compendium-columns"
   }, character.spells.map((name) => {
     const spell = character.compendium.spells.find((s) => s.name === name);
-    return import_react12.default.createElement(CompendiumCard, {
+    return import_react13.default.createElement(CompendiumCard, {
       key: spell.name,
       title: spell.name,
       content: spell.description
     });
-  })), import_react12.default.createElement("h2", {
+  }))), pages.includes("features") && import_react13.default.createElement(import_react13.default.Fragment, null, import_react13.default.createElement("h2", {
     style: { breakBefore: "page" }
-  }, "Compendium \u2013 Features"), import_react12.default.createElement("div", {
+  }, "Compendium \u2013 Features"), import_react13.default.createElement("div", {
     className: "compendium-columns"
   }, character.descriptiveFeatures.map(({ name, description }) => {
-    return import_react12.default.createElement(CompendiumCard, {
+    return import_react13.default.createElement(CompendiumCard, {
       key: name,
       title: name,
       content: description
     });
-  })), import_react12.default.createElement("h2", {
+  }))), pages.includes("items") && import_react13.default.createElement(import_react13.default.Fragment, null, import_react13.default.createElement("h2", {
     style: { breakBefore: "page" }
-  }, "Compendium \u2013 Items"), import_react12.default.createElement("div", {
+  }, "Compendium \u2013 Items"), import_react13.default.createElement("div", {
     className: "compendium-columns"
-  }, character.currentItems.flatMap(({ name, description }) => description ? [import_react12.default.createElement(CompendiumCard, {
+  }, character.compendium.items.flatMap(({ name, description }) => description ? [import_react13.default.createElement(CompendiumCard, {
     key: name,
     title: name,
     content: description
-  })] : [])));
+  })] : []))));
 };
 
 // src/Components/InventoryHistory.tsx
-var import_react13 = __toESM(require_react(), 1);
+var import_react14 = __toESM(require_react(), 1);
 var InventoryHistory = ({ style }) => {
-  const [bouncing, setBouncing] = import_react13.useContext(BounceHistoryContext);
+  const [bouncing, setBouncing] = import_react14.useContext(BounceHistoryContext);
   const [character, setCharacter] = useCharacter();
   const { inventoryHistory, sheetView } = character;
   const { currentInventory } = sheetView;
-  return import_react13.default.createElement("div", {
-    className: bouncing ? "bouncing" : "",
+  const [sortOrder, setSortOrder] = import_react14.useState("asc");
+  return import_react14.default.createElement("div", {
+    className: bouncing ? "bouncing" : " box no-box-border-on-print",
     style: {
-      padding: "4px 1em",
-      border: "1px solid",
-      borderRadius: "4px",
-      borderColor: "var(--bd-primary)",
       position: "relative",
       ...style
     }
-  }, import_react13.default.createElement("strong", null, "Inventory History"), import_react13.default.createElement("div", {
+  }, import_react14.default.createElement("strong", null, "Inventory History (", sortOrder, ")"), import_react14.default.createElement("div", {
+    className: "inventory-history",
     style: {
       display: "grid",
       gridTemplateColumns: "auto 1fr",
@@ -25017,27 +25081,53 @@ var InventoryHistory = ({ style }) => {
       marginTop: "0em",
       justifyContent: "flex-start"
     }
-  }, inventoryHistory.map(({ comment }, index) => {
+  }, import_react14.default.createElement(CornerButton, {
+    title: "Toggle Order",
+    glyph: "\u21C5",
+    hoverGlyph: null,
+    onClick: () => {
+      switch (sortOrder) {
+        case "asc":
+          setSortOrder("desc");
+          break;
+        case "desc":
+          setSortOrder("asc");
+          break;
+        default:
+          console.error(`can't toggle order from '${sortOrder}'`);
+      }
+    }
+  }), inventoryHistory.map((element, index) => ({ element, index })).reduce((accumulator, value) => {
+    switch (sortOrder) {
+      case "asc":
+        return [...accumulator, value];
+      case "desc":
+        return [value, ...accumulator];
+      default:
+        return accumulator;
+    }
+  }, []).map(({ element: { comment }, index }) => {
     if (comment === "---") {
-      return import_react13.default.createElement(import_react13.default.Fragment, {
+      return import_react14.default.createElement(import_react14.default.Fragment, {
         key: index
-      }, import_react13.default.createElement("div", {
+      }, import_react14.default.createElement("div", {
+        className: "do-not-print",
         style: { display: "inline-block" }
-      }), import_react13.default.createElement("hr", {
+      }), import_react14.default.createElement("hr", {
         style: { display: "inline-block", margin: "1em 0" }
       }));
     } else {
-      return import_react13.default.createElement(import_react13.default.Fragment, {
+      return import_react14.default.createElement(import_react14.default.Fragment, {
         key: index
-      }, import_react13.default.createElement("button", {
-        className: "checkbox",
+      }, import_react14.default.createElement("button", {
+        className: "checkbox do-not-print",
         style: { top: "3px" },
         onClick: () => {
           setCharacter({ ...character, sheetView: { ...sheetView, currentInventory: index } });
         }
-      }, import_react13.default.createElement("div", {
+      }, import_react14.default.createElement("div", {
         className: currentInventory === index ? "checkmark" : ""
-      })), import_react13.default.createElement("div", {
+      })), import_react14.default.createElement("div", {
         style: { display: "inline-block" },
         key: "comment"
       }, comment));
@@ -25045,35 +25135,123 @@ var InventoryHistory = ({ style }) => {
   })));
 };
 
+// src/Components/Attacks.tsx
+var import_react15 = __toESM(require_react(), 1);
+var Attacks = () => {
+  const [character, setCharacter] = useCharacter();
+  const FullName = ({ kind, source, name, attackType = null, damageTypes = [], reach = null, range = null }) => {
+    const jump = useCompendiumJump(source);
+    const tags = [
+      titleCase(kind),
+      attackType && titleCase(attackType),
+      reach && `Reach: ${reach}`,
+      range && `Range: ${range}`,
+      ...damageTypes.map(titleCase)
+    ].filter((x) => x !== null);
+    return import_react15.default.createElement("div", {
+      onClick: jump,
+      style: {
+        display: "inline-block"
+      },
+      className: [...character.compendium.spells, ...character.currentItems].map((i) => i.name).includes(source) ? "pointer compendium-present" : ""
+    }, import_react15.default.createElement("div", {
+      style: { display: "inline-block" }
+    }, name && `${name} (${source})` || source), import_react15.default.createElement("br", null), import_react15.default.createElement(TagRow, {
+      tags,
+      classNameCallback: (tagName) => {
+        switch (tagName) {
+          case "Weapon":
+            return "red";
+          case "Spell":
+            return "violet";
+          default:
+            return "";
+        }
+      }
+    }));
+  };
+  return import_react15.default.createElement(GeneralList, {
+    title: "Attacks",
+    data: character.attacks,
+    gridTemplateColumns: "1fr",
+    headers: [""],
+    columns: [FullName],
+    style: {
+      gap: "10px 0",
+      alignItems: "first baseline"
+    }
+  });
+};
+
 // src/Components/App.tsx
 var App = () => {
   const [character, saveCharacter] = useCharacter();
-  const { sheetView: { inventoryHistoryVisible } } = character;
-  import_react14.default.useEffect(() => {
+  const {
+    sheetView: { inventoryHistoryVisible, namePreference },
+    descriptive: { longName, shortName }
+  } = character;
+  const preferredName = (() => {
+    switch (namePreference) {
+      case "long":
+        return longName;
+      case "short":
+        return shortName;
+      default:
+        return "error";
+    }
+  })();
+  const [pages, setPages, togglePages, resetPages] = usePagesVisible();
+  import_react16.default.useEffect(() => {
     window.character = character;
   }, [character]);
-  return import_react14.default.createElement("div", {
+  return import_react16.default.createElement("div", {
     style: { display: "block", justifyContent: "center" }
-  }, import_react14.default.createElement("div", {
+  }, import_react16.default.createElement("div", {
     style: {}
-  }, import_react14.default.createElement(Menu, null), import_react14.default.createElement(IfPresent, {
+  }, import_react16.default.createElement(Menu, null), import_react16.default.createElement(IfPresent, {
     value: character
-  }, import_react14.default.createElement(CharacterName, null), import_react14.default.createElement("div", {
+  }, pages.includes("main") && import_react16.default.createElement(import_react16.default.Fragment, null, import_react16.default.createElement(CharacterName, {
+    preferredName
+  }), import_react16.default.createElement("div", {
     className: "main-grid"
-  }, import_react14.default.createElement("div", {
+  }, import_react16.default.createElement("div", {
     className: "box"
-  }, import_react14.default.createElement(Description, null), import_react14.default.createElement(Proficiencies_default, null)), import_react14.default.createElement("div", {
+  }, import_react16.default.createElement("strong", null, "Overview"), import_react16.default.createElement(Description, null), import_react16.default.createElement(Proficiencies_default, null)), import_react16.default.createElement(Attacks, null), import_react16.default.createElement("div", {
     className: "box"
-  }, import_react14.default.createElement("strong", null, "Stats"), import_react14.default.createElement(OtherStats, null), import_react14.default.createElement("hr", {
+  }, import_react16.default.createElement("strong", null, "Stats"), import_react16.default.createElement(OtherStats, null), import_react16.default.createElement("hr", {
     style: { margin: "1em 0" }
-  }), import_react14.default.createElement(AbilityScores, null), import_react14.default.createElement("hr", {
+  }), import_react16.default.createElement(AbilityScores, null), import_react16.default.createElement("hr", {
     style: { margin: "1em 0" }
-  }), import_react14.default.createElement(SavingThrows, null)), import_react14.default.createElement(Skills, null), import_react14.default.createElement(Spells, null), import_react14.default.createElement(FeaturesDescriptions, null), import_react14.default.createElement(Items, null), inventoryHistoryVisible && import_react14.default.createElement(InventoryHistory, null)), import_react14.default.createElement(Compendium, null), import_react14.default.createElement("div", {
+  }), import_react16.default.createElement(SavingThrows, null)), import_react16.default.createElement(Skills, null), import_react16.default.createElement(Spells, null), import_react16.default.createElement(FeaturesDescriptions, null))), pages.includes("inventory") && import_react16.default.createElement(import_react16.default.Fragment, null, import_react16.default.createElement("h2", {
+    style: { breakBefore: "page", pageBreakBefore: "always" },
+    onClick: () => {
+      if (pages.length === 1) {
+        saveCharacter({
+          ...character,
+          sheetView: {
+            ...character.sheetView,
+            namePreference: (() => {
+              switch (namePreference) {
+                case "long":
+                  return "short";
+                case "short":
+                  return "long";
+                default:
+                  return namePreference;
+              }
+            })()
+          }
+        });
+      }
+    }
+  }, pages.length === 1 && preferredName + " \u2013 ", "Inventory"), import_react16.default.createElement("div", {
+    style: { marginTop: "1em", display: "grid", gap: "1em", gridTemplateColumns: "1fr 1fr" }
+  }, import_react16.default.createElement(Items, null), inventoryHistoryVisible && import_react16.default.createElement(InventoryHistory, null))), import_react16.default.createElement(Compendium, null), import_react16.default.createElement("div", {
     className: "do-not-print",
     style: { height: "80vh" }
-  })), import_react14.default.createElement(IfNotPresent, {
+  })), import_react16.default.createElement(IfNotPresent, {
     value: character
-  }, import_react14.default.createElement("p", null, "No character sheet loaded. Use the load button above."))));
+  }, import_react16.default.createElement("p", null, "No character sheet loaded. Use the load button above."))));
 };
 var IfPresent = ({ value, children }) => !!value && children;
 var IfNotPresent = ({ value, children }) => !value && children;
@@ -25087,28 +25265,29 @@ var Menu = () => {
       saveCharacter(shrinkToSheet(import_json5.default.parse(reader.result)));
     };
   };
-  const filePickerRef = import_react14.useRef();
-  const downloadRef = import_react14.useRef();
-  return import_react14.default.createElement("div", {
+  const filePickerRef = import_react16.useRef();
+  const downloadRef = import_react16.useRef();
+  const [pages, setPages, togglePages, resetPages] = usePagesVisible();
+  return import_react16.default.createElement("div", {
     className: "do-not-print",
     style: { display: "flex", justifyContent: "space-between" }
-  }, import_react14.default.createElement("div", {
+  }, import_react16.default.createElement("div", {
     style: { display: "flex", justifyContent: "flex-start", gap: "1em" }
-  }, import_react14.default.createElement("input", {
+  }, import_react16.default.createElement("input", {
     ref: filePickerRef,
     type: "file",
     onChange: handleFileChange,
     style: { display: "none" }
-  }), import_react14.default.createElement("button", {
+  }), import_react16.default.createElement("button", {
     onClick: () => {
       filePickerRef.current.click();
     }
-  }, "Load Sheet"), import_react14.default.createElement("button", {
+  }, "Load Sheet"), import_react16.default.createElement("button", {
     onClick: () => {
       saveCharacter(null);
     },
     disabled: character == null
-  }, "Remove Character"), import_react14.default.createElement("button", {
+  }, "Remove Character"), import_react16.default.createElement("button", {
     onClick: () => {
       const fileName = "my-character.json";
       const fileContent = import_json5.default.stringify(shrinkToSheet(character));
@@ -25119,15 +25298,23 @@ var Menu = () => {
       download.click();
     },
     disabled: character == null
-  }, "Save Sheet"), import_react14.default.createElement("a", {
+  }, "Save Sheet"), import_react16.default.createElement("a", {
     ref: downloadRef,
     id: "download",
     style: { display: "none" }
-  }), import_react14.default.createElement("button", {
+  }), import_react16.default.createElement("button", {
     onClick: () => {
       window.open(window.location, "", "menubar=no, location=no");
     }
-  }, "Open in Popup Window")), import_react14.default.createElement("div", {
+  }, "Open in Popup Window"), import_react16.default.createElement("button", {
+    onClick: () => {
+      togglePages();
+    }
+  }, "Toggle Visible Pages"), import_react16.default.createElement("button", {
+    onClick: () => {
+      resetPages();
+    }
+  }, "Reset Visible Pages")), import_react16.default.createElement("div", {
     style: { display: "flex", justifyContent: "flex-end", gap: "1em" }
   }));
 };
@@ -25137,18 +25324,28 @@ var scoreToMod = (score) => Math.floor((score - 10) / 2);
 var transfigure = (character) => {
   const currentLevels = character.levels.slice(0, character.sheetView.currentLevel);
   const proficiencyBonus = 1 + Math.ceil(currentLevels.length / 4);
-  const currentItems = character.inventoryHistory[character.sheetView.currentInventory].items.flatMap((item) => ({
+  const currentInventory = character.inventoryHistory[character.sheetView.currentInventory];
+  const currentItems = ((() => {
+    if ("items" in currentInventory) {
+      return currentInventory;
+    } else {
+      return null;
+    }
+  })()?.items ?? []).flatMap((item) => ({
     ...item,
     ...character.compendium.items.find((itemDef) => itemDef.name == item.name)
   }));
   const currentItemEffects = currentItems.flatMap((item) => [
     ...(item.equipped ?? false) && (item.attuned ?? false) ? item.equippedAndAttunedEffects ?? [] : [],
     ...item.equipped ?? false ? item.equippedEffects ?? [] : []
-  ]);
+  ].map((effect) => ({
+    ...effect,
+    source: item.name
+  })));
   const allFeatures = [
     character.species.features,
     character.background.features,
-    ...currentLevels.map((level) => level.features)
+    ...currentLevels.map((level) => level.features.map((f) => ({ ...f, sourceClass: level.class })))
   ].flat();
   const featureEffects = allFeatures.flatMap((feature) => {
     if ("effects" in feature) {
@@ -25307,6 +25504,21 @@ var transfigure = (character) => {
     ...character.compendium.spells.find((s) => s.name === name),
     name
   }));
+  const spellAttacks = fullSpells.flatMap(({ attacks: attacks2 = [], name: spellName }) => attacks2.flatMap((attack) => {
+    if ("attackType" in attack) {
+      return [{ ...attack, kind: "spell", source: spellName }];
+    } else {
+      return [];
+    }
+  }));
+  const itemAttacks = currentItemEffects.flatMap((attack) => {
+    if ("attackType" in attack) {
+      return [{ ...attack, kind: "weapon" }];
+    } else {
+      return [];
+    }
+  });
+  const attacks = [...itemAttacks, ...spellAttacks];
   return {
     ...character,
     currentLevels,
@@ -25322,6 +25534,7 @@ var transfigure = (character) => {
     savingThrowProficiencyBonuses,
     savingThrows,
     skillMods,
+    skillProficiencyBonuses,
     descriptiveFeatures,
     hitPointMaximum,
     hitDice,
@@ -25331,7 +25544,8 @@ var transfigure = (character) => {
     currentItems,
     spellMod,
     spellSaveDC,
-    fullSpells
+    fullSpells,
+    attacks
   };
 };
 var calculateFinalAbilityScores = ({ baseScores, allActiveEffects }) => {
@@ -25400,7 +25614,7 @@ var example = {
         name: "Skill Versatility",
         effects: [
           { skillProficiency: "persuasion" },
-          { skillProficiency: "performance" }
+          { skillProficiency: "deception" }
         ]
       },
       {
@@ -25420,7 +25634,7 @@ var example = {
     ]
   },
   background: {
-    name: "Sage",
+    name: "Sage / Military",
     features: [
       {
         name: "Languages",
@@ -25433,7 +25647,7 @@ var example = {
         name: "Skill Proficiency",
         effects: [
           { skillProficiency: "arcana" },
-          { skillProficiency: "history" }
+          { skillProficiency: "intimidation" }
         ]
       }
     ],
@@ -25455,6 +25669,26 @@ var example = {
   },
   inventoryHistory: [
     {
+      comment: "Adjusting bags",
+      items: [
+        { name: "Gold Pieces", quantity: 635, currency: true },
+        { name: "Gauntlets of Ogre Power", equipped: true, attuned: true },
+        { name: "Studded Leather Armor", equipped: true },
+        { name: "Sleepy Hat", equipped: true },
+        { name: "Bag of Holding" },
+        { name: "Nine Lives Stealer Longsword", attuned: true, equipped: true },
+        { name: "Lightsaber +1", equipped: false, contained: "Bag of Holding" },
+        { name: "Dragon Egg", quantity: 2, contained: "Bag of Holding" },
+        { name: "Mysterious Potion", quantity: 2, comment: "probably not health potions", contained: "Bag of Holding" },
+        { name: "Waterskin" },
+        { name: "Rations", quantity: 5 },
+        { name: "Torch", quantity: 2 },
+        { name: "Component Pouch" },
+        { name: "Cultist Outfit", equipped: false, contained: "Bag of Holding" },
+        { name: "Cultist Sword", equipped: false, contained: "Bag of Holding" }
+      ]
+    },
+    {
       comment: "Shopping: got mystery potions for free",
       items: [
         { name: "Gold Pieces", quantity: 635, currency: true },
@@ -25470,7 +25704,7 @@ var example = {
         { name: "Bag of Holding" },
         { name: "Nine Lives Stealer Longsword", attuned: true, equipped: true },
         { name: "Dragon Egg", quantity: 2, contained: "Bag of Holding" },
-        { name: "Rapier +1 (Lamp)" },
+        { name: "Lightsaber +1", equipped: false, contained: "Bag of Holding" },
         { name: "Mysterious Potion", quantity: 2, comment: "probably not health potions", contained: "Bag of Holding" }
       ]
     },
@@ -25490,7 +25724,7 @@ var example = {
         { name: "Bag of Holding" },
         { name: "Nine Lives Stealer Longsword", attuned: true, equipped: true },
         { name: "Dragon Egg", quantity: 2, contained: "Bag of Holding" },
-        { name: "Rapier +1 (Lamp)", contained: "Bag of Holding" }
+        { name: "Lightsaber +1", equipped: false, contained: "Bag of Holding" }
       ]
     },
     {
@@ -25758,7 +25992,8 @@ var example = {
     classes: [
       {
         name: "Warlock",
-        hitDice: 8
+        hitDice: 8,
+        spellcastingAbility: "charisma"
       },
       {
         name: "Fighter",
@@ -25779,12 +26014,26 @@ var example = {
       {
         name: "Vicious Mockery",
         level: 0,
-        description: "Enchantment Cantrip\n---\nCasting Time: 1 action\nRange/Area: 60 feet\nComponents: V\nDuration: Instantaneous\n---\nYou unleash a string of insults laced with subtle enchantments at a creature you can see within range. If the target can hear you (though it need not understand you), it must succeed on a Wisdom saving throw or take 1d4 psychic damage and have disadvantage on the next attack roll it makes before the end of its next turn.\nThis spell's damage increases by 1d4 when you reach 5th level (2d4), 11th level (3d4), and 17th level (4d4).\n"
+        description: "Enchantment Cantrip\n---\nCasting Time: 1 action\nRange/Area: 60 feet\nComponents: V\nDuration: Instantaneous\n---\nYou unleash a string of insults laced with subtle enchantments at a creature you can see within range. If the target can hear you (though it need not understand you), it must succeed on a Wisdom saving throw or take 1d4 psychic damage and have disadvantage on the next attack roll it makes before the end of its next turn.\nThis spell's damage increases by 1d4 when you reach 5th level (2d4), 11th level (3d4), and 17th level (4d4).\n",
+        attacks: [
+          {
+            attackType: "ranged",
+            range: 60,
+            damageTypes: ["psychic"]
+          }
+        ]
       },
       {
         name: "Eldritch Blast",
         level: 0,
-        description: "Evocation Cantrip\n---\nCasting Time: 1 action\nRange: 120 feet\nComponents: V, S\nDuration: Instantaneous\n---\nA beam of crackling energy straks toward a creature within range. Make a ranged spell attack against the target. On a hit, the target takes 1d10 force damage.\nThe spell creates more than one beam when you reach higher levels: two beams at 5th level, three beams at 11th level, and four beams at 17th level. You can direct the beams at the same target or at different ones. Make a separate attack roll for each beam.\n"
+        description: "Evocation Cantrip\n---\nCasting Time: 1 action\nRange: 120 feet\nComponents: V, S\nDuration: Instantaneous\n---\nA beam of crackling energy straks toward a creature within range. Make a ranged spell attack against the target. On a hit, the target takes 1d10 force damage.\nThe spell creates more than one beam when you reach higher levels: two beams at 5th level, three beams at 11th level, and four beams at 17th level. You can direct the beams at the same target or at different ones. Make a separate attack roll for each beam.\n",
+        attacks: [
+          {
+            attackType: "ranged",
+            range: 120,
+            damageTypes: ["force"]
+          }
+        ]
       },
       {
         name: "Bestow Curse",
@@ -25983,7 +26232,14 @@ A creature can use its action to inspect a target and make an Intelligence (Inve
       {
         name: "Scorching Ray",
         level: 2,
-        description: "2nd-level evocation\n---\nCasting Time: 1 action\nRange: 120 feet\nComponents: V, S\nDuration: Instantaneous\n---\nYou create three rays of fire and hurl them at targets within range. You can hurl them at one target or several.\nMake a ranged spell attack for each ray. On a hit, the target takes 2d6 fire damage.\nAt Higher Levels. When you cast this spell using a spell slot of 3rd level or higher, you create one additional ray for each slot level above 2nd."
+        description: "2nd-level evocation\n---\nCasting Time: 1 action\nRange: 120 feet\nComponents: V, S\nDuration: Instantaneous\n---\nYou create three rays of fire and hurl them at targets within range. You can hurl them at one target or several.\nMake a ranged spell attack for each ray. On a hit, the target takes 2d6 fire damage.\nAt Higher Levels. When you cast this spell using a spell slot of 3rd level or higher, you create one additional ray for each slot level above 2nd.",
+        attacks: [
+          {
+            attackType: "ranged",
+            range: 120,
+            damageTypes: ["fire"]
+          }
+        ]
       },
       {
         name: "Hex",
@@ -26001,7 +26257,14 @@ Components: V, S, M (a twig from a tree that has been struck by lightning)
 Duration: Concentration, up to 1 minute
 ---
 A beam of crackling, blue energy lances out toward a creature within range, forming a sustained arc of lightning between you and the target. Make a ranged spell attack against that creature. On a hit, the target takes 1d12 lightning damage, and on each of your turns for the duration, you can use your action to deal 1d12 lightning damage to the target automatically. The spell ends if you use your action to do anything else. The spell also ends if the target is ever outside the spell\u2019s range or if it has total cover from you.
-At Higher Levels. When you cast this spell using a spell slot of 2nd level or higher, the initial damage increases by 1d12 for each slot level above 1st.`
+At Higher Levels. When you cast this spell using a spell slot of 2nd level or higher, the initial damage increases by 1d12 for each slot level above 1st.`,
+        attacks: [
+          {
+            attackType: "ranged",
+            range: 30,
+            damageTypes: ["lightning"]
+          }
+        ]
       }
     ],
     items: [
@@ -26037,17 +26300,12 @@ At Higher Levels. When you cast this spell using a spell slot of 2nd level or hi
         name: "Greatsword +1",
         description: "You have a +1 bonus to attack and damage rolls made with this magic weapon.",
         type: "weapon",
-        heavy: true,
-        twoHanded: true,
+        traits: ["heavy", "two handed"],
         equippedEffects: [
           {
             attackType: "melee",
             reach: 5,
-            damageType: "slashing",
-            damage: {
-              d6: 2,
-              bonus: 1
-            }
+            damageTypes: ["slashing"]
           }
         ]
       },
@@ -26055,27 +26313,43 @@ At Higher Levels. When you cast this spell using a spell slot of 2nd level or hi
         name: "Nine Lives Stealer Longsword",
         description: "Weapon (longsword), very rare (requires attunement)\n---\nOne-handed: melee, 5 ft reach, slashing: 1d8 + STR mod + 2\n\nTwo-handed: melee, 5ft reach, slashing: 1d10 + STR mod + 2\n---\nYou gain a +2 bonus to attack and damage rolls made with this magic weapon.\n\nThe sword has 1d8 + 1 charges. If you score a critical hit against a creature that has fewer than 100 hit points, it must succeed on a DC 15 Constitution saving throw or be slain instantly as the sword tears its life force from its body (a construct or an undead is immune). The sword loses 1 charge if the creature is slain. When the sword has no charges remaining, it loses this property.",
         type: "weapon",
-        versatile: true,
+        traits: ["versatile"],
         equippedEffects: [
           {
-            name: "one-handed",
             attackType: "melee",
             reach: 5,
-            damageType: "slashing",
-            damage: {
-              d8: 1,
-              bonus: 2
-            }
-          },
+            damageTypes: ["slashing"]
+          }
+        ]
+      },
+      {
+        name: "Sleepy Hat",
+        type: "item",
+        description: "When willingly worn, puts the wearer to sleep."
+      },
+      {
+        name: "Lightsaber +1",
+        type: "weapon",
+        description: "+1 Rapier\n---\na button on the hilt toggles the blade illuminating",
+        traits: ["finesse"],
+        equippedEffects: [
           {
-            name: "two-handed",
             attackType: "melee",
             reach: 5,
-            damageType: "slashing",
-            damage: {
-              d10: 1,
-              bonus: 2
-            }
+            damageTypes: ["piercing"]
+          }
+        ]
+      },
+      {
+        name: "Cultist Sword",
+        type: "weapon",
+        description: "a normal Scimitar",
+        traits: ["light", "finesse"],
+        equippedEffects: [
+          {
+            attackType: "melee",
+            reach: 5,
+            damageTypes: ["slashing"]
           }
         ]
       },
@@ -26087,29 +26361,6 @@ At Higher Levels. When you cast this spell using a spell slot of 2nd level or hi
 If the bag is overloaded, pierced, or torn, it ruptures and is destroyed, and its contents are scattered in the Astral Plane. If the bag is turned inside out, its contents spill forth, unharmed, but the bag must be put right before it can be used again. Breathing creatures inside the bag can survive up to a number of minutes equal to 10 divided by the number of creatures (minimum 1 minute), after which time they begin to suffocate.
 
 Placing a bag of holding inside an extradimensional space created by a handy haversack, portable hole, or similar item instantly destroys both items and opens a gate to the Astral Plane. The gate originates where the one item was placed inside the other. Any creature within 10 feet of the gate is sucked through it to a random location on the Astral Plane. The gate then closes. The gate is one-way only and can\u2019t be reopened.`
-      },
-      {
-        name: "Sleepy Hat",
-        type: "item",
-        description: "When willingly worn, puts the wearer to sleep."
-      },
-      {
-        name: "Rapier +1 (Lamp)",
-        type: "weapon",
-        description: "a button on the hilt toggles the blade being lit",
-        finesse: true,
-        equippedEffects: [
-          {
-            name: "attack",
-            attackType: "melee",
-            reach: 5,
-            damageType: "piercing",
-            damage: {
-              d8: 1,
-              bonus: 1
-            }
-          }
-        ]
       }
     ]
   },
@@ -26160,13 +26411,6 @@ Placing a bag of holding inside an extradimensional space created by a handy hav
     {
       class: "Warlock",
       features: [
-        {
-          name: "Skill Proficiency",
-          effects: [
-            { skillProficiency: "deception" },
-            { skillProficiency: "intimidation" }
-          ]
-        },
         {
           name: "Otherworldly Patron: The Fiend",
           description: "At 1st level, you have struck a bargain with an otherworldly being of your choice: the Fiend, which is detailed at the end of the class description, or one from another source. Your choice grants you features at 1st level and again at 6th, 10th, and 14th level."
@@ -26242,17 +26486,17 @@ You can transform one magic weapon into your pact weapon by performing a special
 var example_character_default = example;
 
 // src/index.tsx
-var CharacterContext8 = import_react15.default.createContext([{}, () => {
+var CharacterContext8 = import_react17.default.createContext([{}, () => {
 }]);
-var BounceHistoryContext = import_react15.default.createContext(false, () => {
+var BounceHistoryContext = import_react17.default.createContext(false, () => {
 });
 var useCharacter = () => {
-  return import_react15.useContext(CharacterContext8);
+  return import_react17.useContext(CharacterContext8);
 };
 var Wrapper = () => {
-  const [character, setCharacter] = import_react15.useState(example_character_default);
+  const [character, setCharacter] = import_react17.useState(example_character_default);
   const transfiguredCharacter = character != null ? transfigure(character) : null;
-  const [bouncing, setBouncing] = import_react15.useState(false);
+  const [bouncing, setBouncing] = import_react17.useState(false);
   const setBouncingInterceptor = (value) => {
     if (value === true) {
       setTimeout(() => {
@@ -26261,23 +26505,26 @@ var Wrapper = () => {
     }
     setBouncing(value);
   };
-  return import_react15.default.createElement(CharacterContext8.Provider, {
+  const [visiblePages, setVisiblePages] = import_react17.useState(["main", "inventory", "spells", "features", "items"]);
+  return import_react17.default.createElement(CharacterContext8.Provider, {
     value: [
       transfiguredCharacter,
       setCharacter
     ]
-  }, import_react15.default.createElement(BounceHistoryContext.Provider, {
+  }, import_react17.default.createElement(BounceHistoryContext.Provider, {
     value: [
       bouncing,
       setBouncingInterceptor
     ]
-  }, import_react15.default.createElement(App, null)));
+  }, import_react17.default.createElement(PagesVisibleProvider, {
+    value: [visiblePages, setVisiblePages]
+  }, import_react17.default.createElement(App, null))));
 };
 if (typeof document !== "undefined") {
   const rootElement = document.getElementById("root");
   if (rootElement) {
     const root = client.default.createRoot(rootElement);
-    root.render(import_react15.default.createElement(import_react15.default.StrictMode, null, import_react15.default.createElement(Wrapper, null)));
+    root.render(import_react17.default.createElement(import_react17.default.StrictMode, null, import_react17.default.createElement(Wrapper, null)));
   }
 }
 export {

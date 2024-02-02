@@ -14,6 +14,11 @@ import {
     ItemState,
     FeatureEffectSpell,
     SpellDefinition,
+    Skill,
+    FeatureEffectAttack,
+    InventoryRow,
+    Sourced,
+    SourcedAnyItem,
 } from "./CharacterSheet";
 
 export type DerivedCharacter = {
@@ -29,6 +34,7 @@ export type DerivedCharacter = {
     abilityMods: AbilityScores,
     savingThrows: AbilityScores, // structurally it's the same
     skillMods: SkillMods,
+    skillProficiencyBonuses: Partial<SkillMods>,
     descriptiveFeatures: FeatureOnlyDescription[],
     hitPointMaximum: number,
     hitDice: DiceCollection,
@@ -37,11 +43,13 @@ export type DerivedCharacter = {
     spells: string[],
     fullSpells: SpellDefinition[],
     armorClass: number,
-    currentItems: (AnyItem & ItemState)[],
+    currentItems: (SourcedAnyItem & ItemState)[],
     spellMod: number,
     spellSaveDC: number,
+    attacks: (Sourced<FeatureEffectAttack & AttackKind>)[],
 }
 
+export type AttackKind = { kind: "weapon" | "spell" }
 export type FullCharacter = CharacterSheet & DerivedCharacter
 
 export const scoreToMod = (score: number): number => (Math.floor((score - 10) / 2))
@@ -50,24 +58,35 @@ export const transfigure = (character: CharacterSheet): FullCharacter => {
     const currentLevels = character.levels.slice(0, character.sheetView.currentLevel)
     const proficiencyBonus = 1 + Math.ceil(currentLevels.length / 4)
 
-    const currentItems: Array<AnyItem & ItemState> = character.inventoryHistory[character.sheetView.currentInventory].items.flatMap((item) => (
+    const currentInventory = character.inventoryHistory[character.sheetView.currentInventory]
+    const currentItems: Array<AnyItem & ItemState> = ((() => {
+        if ("items" in currentInventory) {
+            return (currentInventory as InventoryRow)
+        } else { 
+            return null
+        }
+    })()?.items ?? []).flatMap((item) => (
         {
             ...(item),
             ...(character.compendium.items.find((itemDef) => ( itemDef.name == item.name ))),
         }
     ))
 
-    const currentItemEffects: Array<FeatureEffect> = currentItems.flatMap((item) => (
+    const currentItemEffects: Sourced<FeatureEffect>[] = currentItems.flatMap((item) => (
         [
             ...((item.equipped ?? false) && (item.attuned ?? false) ? (item.equippedAndAttunedEffects ?? []) : []),
             ...((item.equipped ?? false) ? (item.equippedEffects ?? []) : []),
         ]
+        .map((effect) => ({
+            ...effect,
+            source: item.name,
+        }))
     ))
 
     const allFeatures: Array<Feature> = [
         character.species.features,
         character.background.features,
-        ...currentLevels.map(level => (level.features)),
+        ...currentLevels.map(level => (level.features.map((f) => ({...f, sourceClass: level.class})))),
     ].flat()
 
     const featureEffects = allFeatures.flatMap(feature => {
@@ -125,7 +144,7 @@ export const transfigure = (character: CharacterSheet): FullCharacter => {
         charisma: abilityMods.charisma + proficiencyBonus * savingThrowProficiencyBonuses.charisma,
     }
 
-    const skillProficiencyBonuses = 
+    const skillProficiencyBonuses: Partial<SkillMods> = 
         allActiveEffects.reduce((acc, effect) => {
             if ("skillProficiency" in effect) {
                 return {
@@ -242,6 +261,30 @@ export const transfigure = (character: CharacterSheet): FullCharacter => {
         ...character.compendium.spells.find(s=>(s.name === name)),
         name
     }))
+
+
+    const spellAttacks: Sourced<FeatureEffectAttack>[] = 
+        fullSpells
+            .flatMap(({attacks = [], name: spellName}) => (
+                attacks.flatMap((attack) => {
+                    if ("attackType" in attack) {
+                        return [({...attack, kind: "spell", source: spellName} as Sourced<FeatureEffectAttack & AttackKind>)]
+                    } else {
+                        return []
+                    }
+                })
+            ))
+
+    const itemAttacks = currentItemEffects
+        .flatMap((attack) => {
+            if ("attackType" in attack) {
+                return [({...attack, kind: "weapon"} as Sourced<FeatureEffectAttack & AttackKind>)]
+            } else {
+                return []
+            }
+        })
+
+    const attacks = [...itemAttacks, ...spellAttacks]
     
     return {
         ...character,
@@ -258,6 +301,7 @@ export const transfigure = (character: CharacterSheet): FullCharacter => {
         savingThrowProficiencyBonuses,
         savingThrows,
         skillMods,
+        skillProficiencyBonuses,
         descriptiveFeatures,
         hitPointMaximum,
         hitDice,
@@ -268,6 +312,7 @@ export const transfigure = (character: CharacterSheet): FullCharacter => {
         spellMod,
         spellSaveDC,
         fullSpells,
+        attacks,
     }
 }
 
