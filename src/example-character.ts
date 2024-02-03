@@ -65,7 +65,7 @@ const example: CharacterSheet = {
         ],
     },
     background: {
-        name: "Sage / Military",
+        name: "Sage / Soldier",
         features: [
             {
                 name: "Languages",
@@ -84,17 +84,21 @@ const example: CharacterSheet = {
         ],
         characteristics: {
             personality: [
-              "There’s nothing I like more than a good mystery.",
-              "I’ve read every book in the world’s greatest libraries—or I like to boast that I have.",
+              "Sage: There’s nothing I like more than a good mystery.",
+              "Sage: I’ve read every book in the world’s greatest libraries—or I like to boast that I have.",
+              "Soldier: I’m haunted by memories of war. I can’t get the images of violence out of my mind.",
             ],
             ideals: [
-              "Knowledge. The path to power and self-improvement is through knowledge. (Neutral)",
+              "Sage: Knowledge. The path to power and self-improvement is through knowledge. (Neutral)",
+              "Soldier: Greater Good. Our lot is to lay down our lives in defense of others. (Good)",
             ],
             bonds: [
-              "I’ve been searching my whole life for the answer to a certain question.",
+              "Sage: I’ve been searching my whole life for the answer to a certain question.",
+              "Soldier: I’ll never forget the crushing defeat my company suffered or the enemies who dealt it.",
             ],
             flaws: [
-              "Unlocking an ancient mystery is worth the price of a civilization.",
+              "Sage: Unlocking an ancient mystery is worth the price of a civilization.",
+              "Soldier: I made a terrible mistake in battle that cost many lives, and I would do anything to keep that mistake secret.",
             ],
           },
     },
