@@ -74,7 +74,21 @@ export type AnyItemBase =
     {  
         name: string,
         description?: string,
+        diceRolls?: DiceRollDescription[],
     }
+
+export type DiceRollDescription = {
+    name: string,
+    staticBonus?: number,
+    proficiencyBonus?: boolean,
+} & {
+    strengthMod?: boolean,
+    dexterityMod?: boolean,
+    constitutionMod?: boolean,
+    intelligenceMod?: boolean,
+    wisdomMod?: boolean,
+    charismaMod?: boolean,
+} & DiceCollection
 
 export type AnyItem = AnyItemBase & AnyItemEffects
 export type SourcedAnyItem = AnyItemBase & SourcedAnyItemEffects

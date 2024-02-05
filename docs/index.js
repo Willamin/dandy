@@ -24972,7 +24972,8 @@ var import_react13 = __toESM(require_react(), 1);
 
 // src/Components/CompendiumCard.tsx
 var import_react11 = __toESM(require_react(), 1);
-var CompendiumCard = ({ title, content }) => {
+var CompendiumCard = ({ title, content, diceRolls = [] }) => {
+  const [character] = useCharacter();
   const body = content.replaceAll(/---\n/g, "<hr />").replaceAll(/\n/g, "<br />");
   const [classes, setClasses] = import_react11.useState("anchor");
   return import_react11.default.createElement("div", {
@@ -24988,9 +24989,78 @@ var CompendiumCard = ({ title, content }) => {
     }
   }, import_react11.default.createElement("b", null, title), import_react11.default.createElement("br", null), import_react11.default.createElement("p", {
     dangerouslySetInnerHTML: { __html: body }
-  })), import_react11.default.createElement("div", {
+  }), diceRolls.length > 0 && import_react11.default.createElement(import_react11.default.Fragment, null, import_react11.default.createElement("hr", null), import_react11.default.createElement("strong", null, "Dice Rolls"), import_react11.default.createElement("br", null), import_react11.default.createElement("em", null, "using stats for ", import_react11.default.createElement("strong", null, character.preferredName)), import_react11.default.createElement("table", {
+    className: "attacks",
+    cellSpacing: "0"
+  }, (() => {
+    const allRollsPieces = diceRolls.map((d) => diceRollDefinitionToPieces(d, character));
+    const maxLength = allRollsPieces.map((p) => p.length).reduce((acc, p) => p > acc ? p : acc, 0);
+    return allRollsPieces.map((pieces, index) => {
+      console.log(title, diceRolls[index].name, pieces);
+      return import_react11.default.createElement(DiceRollView, {
+        for: diceRolls[index].name,
+        pieces,
+        slots: maxLength
+      });
+    }).flatMap((elem, index) => index === 0 ? [elem] : [
+      import_react11.default.createElement("tr", {
+        style: { height: "5px" }
+      }),
+      elem
+    ]);
+  })()))), import_react11.default.createElement("div", {
     style: { display: "inline-block", height: "1em", margin: 0, padding: 0 }
   }));
+};
+var diceRollDefinitionToPieces = ({
+  d20,
+  d12,
+  d10,
+  d8,
+  d6,
+  d4,
+  strengthMod,
+  dexterityMod,
+  constitutionMod,
+  intelligenceMod,
+  wisdomMod,
+  charismaMod,
+  staticBonus,
+  proficiencyBonus
+}, character) => [
+  writeDice("d20", d20),
+  writeDice("d12", d12),
+  writeDice("d10", d10),
+  writeDice("d8", d8),
+  writeDice("d6", d6),
+  writeDice("d4", d4),
+  writeMod("STR", character.abilityMods.strength, strengthMod),
+  writeMod("DEX", character.abilityMods.dexterity, dexterityMod),
+  writeMod("CON", character.abilityMods.constitution, constitutionMod),
+  writeMod("INT", character.abilityMods.intelligence, intelligenceMod),
+  writeMod("WIS", character.abilityMods.wisdom, wisdomMod),
+  writeMod("CHA", character.abilityMods.charisma, charismaMod),
+  writeMod("BONUS", staticBonus, staticBonus != 0),
+  writeMod("PRO", character.proficiencyBonus, proficiencyBonus)
+].filter(([left, right]) => right !== null && right !== undefined);
+var writeDice = (size, count) => [
+  count > 0 ? `${count}${size}` : null,
+  count > 0 ? `${count}${size}` : null
+];
+var writeMod = (stat, value, present) => [
+  present ? stat : null,
+  present ? value : null
+];
+var DiceRollView = ({ for: name, pieces, slots }) => {
+  const characterString = pieces.flatMap(([character, generic]) => character === null ? [] : [character]).join(" + ");
+  const genericString = pieces.flatMap(([character, generic]) => generic === null ? [] : [generic]).join(" + ");
+  const extraSpacerCells = 2 * (slots - pieces.length) > 0 && Array(2 * (slots - pieces.length)).fill(null).map(() => import_react11.default.createElement("td", null));
+  const topSpacerCells = 2 * slots > 0 && Array(2 * slots).fill(null).map(() => import_react11.default.createElement("td", null));
+  return import_react11.default.createElement(import_react11.default.Fragment, null, import_react11.default.createElement("tr", {
+    style: { height: "5px" }
+  }, topSpacerCells), import_react11.default.createElement("tr", null, import_react11.default.createElement("td", null, name), pieces.flatMap(([gen, char], index) => char === null ? [] : [[gen, char]]).flatMap(([gen, char], index) => import_react11.default.createElement(import_react11.default.Fragment, null, index > 0 && import_react11.default.createElement("td", null, "+"), import_react11.default.createElement("td", null, char))), extraSpacerCells), import_react11.default.createElement("tr", {
+    style: { fontSize: "0.7em" }
+  }, import_react11.default.createElement("td", null), pieces.flatMap(([gen, char], index) => gen === null ? [] : [[gen, char]]).flatMap(([gen, char], index) => import_react11.default.createElement(import_react11.default.Fragment, null, index > 0 && import_react11.default.createElement("td", null), char != gen ? import_react11.default.createElement("td", null, gen) : import_react11.default.createElement("td", null))), extraSpacerCells));
 };
 
 // src/Hooks/usePagesVisibile.tsx
@@ -25049,10 +25119,11 @@ var Compendium = () => {
     style: { breakBefore: "page" }
   }, "Compendium \u2013 Items"), import_react13.default.createElement("div", {
     className: "compendium-columns"
-  }, character.compendium.items.flatMap(({ name, description }) => description ? [import_react13.default.createElement(CompendiumCard, {
+  }, character.compendium.items.flatMap(({ name, description, diceRolls }) => description ? [import_react13.default.createElement(CompendiumCard, {
     key: name,
     title: name,
-    content: description
+    content: description,
+    diceRolls
   })] : []))));
 };
 
@@ -25188,18 +25259,9 @@ var App = () => {
   const [character, saveCharacter] = useCharacter();
   const {
     sheetView: { inventoryHistoryVisible, namePreference },
-    descriptive: { longName, shortName }
+    descriptive: { longName, shortName },
+    preferredName
   } = character;
-  const preferredName = (() => {
-    switch (namePreference) {
-      case "long":
-        return longName;
-      case "short":
-        return shortName;
-      default:
-        return "error";
-    }
-  })();
   const [pages, setPages, togglePages, resetPages] = usePagesVisible();
   import_react16.default.useEffect(() => {
     window.character = character;
@@ -25519,6 +25581,16 @@ var transfigure = (character) => {
     }
   });
   const attacks = [...itemAttacks, ...spellAttacks];
+  const preferredName = (() => {
+    switch (character.sheetView.namePreference) {
+      case "long":
+        return character.descriptive.longName;
+      case "short":
+        return character.descriptive.shortName;
+      default:
+        return character.sheetView.namePreference;
+    }
+  })();
   return {
     ...character,
     currentLevels,
@@ -25545,7 +25617,8 @@ var transfigure = (character) => {
     spellMod,
     spellSaveDC,
     fullSpells,
-    attacks
+    attacks,
+    preferredName
   };
 };
 var calculateFinalAbilityScores = ({ baseScores, allActiveEffects }) => {
@@ -25634,7 +25707,7 @@ var example = {
     ]
   },
   background: {
-    name: "Sage / Military",
+    name: "Sage / Soldier",
     features: [
       {
         name: "Languages",
@@ -25653,17 +25726,21 @@ var example = {
     ],
     characteristics: {
       personality: [
-        "There\u2019s nothing I like more than a good mystery.",
-        "I\u2019ve read every book in the world\u2019s greatest libraries\u2014or I like to boast that I have."
+        "Sage: There\u2019s nothing I like more than a good mystery.",
+        "Sage: I\u2019ve read every book in the world\u2019s greatest libraries\u2014or I like to boast that I have.",
+        "Soldier: I\u2019m haunted by memories of war. I can\u2019t get the images of violence out of my mind."
       ],
       ideals: [
-        "Knowledge. The path to power and self-improvement is through knowledge. (Neutral)"
+        "Sage: Knowledge. The path to power and self-improvement is through knowledge. (Neutral)",
+        "Soldier: Greater Good. Our lot is to lay down our lives in defense of others. (Good)"
       ],
       bonds: [
-        "I\u2019ve been searching my whole life for the answer to a certain question."
+        "Sage: I\u2019ve been searching my whole life for the answer to a certain question.",
+        "Soldier: I\u2019ll never forget the crushing defeat my company suffered or the enemies who dealt it."
       ],
       flaws: [
-        "Unlocking an ancient mystery is worth the price of a civilization."
+        "Sage: Unlocking an ancient mystery is worth the price of a civilization.",
+        "Soldier: I made a terrible mistake in battle that cost many lives, and I would do anything to keep that mistake secret."
       ]
     }
   },
@@ -26320,6 +26397,27 @@ At Higher Levels. When you cast this spell using a spell slot of 2nd level or hi
             reach: 5,
             damageTypes: ["slashing"]
           }
+        ],
+        diceRolls: [
+          {
+            name: "Attack",
+            staticBonus: 2,
+            strengthMod: true,
+            d20: 1,
+            proficiencyBonus: true
+          },
+          {
+            name: "One-handed Damage",
+            staticBonus: 2,
+            strengthMod: true,
+            d8: 1
+          },
+          {
+            name: "Two-handed Damage",
+            staticBonus: 2,
+            strengthMod: true,
+            d10: 1
+          }
         ]
       },
       {
@@ -26338,6 +26436,34 @@ At Higher Levels. When you cast this spell using a spell slot of 2nd level or hi
             reach: 5,
             damageTypes: ["piercing"]
           }
+        ],
+        diceRolls: [
+          {
+            name: "Attack",
+            staticBonus: 1,
+            strengthMod: true,
+            d20: 1,
+            proficiencyBonus: true
+          },
+          {
+            name: "Damage",
+            staticBonus: 1,
+            strengthMod: true,
+            d8: 1
+          },
+          {
+            name: "Attack (finesse)",
+            staticBonus: 1,
+            dexterityMod: true,
+            d20: 1,
+            proficiencyBonus: true
+          },
+          {
+            name: "Damage (finesse)",
+            staticBonus: 1,
+            dexterityMod: true,
+            d8: 1
+          }
         ]
       },
       {
@@ -26350,6 +26476,30 @@ At Higher Levels. When you cast this spell using a spell slot of 2nd level or hi
             attackType: "melee",
             reach: 5,
             damageTypes: ["slashing"]
+          }
+        ],
+        diceRolls: [
+          {
+            name: "Attack",
+            strengthMod: true,
+            d8: 1,
+            proficiencyBonus: true
+          },
+          {
+            name: "Damage",
+            strengthMod: true,
+            d6: 1
+          },
+          {
+            name: "Attack (finesse)",
+            dexterityMod: true,
+            d20: 1,
+            proficiencyBonus: true
+          },
+          {
+            name: "Damage (finesse)",
+            dexterityMod: true,
+            d6: 1
           }
         ]
       },

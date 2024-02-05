@@ -47,6 +47,7 @@ export type DerivedCharacter = {
     spellMod: number,
     spellSaveDC: number,
     attacks: (Sourced<FeatureEffectAttack & AttackKind>)[],
+    preferredName: string,
 }
 
 export type AttackKind = { kind: "weapon" | "spell" }
@@ -285,7 +286,15 @@ export const transfigure = (character: CharacterSheet): FullCharacter => {
         })
 
     const attacks = [...itemAttacks, ...spellAttacks]
-    
+
+    const preferredName = (()=>{
+        switch (character.sheetView.namePreference) {
+        case "long": return character.descriptive.longName
+        case "short": return character.descriptive.shortName
+        default: return character.sheetView.namePreference
+        }
+    })()
+
     return {
         ...character,
         currentLevels,
@@ -313,6 +322,7 @@ export const transfigure = (character: CharacterSheet): FullCharacter => {
         spellSaveDC,
         fullSpells,
         attacks,
+        preferredName,
     }
 }
 

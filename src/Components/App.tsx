@@ -22,15 +22,8 @@ export const App: React.FC = () => {
     const { 
         sheetView: { inventoryHistoryVisible, namePreference },
         descriptive: { longName, shortName },
+        preferredName,
     } = character
-
-    const preferredName = (()=>{
-        switch(namePreference) {
-        case "long": return longName;
-        case "short": return shortName;
-        default: return "error";
-        }
-    })()
 
     const [pages, setPages, togglePages, resetPages] = usePagesVisible()
 

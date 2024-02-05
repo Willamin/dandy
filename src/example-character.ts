@@ -651,7 +651,28 @@ const example: CharacterSheet = {
                         reach: 5, // feet
                         damageTypes: ["slashing"],
                     }
-                ]
+                ],
+                diceRolls: [
+                    {
+                        name: "Attack",
+                        staticBonus: 2,
+                        strengthMod: true,
+                        d20: 1,
+                        proficiencyBonus: true,
+                    },
+                    {
+                        name: "One-handed Damage",
+                        staticBonus: 2,
+                        strengthMod: true,
+                        d8: 1,
+                    },
+                    {
+                        name: "Two-handed Damage",
+                        staticBonus: 2,
+                        strengthMod: true,
+                        d10: 1,
+                    }
+                ],
             },
             {
                 name: "Sleepy Hat",
@@ -672,6 +693,34 @@ const example: CharacterSheet = {
                         damageTypes: ["piercing"],
                     },
                 ],
+                diceRolls: [
+                    {
+                        name: "Attack",
+                        staticBonus: 1,
+                        strengthMod: true,
+                        d20: 1,
+                        proficiencyBonus: true,
+                    },
+                    {
+                        name: "Damage",
+                        staticBonus: 1,
+                        strengthMod: true,
+                        d8: 1,
+                    },
+                    {
+                        name: "Attack (finesse)",
+                        staticBonus: 1,
+                        dexterityMod: true,
+                        d20: 1,
+                        proficiencyBonus: true,
+                    },
+                    {
+                        name: "Damage (finesse)",
+                        staticBonus: 1,
+                        dexterityMod: true,
+                        d8: 1,
+                    }
+                ]
             },
             {
                 name: "Cultist Sword",
@@ -685,6 +734,30 @@ const example: CharacterSheet = {
                         damageTypes: ["slashing"],
                     }
                 ],
+                diceRolls: [
+                    {
+                        name: "Attack",
+                        strengthMod: true,
+                        d8: 1,
+                        proficiencyBonus: true,
+                    },
+                    {
+                        name: "Damage",
+                        strengthMod: true,
+                        d6: 1,
+                    },
+                    {
+                        name: "Attack (finesse)",
+                        dexterityMod: true,
+                        d20: 1,
+                        proficiencyBonus: true,
+                    },
+                    {
+                        name: "Damage (finesse)",
+                        dexterityMod: true,
+                        d6: 1,
+                    },
+                ]
             },
             {
                 name: "Bag of Holding",

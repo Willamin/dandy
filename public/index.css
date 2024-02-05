@@ -345,3 +345,70 @@ body {
         margin: 0 !important;
     }
 }
+
+table.attacks { 
+    border-collapse: separate;
+    text-align: center;
+    margin: 1em;
+    margin-top: 0;
+    width: calc(100% - 2em);
+}
+
+.attacks tr {
+    background-color: var(--bg-secondary);
+}
+
+.attacks tr:nth-of-type(4n+1):hover,
+.attacks tr:nth-of-type(4n+1):hover + tr,
+.attacks tr:nth-of-type(4n+1):hover + tr + tr,
+
+.attacks tr:has( + tr:nth-of-type(4n+2):hover),
+.attacks tr:nth-of-type(4n+2):hover,
+.attacks tr:nth-of-type(4n+2):hover + tr,
+
+.attacks tr:has( + tr + tr:nth-of-type(4n+3):hover),
+.attacks tr:has( + tr:nth-of-type(4n+3):hover),
+.attacks tr:nth-of-type(4n+3):hover {
+    cursor: pointer;
+    color: var(--fg-green) !important; 
+    background-color: var(--bg-green) !important;
+}
+
+.attacks td {
+    border: 0px;
+}
+
+.attacks td:first-of-type {
+    padding-left: 1em;
+    text-align: left;
+    border-left: 1px solid var(--bd-primary); 
+}
+
+.attacks td:last-of-type {
+    padding-right: 1em;
+    border-right: 1px solid var(--bd-primary);
+}
+
+.attacks tr:nth-of-type(4n+1) td:first-of-type {
+    border-top-left-radius: 5px;
+}
+
+.attacks tr:nth-of-type(4n+1) td {
+    border-top: 1px solid var(--bd-primary);
+}
+
+.attacks tr:nth-of-type(4n+1) td:last-of-type {
+    border-top-right-radius: 5px;
+}
+
+.attacks tr:nth-of-type(4n+3) td:first-of-type {
+    border-bottom-left-radius: 5px;
+}
+
+.attacks tr:nth-of-type(4n+3) td {
+    border-bottom: 1px solid var(--bd-primary);
+}
+
+.attacks tr:nth-of-type(4n+3) td:last-of-type {
+    border-bottom-right-radius: 5px;
+}

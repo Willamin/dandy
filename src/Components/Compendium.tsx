@@ -44,11 +44,12 @@ export const Compendium = () => {
             <>
                 <h2 style={{ breakBefore: "page" }}>Compendium – Items</h2>
                 <div className="compendium-columns">
-                    {character.compendium.items.flatMap(({ name, description }) => (
+                    {character.compendium.items.flatMap(({ name, description, diceRolls }) => (
                         description ? [(<CompendiumCard
                             key={name}
                             title={name} 
                             content={description}
+                            diceRolls={diceRolls}
                         />)] : []
                     ))}
                 </div>
