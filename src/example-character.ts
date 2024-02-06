@@ -459,7 +459,7 @@ const example: CharacterSheet = {
                         range: 60, //feet
                         damageTypes: ["psychic"],
                     }
-                ]
+                ],
             },
             {
                 "name": "Eldritch Blast",
@@ -470,6 +470,23 @@ const example: CharacterSheet = {
                         attackType: "ranged",
                         range: 120, // feet
                         damageTypes: ["force"],
+                    }
+                ],
+                diceRolls: [
+                    {
+                        name: "Ranged Spell Attack",
+                        d20: 1,
+                        charismaMod: true,
+                        proficiencyBonus: true,
+                    },
+                    {
+                        name: "Damage",
+                        d10: 1,
+                    },
+                    {
+                        name: "Damage (with Agonizing Blast)",
+                        d10: 1,
+                        charismaMod: true,
                     }
                 ]
             },
@@ -561,7 +578,17 @@ const example: CharacterSheet = {
             {
                 "name": "Burning Hands",
                 "level": 1,
-                "description": "1st-level evocation\n---\nCasting Time: 1 action\nRange: self / 15-foot cone\nComponents: V, S\nDuration: Instantaneous\n---\nAs you hold your hands with thumbs touching and fingers spread, a thin sheet of flames shoots forth from your outstretched fingertips. Each creature in a 15-foot cone must make a Dexterity saving throw. A creature takes 3d6 fire damage on a failed save, or half as much damage on a successful one.\nThe fire ignites any flammable objects in the area that aren't being worn or carried.\nAt Higher Levels. When you cast this spell using a spell slot of 2nd level or higher, the damage increases by 1d6 for each slot level above 1st."
+                "description": "1st-level evocation\n---\nCasting Time: 1 action\nRange: self / 15-foot cone\nComponents: V, S\nDuration: Instantaneous\n---\nAs you hold your hands with thumbs touching and fingers spread, a thin sheet of flames shoots forth from your outstretched fingertips. Each creature in a 15-foot cone must make a Dexterity saving throw. A creature takes 3d6 fire damage on a failed save, or half as much damage on a successful one.\nThe fire ignites any flammable objects in the area that aren't being worn or carried.\nAt Higher Levels. When you cast this spell using a spell slot of 2nd level or higher, the damage increases by 1d6 for each slot level above 1st.",
+                diceRolls: [
+                    {
+                        name: "Damage (level 1 slot)",
+                        d6: 3,
+                    },
+                    {
+                        name: "Damage (level 2 slot)",
+                        d6: 4,
+                    },
+                ]
             },
             {
                 "name": "Scorching Ray",
@@ -573,12 +600,30 @@ const example: CharacterSheet = {
                         range: 120,
                         damageTypes: ["fire"],
                     }
+                ],
+                diceRolls: [
+                    {
+                        name: "Ranged Spell Attack",
+                        charismaMod: true,
+                        proficiencyBonus: true,
+                        d20: 1,
+                    },
+                    {
+                        name: "Damage (level 2 slot)",
+                        d6: 2,
+                    }
                 ]
             },
             {
                 "name": "Hex",
                 "level": 1,
-                "description": "1st-level enchantment\n---\nCasting Time: 1 bonus action\nRange: 90 feet\nComponents: V, S, M (the petrified eye of a newt)\nDuration: Concentration, up to 1 hour\n---\nYou place a curse on a creature that you can see within range. Until the spell ends, you deal an extra 1d6 necrotic damage to the target whenever you hit it with an attack. Also, choose one ability when you cast the spell. The target has disadvantage on ability checks made with the chosen ability.\nIf the target drops to 0 hit points before this spell ends, you can use a bonus action on a subsequent turn of yours to curse a new creature.\nA remove curse cast on the target ends this spell early.\nAt Higher Levels. When you cast this spell using a spell slot of 3rd or 4th level, you can maintain your concentration on the spell for up to 8 hours. When you use a spell slot of 5th level or higher, you can maintain your concentration on the spell for up to 24 hours."
+                "description": "1st-level enchantment\n---\nCasting Time: 1 bonus action\nRange: 90 feet\nComponents: V, S, M (the petrified eye of a newt)\nDuration: Concentration, up to 1 hour\n---\nYou place a curse on a creature that you can see within range. Until the spell ends, you deal an extra 1d6 necrotic damage to the target whenever you hit it with an attack. Also, choose one ability when you cast the spell. The target has disadvantage on ability checks made with the chosen ability.\nIf the target drops to 0 hit points before this spell ends, you can use a bonus action on a subsequent turn of yours to curse a new creature.\nA remove curse cast on the target ends this spell early.\nAt Higher Levels. When you cast this spell using a spell slot of 3rd or 4th level, you can maintain your concentration on the spell for up to 8 hours. When you use a spell slot of 5th level or higher, you can maintain your concentration on the spell for up to 24 hours.",
+                diceRolls: [
+                    {
+                        name: "Extra Damage upon Attack",
+                        d6: 1,
+                    }
+                ]
             },
             {
                 "name": "Witch Bolt",
@@ -590,6 +635,26 @@ const example: CharacterSheet = {
                         range: 30, // feet
                         damageTypes: ["lightning"],
                     }
+                ],
+                diceRolls: [
+                    {
+                        name: "Ranged Spell Attack",
+                        charismaMod: true,
+                        proficiencyBonus: true,
+                        d20: 1,
+                    },
+                    {
+                        name: "Initial Damage (level 1 slot)",
+                        d12: 1,
+                    },
+                    {
+                        name: "Initial Damage (level 2 slot)",
+                        d12: 2,
+                    },
+                    {
+                        name: "Recurring Damage",
+                        d12: 1,
+                    },
                 ]
             }
               
@@ -637,11 +702,28 @@ const example: CharacterSheet = {
         
                         damageTypes: ["slashing"],
                     },
+                ],
+
+                diceRolls: [
+                    {
+                        name: "Attack",
+                        staticBonus: 1,
+                        strengthMod: true,
+                        d20: 1,
+                        proficiencyBonus: true,
+                    },
+                    {
+                        name: "Damage",
+                        staticBonus: 1,
+                        strengthMod: true,
+                        d12: 1,
+                        proficiencyBonus: true,
+                    },
                 ]
             },
             {
                 name: "Nine Lives Stealer Longsword",
-                description: "Weapon (longsword), very rare (requires attunement)\n---\nOne-handed: melee, 5 ft reach, slashing: 1d8 + STR mod + 2\n\nTwo-handed: melee, 5ft reach, slashing: 1d10 + STR mod + 2\n---\nYou gain a +2 bonus to attack and damage rolls made with this magic weapon.\n\nThe sword has 1d8 + 1 charges. If you score a critical hit against a creature that has fewer than 100 hit points, it must succeed on a DC 15 Constitution saving throw or be slain instantly as the sword tears its life force from its body (a construct or an undead is immune). The sword loses 1 charge if the creature is slain. When the sword has no charges remaining, it loses this property.",
+                description: "Weapon (longsword), very rare (requires attunement)\n---\nmelee, versatile, 5 ft reach, slashing\n---\nYou gain a +2 bonus to attack and damage rolls made with this magic weapon.\n\nThe sword has 1d8 + 1 charges. If you score a critical hit against a creature that has fewer than 100 hit points, it must succeed on a DC 15 Constitution saving throw or be slain instantly as the sword tears its life force from its body (a construct or an undead is immune). The sword loses 1 charge if the creature is slain. When the sword has no charges remaining, it loses this property.",
                 type: "weapon",
 
                 traits: ["versatile"],
@@ -806,7 +888,14 @@ const example: CharacterSheet = {
                 },
                 {
                     name: "Second Wind",
-                    description: "You have a limited well of stamina that you can draw on to protect yourself from harm. On your turn, you can use a bonus action to regain hit points equal to 1d10 + your fighter level. Once you use this feature, you must finish a short or long rest before you can use it again."
+                    description: "You have a limited well of stamina that you can draw on to protect yourself from harm. On your turn, you can use a bonus action to regain hit points equal to 1d10 + your fighter level. Once you use this feature, you must finish a short or long rest before you can use it again.",
+                    diceRolls: [
+                        {
+                            name: "Regain HP (1 fighter level)",
+                            d10: 1,
+                            staticBonus: 1
+                        }
+                    ]
                 }
             ],
         },
@@ -822,6 +911,13 @@ const example: CharacterSheet = {
                 }, {
                     name: "Dark One’s Blessing",
                     description: "Starting at 1st level, when you reduce a hostile creature to 0 hit points, you gain temporary hit points equal to your Charisma modifier + your warlock level (minimum of 1).",
+                    diceRolls: [
+                        {
+                            name: "Temporary HP (3 warlock levels)",
+                            charismaMod: true,
+                            staticBonus: 3,
+                        }
+                    ]
                 }, {
                     name: "Spells Learned",
                     effects: [

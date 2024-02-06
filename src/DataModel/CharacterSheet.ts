@@ -136,6 +136,7 @@ export type SpellDefinition = {
     level: number,
     description: string,
     attacks?: FeatureEffectAttack[],
+    diceRolls?: DiceRollDescription[],
 }
 
 export type Species = {
@@ -166,7 +167,7 @@ export type FeatureOnlyDescription = {
 }
 
 export type Feature 
-= (FeatureWithEffect | FeatureOnlyDescription) & { sourceClass?: string }
+= (FeatureWithEffect | FeatureOnlyDescription) & { sourceClass?: string, diceRolls?: DiceRollDescription[] }
 
 export const SkillsToAbilities = {
     "acrobatics": "dexterity",

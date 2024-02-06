@@ -73,16 +73,18 @@ export const transfigure = (character: CharacterSheet): FullCharacter => {
         }
     ))
 
-    const currentItemEffects: Sourced<FeatureEffect>[] = currentItems.flatMap((item) => (
-        [
-            ...((item.equipped ?? false) && (item.attuned ?? false) ? (item.equippedAndAttunedEffects ?? []) : []),
-            ...((item.equipped ?? false) ? (item.equippedEffects ?? []) : []),
-        ]
-        .map((effect) => ({
-            ...effect,
-            source: item.name,
-        }))
-    ))
+    const currentItemEffects: Sourced<FeatureEffect>[] = 
+        currentItems
+        .flatMap((item) => (
+            [
+                ...((item.equipped ?? false) && (item.attuned ?? false) ? (item.equippedAndAttunedEffects ?? []) : []),
+                ...((item.equipped ?? false) ? (item.equippedEffects ?? []) : []),
+            ]
+            .map((effect) => ({
+                ...effect,
+                source: item.name,
+            }))
+        ))
 
     const allFeatures: Array<Feature> = [
         character.species.features,
@@ -172,7 +174,7 @@ export const transfigure = (character: CharacterSheet): FullCharacter => {
     const descriptiveFeatures = 
         allFeatures.flatMap(feature => {
             if (feature.description !== undefined) {
-                return [{name: feature.name, description: feature.description}]
+                return [{name: feature.name, description: feature.description, diceRolls: feature.diceRolls}]
             } else {
                 return []
             }
@@ -262,6 +264,8 @@ export const transfigure = (character: CharacterSheet): FullCharacter => {
         ...character.compendium.spells.find(s=>(s.name === name)),
         name
     }))
+
+    console.log("fullSpells", fullSpells)
 
 
     const spellAttacks: Sourced<FeatureEffectAttack>[] = 

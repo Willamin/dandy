@@ -24996,8 +24996,8 @@ var CompendiumCard = ({ title, content, diceRolls = [] }) => {
     const allRollsPieces = diceRolls.map((d) => diceRollDefinitionToPieces(d, character));
     const maxLength = allRollsPieces.map((p) => p.length).reduce((acc, p) => p > acc ? p : acc, 0);
     return allRollsPieces.map((pieces, index) => {
-      console.log(title, diceRolls[index].name, pieces);
       return import_react11.default.createElement(DiceRollView, {
+        cardTitle: title,
         for: diceRolls[index].name,
         pieces,
         slots: maxLength
@@ -25051,16 +25051,47 @@ var writeMod = (stat, value, present) => [
   present ? stat : null,
   present ? value : null
 ];
-var DiceRollView = ({ for: name, pieces, slots }) => {
-  const characterString = pieces.flatMap(([character, generic]) => character === null ? [] : [character]).join(" + ");
-  const genericString = pieces.flatMap(([character, generic]) => generic === null ? [] : [generic]).join(" + ");
+var DiceRollView = ({ cardTitle, for: name, pieces, slots }) => {
+  const [{ preferredName }] = useCharacter();
+  const genericString = pieces.flatMap(([character, generic]) => character === null ? [] : [character]).join(" + ");
+  const characterString = pieces.flatMap(([character, generic]) => generic === null ? [] : [generic]).join(" + ");
   const extraSpacerCells = 2 * (slots - pieces.length) > 0 && Array(2 * (slots - pieces.length)).fill(null).map(() => import_react11.default.createElement("td", null));
   const topSpacerCells = 2 * slots > 0 && Array(2 * slots).fill(null).map(() => import_react11.default.createElement("td", null));
+  const encodedName = `${preferredName} \u2013 ${cardTitle}: ${name}`.replace("\"", "'");
+  const encodedRoll = encodeURIComponent(characterString + ` named "${encodedName}"`);
+  console.log("encodedRoll", encodedRoll);
+  const onClick = () => {
+    const diceWindow = window.open("about:blank");
+    fetch("https://anydice.com/createLink.php", {
+      body: `program=output+${encodedRoll}`,
+      cache: "default",
+      credentials: "include",
+      headers: {
+        Accept: "text/plain, */*",
+        "Accept-Language": "en-US,en;q=0.9",
+        "Cache-Control": "no-cache",
+        "Content-Type": "application/x-www-form-urlencoded",
+        Pragma: "no-cache",
+        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.2.1 Safari/605.1.15",
+        "X-Requested-With": "XMLHttpRequest"
+      },
+      method: "POST",
+      redirect: "follow",
+      referrer: "https://anydice.com/"
+    }).then((r) => r.text()).then((t) => {
+      diceWindow.location.href = t;
+      diceWindow.focus();
+    });
+  };
   return import_react11.default.createElement(import_react11.default.Fragment, null, import_react11.default.createElement("tr", {
+    onClick,
     style: { height: "5px" }
-  }, topSpacerCells), import_react11.default.createElement("tr", null, import_react11.default.createElement("td", null, name), pieces.flatMap(([gen, char], index) => char === null ? [] : [[gen, char]]).flatMap(([gen, char], index) => import_react11.default.createElement(import_react11.default.Fragment, null, index > 0 && import_react11.default.createElement("td", null, "+"), import_react11.default.createElement("td", null, char))), extraSpacerCells), import_react11.default.createElement("tr", {
+  }, topSpacerCells), import_react11.default.createElement("tr", {
+    onClick
+  }, import_react11.default.createElement("td", null, name), pieces.flatMap(([gen, char], index) => char === null ? [] : [[gen, char]]).flatMap(([gen, char], index) => import_react11.default.createElement(import_react11.default.Fragment, null, index > 0 && import_react11.default.createElement("td", null, "+"), import_react11.default.createElement("td", null, char))), extraSpacerCells), import_react11.default.createElement("tr", {
+    onClick,
     style: { fontSize: "0.7em" }
-  }, import_react11.default.createElement("td", null), pieces.flatMap(([gen, char], index) => gen === null ? [] : [[gen, char]]).flatMap(([gen, char], index) => import_react11.default.createElement(import_react11.default.Fragment, null, index > 0 && import_react11.default.createElement("td", null), char != gen ? import_react11.default.createElement("td", null, gen) : import_react11.default.createElement("td", null))), extraSpacerCells));
+  }, import_react11.default.createElement("td", null, "\xA0"), pieces.flatMap(([gen, char], index) => gen === null ? [] : [[gen, char]]).flatMap(([gen, char], index) => import_react11.default.createElement(import_react11.default.Fragment, null, index > 0 && import_react11.default.createElement("td", null), char != gen ? import_react11.default.createElement("td", null, gen) : import_react11.default.createElement("td", null))), extraSpacerCells));
 };
 
 // src/Hooks/usePagesVisibile.tsx
@@ -25103,17 +25134,19 @@ var Compendium = () => {
     return import_react13.default.createElement(CompendiumCard, {
       key: spell.name,
       title: spell.name,
-      content: spell.description
+      content: spell.description,
+      diceRolls: spell.diceRolls
     });
   }))), pages.includes("features") && import_react13.default.createElement(import_react13.default.Fragment, null, import_react13.default.createElement("h2", {
     style: { breakBefore: "page" }
   }, "Compendium \u2013 Features"), import_react13.default.createElement("div", {
     className: "compendium-columns"
-  }, character.descriptiveFeatures.map(({ name, description }) => {
+  }, character.descriptiveFeatures.map(({ name, description, diceRolls = [] }) => {
     return import_react13.default.createElement(CompendiumCard, {
       key: name,
       title: name,
-      content: description
+      content: description,
+      diceRolls
     });
   }))), pages.includes("items") && import_react13.default.createElement(import_react13.default.Fragment, null, import_react13.default.createElement("h2", {
     style: { breakBefore: "page" }
@@ -25496,7 +25529,7 @@ var transfigure = (character) => {
   })();
   const descriptiveFeatures = allFeatures.flatMap((feature) => {
     if (feature.description !== undefined) {
-      return [{ name: feature.name, description: feature.description }];
+      return [{ name: feature.name, description: feature.description, diceRolls: feature.diceRolls }];
     } else {
       return [];
     }
@@ -25566,6 +25599,7 @@ var transfigure = (character) => {
     ...character.compendium.spells.find((s) => s.name === name),
     name
   }));
+  console.log("fullSpells", fullSpells);
   const spellAttacks = fullSpells.flatMap(({ attacks: attacks2 = [], name: spellName }) => attacks2.flatMap((attack) => {
     if ("attackType" in attack) {
       return [{ ...attack, kind: "spell", source: spellName }];
@@ -26110,6 +26144,23 @@ var example = {
             range: 120,
             damageTypes: ["force"]
           }
+        ],
+        diceRolls: [
+          {
+            name: "Ranged Spell Attack",
+            d20: 1,
+            charismaMod: true,
+            proficiencyBonus: true
+          },
+          {
+            name: "Damage",
+            d10: 1
+          },
+          {
+            name: "Damage (with Agonizing Blast)",
+            d10: 1,
+            charismaMod: true
+          }
         ]
       },
       {
@@ -26304,7 +26355,17 @@ A creature can use its action to inspect a target and make an Intelligence (Inve
       {
         name: "Burning Hands",
         level: 1,
-        description: "1st-level evocation\n---\nCasting Time: 1 action\nRange: self / 15-foot cone\nComponents: V, S\nDuration: Instantaneous\n---\nAs you hold your hands with thumbs touching and fingers spread, a thin sheet of flames shoots forth from your outstretched fingertips. Each creature in a 15-foot cone must make a Dexterity saving throw. A creature takes 3d6 fire damage on a failed save, or half as much damage on a successful one.\nThe fire ignites any flammable objects in the area that aren't being worn or carried.\nAt Higher Levels. When you cast this spell using a spell slot of 2nd level or higher, the damage increases by 1d6 for each slot level above 1st."
+        description: "1st-level evocation\n---\nCasting Time: 1 action\nRange: self / 15-foot cone\nComponents: V, S\nDuration: Instantaneous\n---\nAs you hold your hands with thumbs touching and fingers spread, a thin sheet of flames shoots forth from your outstretched fingertips. Each creature in a 15-foot cone must make a Dexterity saving throw. A creature takes 3d6 fire damage on a failed save, or half as much damage on a successful one.\nThe fire ignites any flammable objects in the area that aren't being worn or carried.\nAt Higher Levels. When you cast this spell using a spell slot of 2nd level or higher, the damage increases by 1d6 for each slot level above 1st.",
+        diceRolls: [
+          {
+            name: "Damage (level 1 slot)",
+            d6: 3
+          },
+          {
+            name: "Damage (level 2 slot)",
+            d6: 4
+          }
+        ]
       },
       {
         name: "Scorching Ray",
@@ -26316,12 +26377,30 @@ A creature can use its action to inspect a target and make an Intelligence (Inve
             range: 120,
             damageTypes: ["fire"]
           }
+        ],
+        diceRolls: [
+          {
+            name: "Ranged Spell Attack",
+            charismaMod: true,
+            proficiencyBonus: true,
+            d20: 1
+          },
+          {
+            name: "Damage (level 2 slot)",
+            d6: 2
+          }
         ]
       },
       {
         name: "Hex",
         level: 1,
-        description: "1st-level enchantment\n---\nCasting Time: 1 bonus action\nRange: 90 feet\nComponents: V, S, M (the petrified eye of a newt)\nDuration: Concentration, up to 1 hour\n---\nYou place a curse on a creature that you can see within range. Until the spell ends, you deal an extra 1d6 necrotic damage to the target whenever you hit it with an attack. Also, choose one ability when you cast the spell. The target has disadvantage on ability checks made with the chosen ability.\nIf the target drops to 0 hit points before this spell ends, you can use a bonus action on a subsequent turn of yours to curse a new creature.\nA remove curse cast on the target ends this spell early.\nAt Higher Levels. When you cast this spell using a spell slot of 3rd or 4th level, you can maintain your concentration on the spell for up to 8 hours. When you use a spell slot of 5th level or higher, you can maintain your concentration on the spell for up to 24 hours."
+        description: "1st-level enchantment\n---\nCasting Time: 1 bonus action\nRange: 90 feet\nComponents: V, S, M (the petrified eye of a newt)\nDuration: Concentration, up to 1 hour\n---\nYou place a curse on a creature that you can see within range. Until the spell ends, you deal an extra 1d6 necrotic damage to the target whenever you hit it with an attack. Also, choose one ability when you cast the spell. The target has disadvantage on ability checks made with the chosen ability.\nIf the target drops to 0 hit points before this spell ends, you can use a bonus action on a subsequent turn of yours to curse a new creature.\nA remove curse cast on the target ends this spell early.\nAt Higher Levels. When you cast this spell using a spell slot of 3rd or 4th level, you can maintain your concentration on the spell for up to 8 hours. When you use a spell slot of 5th level or higher, you can maintain your concentration on the spell for up to 24 hours.",
+        diceRolls: [
+          {
+            name: "Extra Damage upon Attack",
+            d6: 1
+          }
+        ]
       },
       {
         name: "Witch Bolt",
@@ -26340,6 +26419,26 @@ At Higher Levels. When you cast this spell using a spell slot of 2nd level or hi
             attackType: "ranged",
             range: 30,
             damageTypes: ["lightning"]
+          }
+        ],
+        diceRolls: [
+          {
+            name: "Ranged Spell Attack",
+            charismaMod: true,
+            proficiencyBonus: true,
+            d20: 1
+          },
+          {
+            name: "Initial Damage (level 1 slot)",
+            d12: 1
+          },
+          {
+            name: "Initial Damage (level 2 slot)",
+            d12: 2
+          },
+          {
+            name: "Recurring Damage",
+            d12: 1
           }
         ]
       }
@@ -26384,11 +26483,27 @@ At Higher Levels. When you cast this spell using a spell slot of 2nd level or hi
             reach: 5,
             damageTypes: ["slashing"]
           }
+        ],
+        diceRolls: [
+          {
+            name: "Attack",
+            staticBonus: 1,
+            strengthMod: true,
+            d20: 1,
+            proficiencyBonus: true
+          },
+          {
+            name: "Damage",
+            staticBonus: 1,
+            strengthMod: true,
+            d12: 1,
+            proficiencyBonus: true
+          }
         ]
       },
       {
         name: "Nine Lives Stealer Longsword",
-        description: "Weapon (longsword), very rare (requires attunement)\n---\nOne-handed: melee, 5 ft reach, slashing: 1d8 + STR mod + 2\n\nTwo-handed: melee, 5ft reach, slashing: 1d10 + STR mod + 2\n---\nYou gain a +2 bonus to attack and damage rolls made with this magic weapon.\n\nThe sword has 1d8 + 1 charges. If you score a critical hit against a creature that has fewer than 100 hit points, it must succeed on a DC 15 Constitution saving throw or be slain instantly as the sword tears its life force from its body (a construct or an undead is immune). The sword loses 1 charge if the creature is slain. When the sword has no charges remaining, it loses this property.",
+        description: "Weapon (longsword), very rare (requires attunement)\n---\nmelee, versatile, 5 ft reach, slashing\n---\nYou gain a +2 bonus to attack and damage rolls made with this magic weapon.\n\nThe sword has 1d8 + 1 charges. If you score a critical hit against a creature that has fewer than 100 hit points, it must succeed on a DC 15 Constitution saving throw or be slain instantly as the sword tears its life force from its body (a construct or an undead is immune). The sword loses 1 charge if the creature is slain. When the sword has no charges remaining, it loses this property.",
         type: "weapon",
         traits: ["versatile"],
         equippedEffects: [
@@ -26554,7 +26669,14 @@ Placing a bag of holding inside an extradimensional space created by a handy hav
         },
         {
           name: "Second Wind",
-          description: "You have a limited well of stamina that you can draw on to protect yourself from harm. On your turn, you can use a bonus action to regain hit points equal to 1d10 + your fighter level. Once you use this feature, you must finish a short or long rest before you can use it again."
+          description: "You have a limited well of stamina that you can draw on to protect yourself from harm. On your turn, you can use a bonus action to regain hit points equal to 1d10 + your fighter level. Once you use this feature, you must finish a short or long rest before you can use it again.",
+          diceRolls: [
+            {
+              name: "Regain HP (1 fighter level)",
+              d10: 1,
+              staticBonus: 1
+            }
+          ]
         }
       ]
     },
@@ -26571,7 +26693,14 @@ Placing a bag of holding inside an extradimensional space created by a handy hav
         },
         {
           name: "Dark One\u2019s Blessing",
-          description: "Starting at 1st level, when you reduce a hostile creature to 0 hit points, you gain temporary hit points equal to your Charisma modifier + your warlock level (minimum of 1)."
+          description: "Starting at 1st level, when you reduce a hostile creature to 0 hit points, you gain temporary hit points equal to your Charisma modifier + your warlock level (minimum of 1).",
+          diceRolls: [
+            {
+              name: "Temporary HP (3 warlock levels)",
+              charismaMod: true,
+              staticBonus: 3
+            }
+          ]
         },
         {
           name: "Spells Learned",

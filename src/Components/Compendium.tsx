@@ -19,6 +19,7 @@ export const Compendium = () => {
                             key={spell.name}
                             title={spell.name} 
                             content={spell.description}
+                            diceRolls={spell.diceRolls}
                         />)
                     })}
                 </div>
@@ -29,11 +30,12 @@ export const Compendium = () => {
             <>
                 <h2 style={{ breakBefore: "page" }}>Compendium – Features</h2>
                 <div className="compendium-columns">
-                    {character.descriptiveFeatures.map(({name, description}) => {
+                    {character.descriptiveFeatures.map(({name, description, diceRolls = []}) => {
                         return (<CompendiumCard
                             key={name}
                             title={name} 
                             content={description}
+                            diceRolls={diceRolls}
                         />)
                     })}
                 </div>

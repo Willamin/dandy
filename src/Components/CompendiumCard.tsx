@@ -11,7 +11,6 @@ export const CompendiumCard: React.FC<{title: string, content: string, diceRolls
         .replaceAll(/\n/g, '<br />')
 
     const [classes, setClasses] = useState("anchor")
-
     return (
         <div style={{breakInside: "avoid"}}>
             <div className={classes + " box"} id={"compendium-" + title.replace(" ", "-")} style={{
@@ -43,9 +42,7 @@ export const CompendiumCard: React.FC<{title: string, content: string, diceRolls
 
                             return allRollsPieces
                             .map((pieces, index) => {
-                                console.log(title, diceRolls[index].name, pieces)
-
-                                return (<DiceRollView for={diceRolls[index].name} pieces={pieces} slots={maxLength} />)
+                                return (<DiceRollView cardTitle={title} for={diceRolls[index].name} pieces={pieces} slots={maxLength} />)
                             })
                             .flatMap((elem, index) => (
                                 index === 0 ? [elem] : [
@@ -106,13 +103,15 @@ export const writeMod = (stat, value, present) => (
     ]
 )
 
-export const DiceRollView = ({for: name, pieces, slots }) => {
-    const characterString = 
+export const DiceRollView = ({cardTitle, for: name, pieces, slots }) => {
+    const [{preferredName}] = useCharacter()
+
+    const genericString = 
         pieces
         .flatMap(([character, generic]) => (character === null ? [] : [character]))
         .join(" + ")
 
-    const genericString = 
+    const characterString = 
         pieces
         .flatMap(([character, generic]) => (generic === null ? [] : [generic]))
         .join(" + ")
@@ -121,9 +120,39 @@ export const DiceRollView = ({for: name, pieces, slots }) => {
 
     const topSpacerCells = (2 * slots) > 0 && Array(2 * slots).fill(null).map(() => (<td></td>))
 
+    const encodedName = `${preferredName} – ${cardTitle}: ${name}`.replace("\"", "'")
+    const encodedRoll = encodeURIComponent(characterString + ` named "${encodedName}"`)
+    console.log("encodedRoll", encodedRoll)
+
+    const onClick = () => {
+        const diceWindow = window.open('about:blank')
+        fetch("https://anydice.com/createLink.php", {
+            "body": `program=output+${encodedRoll}`,
+            "cache": "default",
+            "credentials": "include",
+            "headers": {
+                "Accept": "text/plain, */*",
+                "Accept-Language": "en-US,en;q=0.9",
+                "Cache-Control": "no-cache",
+                "Content-Type": "application/x-www-form-urlencoded",
+                "Pragma": "no-cache",
+                "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.2.1 Safari/605.1.15",
+                "X-Requested-With": "XMLHttpRequest"
+            },
+            "method": "POST",
+            "redirect": "follow",
+            "referrer": "https://anydice.com/",
+        })
+        .then((r) => (r.text()))
+        .then((t) => { 
+            diceWindow.location.href = t
+            diceWindow.focus()
+        })
+    }
+
     return <>
-        <tr style={{height: "5px"}}>{topSpacerCells}</tr>
-        <tr>
+        <tr onClick={onClick} style={{height: "5px"}}>{topSpacerCells}</tr>
+        <tr onClick={onClick}>
             <td>{name}</td>
             { pieces.flatMap(([gen, char], index) => (
                 char === null ? [] : [[gen,char]]
@@ -137,8 +166,8 @@ export const DiceRollView = ({for: name, pieces, slots }) => {
 
             { extraSpacerCells }
         </tr>
-        <tr style={{fontSize: "0.7em"}}>
-            <td></td>
+        <tr onClick={onClick} style={{fontSize: "0.7em"}}>
+            <td>&nbsp;</td>
             { pieces.flatMap(([gen, char], index) => (
                 gen === null ? [] : [[gen, char]]
             )).flatMap(([gen, char], index) => (

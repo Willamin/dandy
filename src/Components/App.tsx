@@ -38,7 +38,7 @@ export const App: React.FC = () => {
                 <IfPresent value={character}>
                     { pages.includes("main") && (
                         <>
-                        <CharacterName {preferredName} />
+                        <CharacterName preferredName={preferredName} />
 
                         <div className="main-grid">
                             <div className="box">
