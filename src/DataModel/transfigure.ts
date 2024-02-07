@@ -19,6 +19,7 @@ import {
     InventoryRow,
     Sourced,
     SourcedAnyItem,
+    Ability,
 } from "./CharacterSheet";
 
 export type DerivedCharacter = {
@@ -46,6 +47,13 @@ export type DerivedCharacter = {
     currentItems: (SourcedAnyItem & ItemState)[],
     spellMod: number,
     spellSaveDC: number,
+
+    spellStats: {
+        sourceClass: string,
+        originalAbility: Ability,
+        mod: number,
+    }[],
+
     attacks: (Sourced<FeatureEffectAttack & AttackKind>)[],
     preferredName: string,
 }
@@ -260,13 +268,34 @@ export const transfigure = (character: CharacterSheet): FullCharacter => {
     const spellMod = abilityMods.charisma + proficiencyBonus
     const spellSaveDC = 8 + spellMod
 
+    const spellStats = 
+        currentLevels
+        .map((level) => (level.class))
+        .reduce((acc, classLevel) => {
+            if (acc.includes(classLevel)) {
+                return acc
+            } else {
+                return [...acc, classLevel]
+            }
+        }, [])
+        .flatMap((className) => {
+            const ability = character.compendium.classes.find(({name}) => (name === className))?.spellcastingAbility
+            if (ability) {
+                return [{
+                    sourceClass: className,
+                    originalAbility: ability,
+                    mod: abilityMods[ability] + proficiencyBonus,
+                    saveDC: 8 + abilityMods[ability] + proficiencyBonus,
+                }]
+            } else {
+                return []
+            }
+        })
+
     const fullSpells = spells.map((name) => ({
         ...character.compendium.spells.find(s=>(s.name === name)),
         name
     }))
-
-    console.log("fullSpells", fullSpells)
-
 
     const spellAttacks: Sourced<FeatureEffectAttack>[] = 
         fullSpells
@@ -327,6 +356,7 @@ export const transfigure = (character: CharacterSheet): FullCharacter => {
         fullSpells,
         attacks,
         preferredName,
+        spellStats,
     }
 }
 

@@ -72,7 +72,7 @@ export const GeneralList: React.FC<{style?: React.style}> = ({
                     gridColumn: `span ${columns.length}`,
                     display: "grid",
                     textAlign: "center",
-                    gridTemplateColumns: "repeat(auto-fill, minmax(0, 8em))",
+                    gridTemplateColumns: "repeat(auto-fill, minmax(0, 10em))",
                     gap: "0.5em",
                     margin: "0.5em 0",
                     justifyContent: "space-around",

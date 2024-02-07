@@ -24,22 +24,24 @@ export const makeSortFun = (key, direction = "asc") => {
 
 export const Spells: React.FC = () => {
     const [character, setCharacter] = useCharacter()
-    const { spells, compendium, spellMod, spellSaveDC } = character;
+    const { spells, compendium, spellMod, spellSaveDC, spellStats } = character;
 
-    const topChunk = (
+    const topChunk = spellStats.map(({sourceClass, originalAbility, mod, saveDC}) => (
         <>
             <StatBlock
                 name="Spell Attack"
-                primary={StatBlockMod(character.spellMod)}
-                secondary=""
+                tertiary={sourceClass}
+                primary={StatBlockMod(mod)}
+                secondary={`(${originalAbility.slice(0,3).toUpperCase()} + prof)`}
             />
             <StatBlock
                 name="Spell Save DC"
-                primary={character.spellSaveDC}
-                secondary=""
+                tertiary={sourceClass}
+                primary={saveDC}
+                secondary={`(${originalAbility.slice(0,3).toUpperCase()} + prof + 8)`}
             />
         </>
-    )
+    ))
 
     const SpellNameInList = ({ name }) => {
         const doJump = useCompendiumJump(name)
