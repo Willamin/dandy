@@ -104,6 +104,115 @@ const example: CharacterSheet = {
     },
     inventoryHistory: [
         {
+            comment: "Deal + Murder of Mean-to-Horses man",
+            items: [
+                { name: "Gold Pieces", quantity: 690, currency: true },
+                { name: "Gauntlets of Ogre Power", equipped: true, attuned: true },
+                { name: "Studded Leather Armor", equipped: true },
+                { name: "Sleepy Hat", equipped: true },
+                { name: "Bag of Holding" },
+                { name: "Nine Lives Stealer Longsword", attuned: true, equipped: true },
+                { name: "Lightsaber +1", equipped: false, contained: "Bag of Holding" },
+                
+                { name: "Dragon Egg", quantity: 2, contained: "Bag of Holding"},
+                { name: "Mysterious Potion", quantity: 2, comment: "probably not health potions", contained: "Bag of Holding" },
+
+                { name: "Waterskin" },
+                { name: "Rations", quantity: 5 },
+                { name: "Torch", quantity: 2 },
+                { name: "Component Pouch" },
+
+                { name: "Cultist Outfit", equipped: false, contained: "Bag of Holding" },
+                { name: "Cultist Sword", equipped: false, contained: "Bag of Holding" },
+
+                { name: "Horse (named \"Patter\")" },
+                { name: "Receipt for \"Patter\"" },
+                
+                { name: "Head of Brick Boards (wrapped in a sheet)" },
+                { name: "Corpse of yet-to-be-looted Mean-to-Horses man" },
+            ]
+        }, {
+            comment: "Killed Brick Boars",
+            items: [
+                { name: "Gold Pieces", quantity: 685, currency: true },
+                { name: "Gauntlets of Ogre Power", equipped: true, attuned: true },
+                { name: "Studded Leather Armor", equipped: true },
+                { name: "Sleepy Hat", equipped: true },
+                { name: "Bag of Holding" },
+                { name: "Nine Lives Stealer Longsword", attuned: true, equipped: true },
+                { name: "Lightsaber +1", equipped: false, contained: "Bag of Holding" },
+                
+                { name: "Dragon Egg", quantity: 2, contained: "Bag of Holding"},
+                { name: "Mysterious Potion", quantity: 2, comment: "probably not health potions", contained: "Bag of Holding" },
+
+                { name: "Waterskin" },
+                { name: "Rations", quantity: 5 },
+                { name: "Torch", quantity: 2 },
+                { name: "Component Pouch" },
+
+                { name: "Cultist Outfit", equipped: false, contained: "Bag of Holding" },
+                { name: "Cultist Sword", equipped: false, contained: "Bag of Holding" },
+
+                { name: "Horse (named \"Patter\")" },
+                { name: "Receipt for \"Patter\"" },
+                
+                { name: "Head of Brick Boards (wrapped in a sheet)" },
+            ]
+        },
+        {
+            comment: "Played (and won) Reindeer Games",
+            items: [
+                { name: "Gold Pieces", quantity: 685, currency: true },
+                { name: "Gauntlets of Ogre Power", equipped: true, attuned: true },
+                { name: "Studded Leather Armor", equipped: true },
+                { name: "Sleepy Hat", equipped: true },
+                { name: "Bag of Holding" },
+                { name: "Nine Lives Stealer Longsword", attuned: true, equipped: true },
+                { name: "Lightsaber +1", equipped: false, contained: "Bag of Holding" },
+                
+                { name: "Dragon Egg", quantity: 2, contained: "Bag of Holding"},
+                { name: "Mysterious Potion", quantity: 2, comment: "probably not health potions", contained: "Bag of Holding" },
+
+                { name: "Waterskin" },
+                { name: "Rations", quantity: 5 },
+                { name: "Torch", quantity: 2 },
+                { name: "Component Pouch" },
+
+                { name: "Cultist Outfit", equipped: false, contained: "Bag of Holding" },
+                { name: "Cultist Sword", equipped: false, contained: "Bag of Holding" },
+
+                { name: "Horse (named \"Patter\")" },
+                { name: "Receipt for \"Patter\"" },
+            ]
+        },
+        {
+            comment: "Received a horse",
+            items: [
+                { name: "Gold Pieces", quantity: 635, currency: true },
+                { name: "Gauntlets of Ogre Power", equipped: true, attuned: true },
+                { name: "Studded Leather Armor", equipped: true },
+                { name: "Sleepy Hat", equipped: true },
+                { name: "Bag of Holding" },
+                { name: "Nine Lives Stealer Longsword", attuned: true, equipped: true },
+                { name: "Lightsaber +1", equipped: false, contained: "Bag of Holding" },
+                
+                { name: "Dragon Egg", quantity: 2, contained: "Bag of Holding"},
+                { name: "Mysterious Potion", quantity: 2, comment: "probably not health potions", contained: "Bag of Holding" },
+
+                { name: "Waterskin" },
+                { name: "Rations", quantity: 5 },
+                { name: "Torch", quantity: 2 },
+                { name: "Component Pouch" },
+
+                { name: "Cultist Outfit", equipped: false, contained: "Bag of Holding" },
+                { name: "Cultist Sword", equipped: false, contained: "Bag of Holding" },
+
+                { name: "Horse (named \"Patter\")" },
+                { name: "Receipt for \"Patter\"" },
+            ]
+        },
+        { comment: "---" },
+        {
             comment: "Adjusting bags",
             items: [
                 { name: "Gold Pieces", quantity: 635, currency: true },
@@ -609,7 +718,7 @@ const example: CharacterSheet = {
                         d20: 1,
                     },
                     {
-                        name: "Damage (level 2 slot)",
+                        name: "Damage",
                         d6: 2,
                     }
                 ]

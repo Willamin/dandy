@@ -13,7 +13,7 @@ export const Tag: React.FC<{children: React.ReactChild, className?: string, inli
     }}>{children}</div>
 )
 
-export const TagRow: React.FC<{title: string, tags: React.ReactChild[], tagsClassName?: string, key?: string, classNameCallback?: (string)=>(string)}> = ({title = "", tags, tagsClassName = "", classNameCallback = (tagName) => ("")}) => {
+export const TagRow: React.FC<{title: string, tags: React.ReactChild[], tagsClassName?: string, key?: string, classNameCallback?: (string)=>(string)}> = ({title = "", tags, style = {}, tagsClassName = "", classNameCallback = (tagName) => ("")}) => {
     return <div style={{
         display: "block",
         justifyContent: "flex-start",
@@ -22,6 +22,7 @@ export const TagRow: React.FC<{title: string, tags: React.ReactChild[], tagsClas
         width: "100%",
         lineHeight: "1.2em",
         textIndent: "1em hanging each-line",
+        ...style,
     }}>
         { title != "" && <span>{title}:</span> }
         { (tags ?? []).length == 0 && (<Tag className={tagsClassName} key={"none"}>None</Tag>)}
@@ -33,7 +34,11 @@ export const TagRow: React.FC<{title: string, tags: React.ReactChild[], tagsClas
                     return ""
                 }
             })()
-            return <Tag className={tagsClassName + " " + extraClassNames} key={typeof tag == "object" ? tag.key ?? tag : tag}>{tag}</Tag>
+            if (typeof tag == "object" && "render" in tag) {
+                return tag.render
+            } else {
+                return <Tag className={tagsClassName + " " + extraClassNames} key={typeof tag == "object" ? tag.key ?? tag : tag}>{tag}</Tag>
+            }
         })}
     </div>
 }

@@ -59,6 +59,9 @@ export type DerivedCharacter = {
 }
 
 export type AttackKind = { kind: "weapon" | "spell" }
+export type ItemAttackEquipRequirements = { equipNeeded: boolean, currentlyEquipped: boolean }
+export type ItemAttackAttuneRequirements = { attuneNeeded: boolean, currentlyAttuned: boolean }
+export type ItemAttackRequirements = ItemAttackEquipRequirements | ( ItemAttackEquipRequirements & ItemAttackAttuneRequirements)
 export type FullCharacter = CharacterSheet & DerivedCharacter
 
 export const scoreToMod = (score: number): number => (Math.floor((score - 10) / 2))
@@ -88,11 +91,55 @@ export const transfigure = (character: CharacterSheet): FullCharacter => {
                 ...((item.equipped ?? false) && (item.attuned ?? false) ? (item.equippedAndAttunedEffects ?? []) : []),
                 ...((item.equipped ?? false) ? (item.equippedEffects ?? []) : []),
             ]
+            .filter((effect) => {
+                if ("attackType" in effect) { 
+                    return false 
+                } else { 
+                    return true
+                }
+            })
             .map((effect) => ({
                 ...effect,
                 source: item.name,
             }))
         ))
+    
+    const currentItemAttacks = currentItems.flatMap((item) => (
+        [
+            ...(
+                (item.equippedEffects ?? [])
+                .flatMap((effect) => {
+                    if ("attackType" in effect) {
+                        return [{
+                            ...effect,
+                            source: item.name,
+                            equipNeeded: true, 
+                            currentlyEquipped: item.equipped ?? false,
+                        }]
+                    } else {
+                        return []
+                    }
+                })
+            ),
+            ...(
+                (item.equippedAndAttunedEffects ?? [])
+                .flatMap((effect) => {
+                    if ("attackType" in effect) {
+                        return [{
+                            ...effect, 
+                            source: item.name,
+                            equipNeeded: true, 
+                            currentlyEquipped: item.equipped ?? false, 
+                            attunedNeeded: true, 
+                            currentlyAttuned: item.attuned ?? false,
+                        }]
+                    } else {
+                        return []
+                    }
+                })
+            ),
+        ]
+    ))
 
     const allFeatures: Array<Feature> = [
         character.species.features,
@@ -309,15 +356,11 @@ export const transfigure = (character: CharacterSheet): FullCharacter => {
                 })
             ))
 
-    const itemAttacks = currentItemEffects
-        .flatMap((attack) => {
-            if ("attackType" in attack) {
-                return [({...attack, kind: "weapon"} as Sourced<FeatureEffectAttack & AttackKind>)]
-            } else {
-                return []
-            }
-        })
-
+    const itemAttacks = 
+        currentItemAttacks
+            .map((attack) => (
+                {...attack, kind: "weapon"} as Sourced<FeatureEffectAttack & AttackKind & ItemAttackRequirements>
+            ))
     const attacks = [...itemAttacks, ...spellAttacks]
 
     const preferredName = (()=>{

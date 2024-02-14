@@ -9,7 +9,19 @@ import { useCompendiumJump } from "../Helpers/useCompendiumJump"
 export const Attacks = () => {
     const [character, setCharacter] = useCharacter()
     
-    const FullName = ({ kind, source, name, attackType = null, damageTypes = [], reach = null, range = null }) => {
+    const FullName = ({ 
+        kind, 
+        source, 
+        name, 
+        attackType = null,
+        damageTypes = [], 
+        reach = null, 
+        range = null, 
+        equipNeeded = false, 
+        currentlyEquipped = false,
+        attuneNeeded = false, 
+        currentlyAttuned = false,
+    }) => {
         const jump = useCompendiumJump(source)
 
         const tags = [
@@ -31,9 +43,29 @@ export const Attacks = () => {
                 ? "pointer compendium-present"
                 : ""
             }>
-            <div style={{display: "inline-block"}}>{name && `${name} (${source})` || source}</div>
-            <br/>
-            <TagRow tags={tags} classNameCallback={(tagName) => {
+            <div style={{display: "inline-block"}}>{source}</div>
+            <br />
+            <TagRow tags={[
+                {render: (<button
+                    style={{ display: "inline-flex", marginInline: "2px", position: "relative", top: "-1px" }}
+                    className="checkbox" 
+                    disabled={ attuneNeeded == false } 
+                    onClick={ (e) => { e.stopPropagation() /* toggleStatus(index, "attuned") */ }}
+                >
+                    <div className={currentlyAttuned ? "checkmark" : ""}>A</div>
+                    <div className="disablemark">╱</div>
+                </button>)},
+                {render: (<button
+                    style={{ display: "inline-flex", marginInline: "2px", position: "relative", top: "-1px" }}
+                    className="checkbox" 
+                    disabled={ equipNeeded == false } 
+                    onClick={ (e) => { e.stopPropagation() /* toggleStatus(index, "attuned") */ }}
+                >
+                    <div className={currentlyEquipped ? "checkmark" : ""}>E</div>
+                    <div className="disablemark">╱</div>
+                </button>)},
+                ...tags,
+            ]} classNameCallback={(tagName) => {
                 switch (tagName) {
                 case "Weapon": return "red"
                 case "Spell": return "violet"
