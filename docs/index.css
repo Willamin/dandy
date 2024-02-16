@@ -376,12 +376,14 @@ table.attacks {
 
 .attacks td {
     border: 0px;
+    padding-inline: 0.5em;
 }
 
 .attacks td:first-of-type {
     padding-left: 1em;
     text-align: left;
     border-left: 1px solid var(--bd-primary); 
+    width: 100%;
 }
 
 .attacks td:last-of-type {

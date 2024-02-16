@@ -24039,7 +24039,7 @@ var prefixify = (value) => {
 var titleCase = (string) => string.slice(0, 1).toUpperCase() + string.slice(1, string.length);
 
 // src/Components/StatBlock.tsx
-var StatBlock = ({ name, primary, secondary, style, className }) => import_react.default.createElement("div", {
+var StatBlock = ({ name, primary, secondary, tertiary, style, className }) => import_react.default.createElement("div", {
   key: `row-${name}`,
   className: `stat-block secondary pointer ${className}`,
   style: {
@@ -24054,7 +24054,9 @@ var StatBlock = ({ name, primary, secondary, style, className }) => import_react
   }
 }, name && import_react.default.createElement("div", {
   style: { fontSize: "0.7em" }
-}, name), import_react.default.createElement("div", {
+}, name), tertiary && import_react.default.createElement("div", {
+  style: { fontSize: "0.7em" }
+}, tertiary), import_react.default.createElement("div", {
   style: { fontSize: "1.3em" }
 }, primary), secondary && import_react.default.createElement("div", {
   style: { fontSize: "0.7em" }
@@ -24189,7 +24191,7 @@ var Tag = ({ children, className, inline = false, style = {} }) => import_react4
     ...style
   }
 }, children);
-var TagRow = ({ title = "", tags, tagsClassName = "", classNameCallback = (tagName) => "" }) => {
+var TagRow = ({ title = "", tags, style = {}, tagsClassName = "", classNameCallback = (tagName) => "" }) => {
   return import_react4.default.createElement("div", {
     style: {
       display: "block",
@@ -24198,7 +24200,8 @@ var TagRow = ({ title = "", tags, tagsClassName = "", classNameCallback = (tagNa
       flexWrap: "wrap",
       width: "100%",
       lineHeight: "1.2em",
-      textIndent: "1em hanging each-line"
+      textIndent: "1em hanging each-line",
+      ...style
     }
   }, title != "" && import_react4.default.createElement("span", null, title, ":"), (tags ?? []).length == 0 && import_react4.default.createElement(Tag, {
     className: tagsClassName,
@@ -24211,10 +24214,14 @@ var TagRow = ({ title = "", tags, tagsClassName = "", classNameCallback = (tagNa
         return "";
       }
     })();
-    return import_react4.default.createElement(Tag, {
-      className: tagsClassName + " " + extraClassNames,
-      key: typeof tag == "object" ? tag.key ?? tag : tag
-    }, tag);
+    if (typeof tag == "object" && "render" in tag) {
+      return tag.render;
+    } else {
+      return import_react4.default.createElement(Tag, {
+        className: tagsClassName + " " + extraClassNames,
+        key: typeof tag == "object" ? tag.key ?? tag : tag
+      }, tag);
+    }
   }));
 };
 
@@ -24494,7 +24501,7 @@ var GeneralList = ({
       gridColumn: `span ${columns.length}`,
       display: "grid",
       textAlign: "center",
-      gridTemplateColumns: "repeat(auto-fill, minmax(0, 8em))",
+      gridTemplateColumns: "repeat(auto-fill, minmax(0, 10em))",
       gap: "0.5em",
       margin: "0.5em 0",
       justifyContent: "space-around"
@@ -24567,16 +24574,18 @@ var makeSortFun = (key, direction = "asc") => {
 };
 var Spells = () => {
   const [character, setCharacter] = useCharacter();
-  const { spells, compendium, spellMod, spellSaveDC } = character;
-  const topChunk = import_react7.default.createElement(import_react7.default.Fragment, null, import_react7.default.createElement(StatBlock, {
+  const { spells, compendium, spellMod, spellSaveDC, spellStats } = character;
+  const topChunk = spellStats.map(({ sourceClass, originalAbility, mod, saveDC }) => import_react7.default.createElement(import_react7.default.Fragment, null, import_react7.default.createElement(StatBlock, {
     name: "Spell Attack",
-    primary: StatBlockMod(character.spellMod),
-    secondary: ""
+    tertiary: sourceClass,
+    primary: StatBlockMod(mod),
+    secondary: `(${originalAbility.slice(0, 3).toUpperCase()} + prof)`
   }), import_react7.default.createElement(StatBlock, {
     name: "Spell Save DC",
-    primary: character.spellSaveDC,
-    secondary: ""
-  }));
+    tertiary: sourceClass,
+    primary: saveDC,
+    secondary: `(${originalAbility.slice(0, 3).toUpperCase()} + prof + 8)`
+  })));
   const SpellNameInList = ({ name }) => {
     const doJump = useCompendiumJump(name);
     return import_react7.default.createElement("div", {
@@ -25243,7 +25252,19 @@ var InventoryHistory = ({ style }) => {
 var import_react15 = __toESM(require_react(), 1);
 var Attacks = () => {
   const [character, setCharacter] = useCharacter();
-  const FullName = ({ kind, source, name, attackType = null, damageTypes = [], reach = null, range = null }) => {
+  const FullName = ({
+    kind,
+    source,
+    name,
+    attackType = null,
+    damageTypes = [],
+    reach = null,
+    range = null,
+    equipNeeded = false,
+    currentlyEquipped = false,
+    attuneNeeded = false,
+    currentlyAttuned = false
+  }) => {
     const jump = useCompendiumJump(source);
     const tags = [
       titleCase(kind),
@@ -25260,8 +25281,34 @@ var Attacks = () => {
       className: [...character.compendium.spells, ...character.currentItems].map((i) => i.name).includes(source) ? "pointer compendium-present" : ""
     }, import_react15.default.createElement("div", {
       style: { display: "inline-block" }
-    }, name && `${name} (${source})` || source), import_react15.default.createElement("br", null), import_react15.default.createElement(TagRow, {
-      tags,
+    }, source), import_react15.default.createElement("br", null), import_react15.default.createElement(TagRow, {
+      tags: [
+        { render: import_react15.default.createElement("button", {
+          style: { display: "inline-flex", marginInline: "2px", position: "relative", top: "-1px" },
+          className: "checkbox",
+          disabled: attuneNeeded == false,
+          onClick: (e) => {
+            e.stopPropagation();
+          }
+        }, import_react15.default.createElement("div", {
+          className: currentlyAttuned ? "checkmark" : ""
+        }, "A"), import_react15.default.createElement("div", {
+          className: "disablemark"
+        }, "\u2571")) },
+        { render: import_react15.default.createElement("button", {
+          style: { display: "inline-flex", marginInline: "2px", position: "relative", top: "-1px" },
+          className: "checkbox",
+          disabled: equipNeeded == false,
+          onClick: (e) => {
+            e.stopPropagation();
+          }
+        }, import_react15.default.createElement("div", {
+          className: currentlyEquipped ? "checkmark" : ""
+        }, "E"), import_react15.default.createElement("div", {
+          className: "disablemark"
+        }, "\u2571")) },
+        ...tags
+      ],
       classNameCallback: (tagName) => {
         switch (tagName) {
           case "Weapon":
@@ -25433,10 +25480,44 @@ var transfigure = (character) => {
   const currentItemEffects = currentItems.flatMap((item) => [
     ...(item.equipped ?? false) && (item.attuned ?? false) ? item.equippedAndAttunedEffects ?? [] : [],
     ...item.equipped ?? false ? item.equippedEffects ?? [] : []
-  ].map((effect) => ({
+  ].filter((effect) => {
+    if ("attackType" in effect) {
+      return false;
+    } else {
+      return true;
+    }
+  }).map((effect) => ({
     ...effect,
     source: item.name
   })));
+  const currentItemAttacks = currentItems.flatMap((item) => [
+    ...(item.equippedEffects ?? []).flatMap((effect) => {
+      if ("attackType" in effect) {
+        return [{
+          ...effect,
+          source: item.name,
+          equipNeeded: true,
+          currentlyEquipped: item.equipped ?? false
+        }];
+      } else {
+        return [];
+      }
+    }),
+    ...(item.equippedAndAttunedEffects ?? []).flatMap((effect) => {
+      if ("attackType" in effect) {
+        return [{
+          ...effect,
+          source: item.name,
+          equipNeeded: true,
+          currentlyEquipped: item.equipped ?? false,
+          attunedNeeded: true,
+          currentlyAttuned: item.attuned ?? false
+        }];
+      } else {
+        return [];
+      }
+    })
+  ]);
   const allFeatures = [
     character.species.features,
     character.background.features,
@@ -25595,11 +25676,29 @@ var transfigure = (character) => {
   })();
   const spellMod = abilityMods.charisma + proficiencyBonus;
   const spellSaveDC = 8 + spellMod;
+  const spellStats = currentLevels.map((level) => level.class).reduce((acc, classLevel) => {
+    if (acc.includes(classLevel)) {
+      return acc;
+    } else {
+      return [...acc, classLevel];
+    }
+  }, []).flatMap((className) => {
+    const ability = character.compendium.classes.find(({ name }) => name === className)?.spellcastingAbility;
+    if (ability) {
+      return [{
+        sourceClass: className,
+        originalAbility: ability,
+        mod: abilityMods[ability] + proficiencyBonus,
+        saveDC: 8 + abilityMods[ability] + proficiencyBonus
+      }];
+    } else {
+      return [];
+    }
+  });
   const fullSpells = spells.map((name) => ({
     ...character.compendium.spells.find((s) => s.name === name),
     name
   }));
-  console.log("fullSpells", fullSpells);
   const spellAttacks = fullSpells.flatMap(({ attacks: attacks2 = [], name: spellName }) => attacks2.flatMap((attack) => {
     if ("attackType" in attack) {
       return [{ ...attack, kind: "spell", source: spellName }];
@@ -25607,13 +25706,7 @@ var transfigure = (character) => {
       return [];
     }
   }));
-  const itemAttacks = currentItemEffects.flatMap((attack) => {
-    if ("attackType" in attack) {
-      return [{ ...attack, kind: "weapon" }];
-    } else {
-      return [];
-    }
-  });
+  const itemAttacks = currentItemAttacks.map((attack) => ({ ...attack, kind: "weapon" }));
   const attacks = [...itemAttacks, ...spellAttacks];
   const preferredName = (() => {
     switch (character.sheetView.namePreference) {
@@ -25652,7 +25745,8 @@ var transfigure = (character) => {
     spellSaveDC,
     fullSpells,
     attacks,
-    preferredName
+    preferredName,
+    spellStats
   };
 };
 var calculateFinalAbilityScores = ({ baseScores, allActiveEffects }) => {
@@ -25779,6 +25873,98 @@ var example = {
     }
   },
   inventoryHistory: [
+    {
+      comment: "Deal + Murder of Mean-to-Horses man",
+      items: [
+        { name: "Gold Pieces", quantity: 690, currency: true },
+        { name: "Gauntlets of Ogre Power", equipped: true, attuned: true },
+        { name: "Studded Leather Armor", equipped: true },
+        { name: "Sleepy Hat", equipped: true },
+        { name: "Bag of Holding" },
+        { name: "Nine Lives Stealer Longsword", attuned: true, equipped: true },
+        { name: "Lightsaber +1", equipped: false, contained: "Bag of Holding" },
+        { name: "Dragon Egg", quantity: 2, contained: "Bag of Holding" },
+        { name: "Mysterious Potion", quantity: 2, comment: "probably not health potions", contained: "Bag of Holding" },
+        { name: "Waterskin" },
+        { name: "Rations", quantity: 5 },
+        { name: "Torch", quantity: 2 },
+        { name: "Component Pouch" },
+        { name: "Cultist Outfit", equipped: false, contained: "Bag of Holding" },
+        { name: "Cultist Sword", equipped: false, contained: "Bag of Holding" },
+        { name: "Horse (named \"Patter\")" },
+        { name: "Receipt for \"Patter\"" },
+        { name: "Head of Brick Boards (wrapped in a sheet)" },
+        { name: "Corpse of yet-to-be-looted Mean-to-Horses man" }
+      ]
+    },
+    {
+      comment: "Killed Brick Boars",
+      items: [
+        { name: "Gold Pieces", quantity: 685, currency: true },
+        { name: "Gauntlets of Ogre Power", equipped: true, attuned: true },
+        { name: "Studded Leather Armor", equipped: true },
+        { name: "Sleepy Hat", equipped: true },
+        { name: "Bag of Holding" },
+        { name: "Nine Lives Stealer Longsword", attuned: true, equipped: true },
+        { name: "Lightsaber +1", equipped: false, contained: "Bag of Holding" },
+        { name: "Dragon Egg", quantity: 2, contained: "Bag of Holding" },
+        { name: "Mysterious Potion", quantity: 2, comment: "probably not health potions", contained: "Bag of Holding" },
+        { name: "Waterskin" },
+        { name: "Rations", quantity: 5 },
+        { name: "Torch", quantity: 2 },
+        { name: "Component Pouch" },
+        { name: "Cultist Outfit", equipped: false, contained: "Bag of Holding" },
+        { name: "Cultist Sword", equipped: false, contained: "Bag of Holding" },
+        { name: "Horse (named \"Patter\")" },
+        { name: "Receipt for \"Patter\"" },
+        { name: "Head of Brick Boards (wrapped in a sheet)" }
+      ]
+    },
+    {
+      comment: "Played (and won) Reindeer Games",
+      items: [
+        { name: "Gold Pieces", quantity: 685, currency: true },
+        { name: "Gauntlets of Ogre Power", equipped: true, attuned: true },
+        { name: "Studded Leather Armor", equipped: true },
+        { name: "Sleepy Hat", equipped: true },
+        { name: "Bag of Holding" },
+        { name: "Nine Lives Stealer Longsword", attuned: true, equipped: true },
+        { name: "Lightsaber +1", equipped: false, contained: "Bag of Holding" },
+        { name: "Dragon Egg", quantity: 2, contained: "Bag of Holding" },
+        { name: "Mysterious Potion", quantity: 2, comment: "probably not health potions", contained: "Bag of Holding" },
+        { name: "Waterskin" },
+        { name: "Rations", quantity: 5 },
+        { name: "Torch", quantity: 2 },
+        { name: "Component Pouch" },
+        { name: "Cultist Outfit", equipped: false, contained: "Bag of Holding" },
+        { name: "Cultist Sword", equipped: false, contained: "Bag of Holding" },
+        { name: "Horse (named \"Patter\")" },
+        { name: "Receipt for \"Patter\"" }
+      ]
+    },
+    {
+      comment: "Received a horse",
+      items: [
+        { name: "Gold Pieces", quantity: 635, currency: true },
+        { name: "Gauntlets of Ogre Power", equipped: true, attuned: true },
+        { name: "Studded Leather Armor", equipped: true },
+        { name: "Sleepy Hat", equipped: true },
+        { name: "Bag of Holding" },
+        { name: "Nine Lives Stealer Longsword", attuned: true, equipped: true },
+        { name: "Lightsaber +1", equipped: false, contained: "Bag of Holding" },
+        { name: "Dragon Egg", quantity: 2, contained: "Bag of Holding" },
+        { name: "Mysterious Potion", quantity: 2, comment: "probably not health potions", contained: "Bag of Holding" },
+        { name: "Waterskin" },
+        { name: "Rations", quantity: 5 },
+        { name: "Torch", quantity: 2 },
+        { name: "Component Pouch" },
+        { name: "Cultist Outfit", equipped: false, contained: "Bag of Holding" },
+        { name: "Cultist Sword", equipped: false, contained: "Bag of Holding" },
+        { name: "Horse (named \"Patter\")" },
+        { name: "Receipt for \"Patter\"" }
+      ]
+    },
+    { comment: "---" },
     {
       comment: "Adjusting bags",
       items: [
@@ -26386,7 +26572,7 @@ A creature can use its action to inspect a target and make an Intelligence (Inve
             d20: 1
           },
           {
-            name: "Damage (level 2 slot)",
+            name: "Damage",
             d6: 2
           }
         ]
