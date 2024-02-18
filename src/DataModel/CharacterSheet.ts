@@ -155,9 +155,15 @@ export type Background = {
     },
 }
 
+export const Conditional_Always = "Conditional_Always"
+export const Conditional_WhenWieldingTwoMeleeWeapons = "Conditional_WhenWieldingTwoMeleeWeapons"
+export type Conditional
+    = typeof Conditional_Always
+    | typeof Conditional_WhenWieldingTwoMeleeWeapons
+
 export type FeatureWithEffect = {
     name: string,
-    effects: [FeatureEffect, ...FeatureEffect[]], 
+    effects: [FeatureEffect, ...FeatureEffect[]],
     description?: string,
 }
 
@@ -215,7 +221,8 @@ export type SkillMods =
 export type Skill = keyof SkillMods
 
 export type FeatureEffect
-= FeatureEffectIncreaseAbility
+= 
+( FeatureEffectIncreaseAbility
 | FeatureEffectVisionDark
 | FeatureEffectSkillProficiency
 | FeatureEffectArmorProficienct
@@ -228,6 +235,7 @@ export type FeatureEffect
 | FeatureEffectSetAbility
 | FeatureEffectAC
 | FeatureEffectAttack
+) & { conditional?: Conditional }
 
 export type Sourced<FE extends FeatureEffect> = FE & { source: string }
 
@@ -248,9 +256,7 @@ export type FeatureEffectWalkingSpeed = { walking: number}
 export type FeatureEffectSpell = { spell: string }
 export type FeatureEffectSetAbility = { setAbility: Ability, minimum: number }
 export type FeatureEffectAC =
-    ({ armorClassBase: number } | { armorClassBonus: number })
-    &
-    ({ dexModMultiplier: number, dexModMaximum?: number })
+    ({ armorClassBase: number } & ({ dexModMultiplier: number, dexModMaximum?: number })) | { armorClassBonus: number }
 export type FeatureEffectAttack = 
     { damageTypes: DamageType[], name?: string } 
     & 

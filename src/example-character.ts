@@ -1,4 +1,4 @@
-import { CharacterSheet } from "./DataModel/CharacterSheet";
+import { CharacterSheet, Conditional_when_wielding_two_melee_weapons } from "./DataModel/CharacterSheet";
 
 const example: CharacterSheet = {
     sheetView: {
@@ -765,8 +765,17 @@ const example: CharacterSheet = {
                         d12: 1,
                     },
                 ]
+            },
+            {
+                name: "True Strike",
+                level: 0,
+                description: "Divination Cantrip\n---\nCasting Time: 1 action\nRange: 120 feet\nComponents: S\nDuration: Concentration, up to 1 round\n---\nYou point a finger at a target in range. Your magic grants you a brief insight into the target's defenses. On your next turn, you gain advantage on your first attack roll against the target, provided that this spell hasn't ended.",
+            },
+            {
+                name: "Darkness",
+                level: 2,
+                description: "2nd Level Evocation\n---\nCasting Time: 1 action\n Range/Area: 60ft./15ft.\nComponents: V, M (bat fur and a drop of pitch or piece of coal)\nDuration: Concentration, up to 10 minutes\n---\nMagical darkness spreads from a point you choose within range to fill a 15-foot-radius sphere for the duration. The darkness spreads around corners. A creature with darkvision can't see through this darkness, and nonmagical light can't illuminate it.\n\nIf the point you choose is on an object you are holding or one that isn't being worn or carried, the darkness emanates from the object and moves with it. Completely covering the source of the darkness with an opaque object, such as a bowl or a helm, blocks the darkness.\n\nIf any of this spell's area overlaps with an area of light created by a spell of 2nd level or lower, the spell that created the light is dispelled.",
             }
-              
         ],
         items: [
             { 
@@ -1079,6 +1088,28 @@ const example: CharacterSheet = {
               },
             ],
         },
+        {
+            class: "Warlock",
+            features: [
+                {
+                    name: "Dual Wielder",
+                    description: "You master fighting with two weapons, gaining the following benefits:\n* You gain a +1 bonus to AC while you are wielding a separate melee weapon in each hand.\n* You can use two-weapon fighting even when the one-handed melee weapons you are wielding aren't light.\n* You can draw or stow two one-handed weapons when you would normally be able to draw or stow only one.",
+                    effects: [
+                        {
+                            armorClassBonus: 1,
+                            conditional: "Conditional_WhenWieldingTwoMeleeWeapons",
+                        }
+                    ],
+                },
+                {
+                    name: "Spells Learned",
+                    effects: [
+                        { spell: "True Strike" },
+                        { spell: "Darkness" },
+                    ]
+                }
+            ],
+        }
     ]
 }
 

@@ -20,6 +20,8 @@ import {
     Sourced,
     SourcedAnyItem,
     Ability,
+    Conditional_Always,
+    Conditional_WhenWieldingTwoMeleeWeapons,
 } from "./CharacterSheet";
 
 export type DerivedCharacter = {
@@ -151,7 +153,27 @@ export const transfigure = (character: CharacterSheet): FullCharacter => {
         if ("effects" in feature) { return feature.effects } else { return [] }
     })
 
-    const allActiveEffects: Array<FeatureEffect> = [...featureEffects, ...currentItemEffects]
+    const allActiveEffects: Array<FeatureEffect> = 
+        [...featureEffects, ...currentItemEffects]
+            .flatMap(effect => {
+                if ("conditional" in effect) {
+                    switch(effect.conditional) {
+                    case Conditional_Always:
+                        return [effect]
+                    case Conditional_WhenWieldingTwoMeleeWeapons:
+                        return currentItems
+                            .filter((item) => (item.equipped))
+                            .filter((item) => (item.type == "weapon"))
+                            .filter((item) => (
+                                item.equippedEffects.filter((effect) => (
+                                    ("attackType" in effect) ? effect.attackType === "melee" : false
+                                )).length > 0))
+                            .length > 1 ? [effect] : []
+                    }
+                } else {
+                    return [effect]
+                }
+            })
 
     const finalAbilityScores = calculateFinalAbilityScores({ ...character, allActiveEffects })
 
